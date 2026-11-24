@@ -27,11 +27,11 @@ test("Make default saves the sort; picking a sort alone does not; bad values fal
     localStorage.setItem("career-ops:first-score-seen", "1");
   });
 
-  const sort = page.getByRole("group", { name: "Sort inbox" });
-  const fit = sort.getByRole("button", { name: "Best fit" });
-  const newest = sort.getByRole("button", { name: "Newest" });
-  const makeDefault = sort.getByRole("button", { name: "Make default" });
-  const isDefault = sort.getByRole("button", { name: "✓ Default" });
+  const sort = page.getByRole("group", { name: "Posteingang sortieren" });
+  const fit = sort.getByRole("button", { name: "Beste Passung" });
+  const newest = sort.getByRole("button", { name: "Neueste" });
+  const makeDefault = sort.getByRole("button", { name: "Als Standard" });
+  const isDefault = sort.getByRole("button", { name: "✓ Standard" });
   const pressed = (button) => button.getAttribute("aria-pressed");
   const stored = () => page.evaluate((k) => localStorage.getItem(k), KEY);
   async function until(check) {
@@ -96,14 +96,14 @@ test("Make default saves the sort; picking a sort alone does not; bad values fal
   // Two tabs: saving a default in one updates the other tab's pill, but not its view.
   const tabB = await context.newPage();
   await tabB.goto(`${origin.origin}/pipeline`);
-  const sortB = tabB.getByRole("group", { name: "Sort inbox" });
-  await sortB.getByRole("button", { name: "✓ Default" }).waitFor(); // Best fit is the default here
+  const sortB = tabB.getByRole("group", { name: "Posteingang sortieren" });
+  await sortB.getByRole("button", { name: "✓ Standard" }).waitFor(); // Best fit is the default here
   await newest.click();
   await makeDefault.click();
   await until(async () => (await stored()) === "newest");
   // Tab B still views Best fit, now offers to make it the default again.
-  await sortB.getByRole("button", { name: "Make default" }).waitFor();
-  assert.equal(await sortB.getByRole("button", { name: "Best fit" }).getAttribute("aria-pressed"), "true");
+  await sortB.getByRole("button", { name: "Als Standard" }).waitFor();
+  assert.equal(await sortB.getByRole("button", { name: "Beste Passung" }).getAttribute("aria-pressed"), "true");
   await tabB.close();
   await page.evaluate((k) => localStorage.setItem(k, "fit"), KEY);
 
@@ -120,14 +120,14 @@ test("Make default saves the sort; picking a sort alone does not; bad values fal
     Storage.prototype.setItem = function (k, v) { if (k === key) throw new DOMException("quota", "QuotaExceededError"); return set.call(this, k, v); };
   }, KEY);
   await blocked.goto(`${origin.origin}/pipeline`);
-  const blockedSort = blocked.getByRole("group", { name: "Sort inbox" });
-  await blockedSort.getByRole("button", { name: "Best fit" }).waitFor();
-  assert.equal(await blockedSort.getByRole("button", { name: "Best fit" }).getAttribute("aria-pressed"), "true");
-  await blockedSort.getByRole("button", { name: "Newest" }).click();
-  assert.equal(await blockedSort.getByRole("button", { name: "Newest" }).getAttribute("aria-pressed"), "true");
-  await blockedSort.getByRole("button", { name: "Make default" }).click();
-  await blockedSort.getByText("Can’t save in this browser").waitFor();
-  assert.equal(await blockedSort.getByRole("button", { name: "Make default" }).count(), 1, "still offered, not a silent no-op");
+  const blockedSort = blocked.getByRole("group", { name: "Posteingang sortieren" });
+  await blockedSort.getByRole("button", { name: "Beste Passung" }).waitFor();
+  assert.equal(await blockedSort.getByRole("button", { name: "Beste Passung" }).getAttribute("aria-pressed"), "true");
+  await blockedSort.getByRole("button", { name: "Neueste" }).click();
+  assert.equal(await blockedSort.getByRole("button", { name: "Neueste" }).getAttribute("aria-pressed"), "true");
+  await blockedSort.getByRole("button", { name: "Als Standard" }).click();
+  await blockedSort.getByText("In diesem Browser nicht speicherbar").waitFor();
+  assert.equal(await blockedSort.getByRole("button", { name: "Als Standard" }).count(), 1, "still offered, not a silent no-op");
   assert.deepEqual(blockedErrors, []);
 
   assert.deepEqual(errors, []);

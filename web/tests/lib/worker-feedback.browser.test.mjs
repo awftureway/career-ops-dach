@@ -88,7 +88,7 @@ test("workers expose task-specific state and notify once without moving focus", 
     async function send(message, reply) {
       await tabTo(input); await page.keyboard.press('ControlOrMeta+A'); await page.keyboard.press('Backspace');
       await page.keyboard.type(message);
-      await until(() => page.getByRole('button', { name: 'Send', exact: true }).isEnabled());
+      await until(() => page.getByRole('button', { name: 'Senden', exact: true }).isEnabled());
       await page.keyboard.press('Enter');
       await until(() => replies.has(message), 'Assistant fixture not requested');
       replies.get(message).end(reply);
@@ -129,7 +129,7 @@ test("workers expose task-specific state and notify once without moving focus", 
     assert.ok(await treeHas('status', 'Status der Worker-Aufgaben', ['atomic', true]));
 
     const alpha = await launch('Alpha', 'Alpha · Engineer');
-    const runningName = 'Worker öffnen: Alpha · Engineer — Running';
+    const runningName = 'Worker öffnen: Alpha · Engineer — Läuft';
     const runningLink = tray.getByRole('link', { name: runningName, exact: true });
     await runningLink.waitFor(); await tabTo(runningLink);
     assert.ok(await treeHas('link', runningName, ['focused', true]));
@@ -146,10 +146,10 @@ test("workers expose task-specific state and notify once without moving focus", 
     progress(alpha, { type: 'done', tokens: 100 });
     finish(alpha, { type: 'done', tokens: 100 });
     await until(async () => (await notices()).length === 1);
-    assert.deepEqual(await notices(), ['Alpha · Engineer: completed.']);
+    assert.deepEqual(await notices(), ['Alpha · Engineer: abgeschlossen.']);
     assert.equal(await focused(input), true);
     assert.equal(await input.inputValue(), 'Keep this draft');
-    const completedName = 'Worker öffnen: Alpha · Engineer — Completed';
+    const completedName = 'Worker öffnen: Alpha · Engineer — Abgeschlossen';
     assert.ok(await treeHas('link', completedName));
     assert.ok(await treeHas('group', 'Alpha · Engineer'));
     assert.equal(await latest.getByRole('link', { name: completedName, exact: true }).count(), 1);
@@ -160,28 +160,28 @@ test("workers expose task-specific state and notify once without moving focus", 
     const beta = await launch('Beta', 'Beta · Analyst');
     finish(beta, { type: 'error', msg: 'Fictional evaluation failed' });
     await until(async () => (await notices()).length === 2);
-    assert.equal((await notices()).at(-1), 'Beta · Analyst: failed.');
-    assert.ok(await treeHas('link', 'Worker öffnen: Beta · Analyst — Failed'));
+    assert.equal((await notices()).at(-1), 'Beta · Analyst: fehlgeschlagen.');
+    assert.ok(await treeHas('link', 'Worker öffnen: Beta · Analyst — Fehlgeschlagen'));
     assert.equal(await focused(input), true);
 
     await send('Batch', 'Review this fictional batch.\n<<act:evaluateCompany {"company":"FixtureCo"}>>');
-    const confirm = page.getByRole('button', { name: /^Bestätigen: Evaluate 2 FixtureCo postings/ });
+    const confirm = page.getByRole('button', { name: /^Bestätigen: 2 Stellen von FixtureCo bewerten/ });
     await confirm.waitFor();
     assert.equal(workers.has('https://example.com/batch-platform'), false, 'batch must wait for human confirmation');
     await tabTo(confirm); await page.keyboard.press('Enter');
     await until(() => workers.has('https://example.com/batch-platform') && workers.has('https://example.com/batch-design'));
     await tabTo(input);
-    await latest.getByText('2 running', { exact: true }).waitFor();
-    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Platform Engineer — Running'));
-    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Product Designer — Running'));
-    assert.equal(await latest.getByText('Platform Engineer · Running', { exact: true }).count(), 1);
+    await latest.getByText('2 läuft', { exact: true }).waitFor();
+    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Platform Engineer — Läuft'));
+    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Product Designer — Läuft'));
+    assert.equal(await latest.getByText('Platform Engineer · Läuft', { exact: true }).count(), 1);
     finish('https://example.com/batch-platform', { type: 'done', tokens: 200 });
     finish('https://example.com/batch-design', { type: 'error', msg: 'Fictional evaluation failed' });
     await until(async () => (await notices()).length === 3);
-    assert.equal((await notices()).at(-1), 'Evaluate · FixtureCo · Platform Engineer: completed. Evaluate · FixtureCo · Product Designer: failed.');
-    await latest.getByText('1 completed, 1 failed', { exact: true }).waitFor();
+    assert.equal((await notices()).at(-1), 'Evaluate · FixtureCo · Platform Engineer: abgeschlossen. Evaluate · FixtureCo · Product Designer: fehlgeschlagen.');
+    await latest.getByText('1 abgeschlossen, 1 fehlgeschlagen', { exact: true }).waitFor();
     await snapshot('mixed-batch-settled');
-    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Product Designer — Failed'));
+    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Product Designer — Fehlgeschlagen'));
     assert.equal(await focused(input), true);
 
     // Global worker feedback survives closing the Assistant; it never steals focus.
@@ -190,7 +190,7 @@ test("workers expose task-specific state and notify once without moving focus", 
     assert.equal(await focused(opener), true);
     finish(delta, { type: 'done' });
     await until(async () => (await notices()).length === 4);
-    assert.equal((await notices()).at(-1), 'Delta · Auditor: completed.');
+    assert.equal((await notices()).at(-1), 'Delta · Auditor: abgeschlossen.');
     assert.equal(await focused(opener), true);
     await page.keyboard.press('Enter'); await input.waitFor(); await pause(650);
     assert.equal((await notices()).length, 4, 'reopening does not replay completions');
@@ -199,21 +199,21 @@ test("workers expose task-specific state and notify once without moving focus", 
     const duplicateTitle = await launch('Delta-again', 'Delta · Auditor');
     finish(duplicateTitle, { type: 'done' });
     await until(async () => (await notices()).length === 5);
-    assert.equal((await notices()).at(-1), 'Delta · Auditor: completed.');
+    assert.equal((await notices()).at(-1), 'Delta · Auditor: abgeschlossen.');
 
     // A closed stream without an explicit done event is failure, even though the
     // Assistant reply has already finished. No completion is inferred from prose.
     const cutOff = await launch('Cut-off', 'Cut-off · Engineer');
     workers.get(cutOff).end();
     await until(async () => (await notices()).length === 6);
-    assert.equal((await notices()).at(-1), 'Cut-off · Engineer: failed.');
+    assert.equal((await notices()).at(-1), 'Cut-off · Engineer: fehlgeschlagen.');
     assert.equal(await focused(input), true);
 
     // Configuration failure can settle before the first running-card render.
     await page.route('**/api/clis', (route) => route.fulfill({ json: { clis: [] } }));
     await send('No CLI', 'Starting a fictional worker.\n<<act:evaluate {"url":"https://example.com/no-cli","title":"No CLI task"}>>');
     await until(async () => (await notices()).length === 7);
-    assert.equal((await notices()).at(-1), 'No CLI task: failed.');
+    assert.equal((await notices()).at(-1), 'No CLI task: fehlgeschlagen.');
     assert.equal(workers.has('https://example.com/no-cli'), false);
     assert.equal(await focused(input), true);
     await page.route('**/api/clis', (route) => route.fulfill({ json: { clis: [{ id: 'fixture-cli', installed: true }] } }));
@@ -229,9 +229,9 @@ test("workers expose task-specific state and notify once without moving focus", 
     await opener.waitFor(); await tabTo(opener); await page.keyboard.press('Enter'); await input.waitFor();
     await pause(650); assert.deepEqual(await notices(), []);
 
-    const failedLink = tray.getByRole('link', { name: 'Worker öffnen: Gamma · Researcher — Failed', exact: true });
+    const failedLink = tray.getByRole('link', { name: 'Worker öffnen: Gamma · Researcher — Fehlgeschlagen', exact: true });
     await tabTo(failedLink);
-    assert.ok(await treeHas('link', 'Worker öffnen: Gamma · Researcher — Failed', ['focused', true]));
+    assert.ok(await treeHas('link', 'Worker öffnen: Gamma · Researcher — Fehlgeschlagen', ['focused', true]));
     await page.keyboard.press('Enter'); await page.waitForURL('**/jobs/job-*');
     await page.locator('h1').waitFor();
     assert.deepEqual(await notices(), [], 'client navigation/mounts do not replay history');
@@ -278,9 +278,9 @@ test("worker dismiss stays discoverable without hover and by keyboard", { skip: 
         await page.goto(`${origin.origin}/pipeline?tab=ALL`);
         assert.equal(await page.evaluate(() => matchMedia("(hover: hover)").matches), !mode.hasTouch);
         const tray = mode.width < 768
-          ? page.getByRole("dialog", { name: "Navigation menu", exact: true })
+          ? page.getByRole("dialog", { name: "Navigationsmenü", exact: true })
           : page.getByRole("complementary");
-        if (mode.width < 768) await page.getByRole("button", { name: "Open menu", exact: true }).tap();
+        if (mode.width < 768) await page.getByRole("button", { name: "Menü öffnen", exact: true }).tap();
         const dismiss = tray.getByRole("button", { name: "Worker ausblenden: Fictional evaluation · Engineer", exact: true });
         await dismiss.waitFor();
         async function until(check, message) {
@@ -294,7 +294,7 @@ test("worker dismiss stays discoverable without hover and by keyboard", { skip: 
           await dismiss.tap();
         } else {
           await until(async () => (await opacity()) === "0", "desktop default stays hidden");
-          await tray.getByRole("link", { name: "Worker öffnen: Fictional evaluation · Engineer — Completed", exact: true }).hover();
+          await tray.getByRole("link", { name: "Worker öffnen: Fictional evaluation · Engineer — Abgeschlossen", exact: true }).hover();
           await until(async () => (await opacity()) === "1", "pointer hover reveals dismiss");
           await page.mouse.move(1100, 850);
           await until(async () => (await opacity()) === "0", "leaving hover hides dismiss");

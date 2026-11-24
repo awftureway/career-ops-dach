@@ -57,16 +57,16 @@ test("Modal dialogs take focus, trap Tab, close on Escape and return focus", { s
 
   const row = () => page.locator("tbody tr", { hasText: "Fixture Beta" });
   await t.test("Log follow-up", () =>
-    assertModalKeyboard("/followups", () => row().getByRole("button", { name: "Log follow-up for Fixture Beta", exact: true }), /Log follow-up.*Fixture Beta/));
+    assertModalKeyboard("/followups", () => row().getByRole("button", { name: "Nachfassen für Fixture Beta protokollieren", exact: true }), /Nachfassen protokollieren.*Fixture Beta/));
   await t.test("Next follow-up date", () =>
-    assertModalKeyboard("/followups", () => row().getByRole("button", { name: "Next date for Fixture Beta", exact: true }), /Pin next follow-up.*Fixture Beta/));
+    assertModalKeyboard("/followups", () => row().getByRole("button", { name: "Nächster Termin für Fixture Beta", exact: true }), /Nächstes Nachfassen festlegen.*Fixture Beta/));
   await t.test("Next follow-up date field takes a key and Tab stays in the dialog", async () => {
     await page.goto(`${origin.origin}/followups`);
-    const opener = row().getByRole("button", { name: "Next date for Fixture Beta", exact: true });
+    const opener = row().getByRole("button", { name: "Nächster Termin für Fixture Beta", exact: true });
     await opener.waitFor();
     await opener.focus();
     await page.keyboard.press("Enter");
-    const dialog = page.getByRole("dialog", { name: /Pin next follow-up.*Fixture Beta/ });
+    const dialog = page.getByRole("dialog", { name: /Nächstes Nachfassen festlegen.*Fixture Beta/ });
     await dialog.waitFor();
     const date = dialog.locator("input[type='date']");
     await until(() => focused(date), "the date field takes focus");

@@ -41,10 +41,10 @@ test("inline Pipeline status browser flow (disposable data only)", { skip: liveS
   // On a slow runner the page can hold a second, hidden copy of the table for a
   // moment: rows and edit buttons are matched only where they are visible.
   const visibleRows = page.locator("tbody tr").filter({ visible: true });
-  const editButtons = page.getByRole("button", { name: /^Edit status/ }).filter({ visible: true });
+  const editButtons = page.getByRole("button", { name: /^Status für .* bearbeiten/ }).filter({ visible: true });
   const row = (n) => visibleRows.filter({ has: page.getByRole("link", { name: `#${n}`, exact: true }) });
   const tab = (name) => page.getByRole("button", { name: new RegExp(`^${name} \\d+$`) });
-  const edit = (n) => row(n).getByRole("button", { name: /^Edit status/ });
+  const edit = (n) => row(n).getByRole("button", { name: /^Status für .* bearbeiten/ });
   const select = (n) => row(n).getByRole("combobox");
   async function until(check) {
     const start = Date.now();
@@ -67,7 +67,7 @@ test("inline Pipeline status browser flow (disposable data only)", { skip: liveS
     // One editor open in the table. The score-floor menu above it is a combobox too.
     assert.equal(await page.locator("tbody").getByRole("combobox").count(), 1);
     await select(11).selectOption("Evaluated");
-    await row(11).getByRole("button", { name: /^Cancel editing/ }).click();
+    await row(11).getByRole("button", { name: /^Statusbearbeitung für .* abbrechen/ }).click();
     await edit(11).waitFor();
     await until(() => edit(11).evaluate((element) => document.activeElement === element));
     await edit(11).click();
@@ -97,9 +97,9 @@ test("inline Pipeline status browser flow (disposable data only)", { skip: liveS
     await select(11).selectOption("Applied");
     await row(11).getByRole("button", { name: "Ja, als beworben markieren" }).click();
     assert.equal(await select(11).isDisabled(), true);
-    assert.equal(await row(11).getByRole("button", { name: /^Cancel editing/ }).isDisabled(), true);
+    assert.equal(await row(11).getByRole("button", { name: /^Statusbearbeitung für .* abbrechen/ }).isDisabled(), true);
     assert.equal(await edit(12).isEnabled(), true);
-    await page.getByPlaceholder("Search company or role…").fill("Fixture");
+    await page.getByPlaceholder("Firma oder Rolle suchen …").fill("Fixture");
     release();
     await row(11).getByRole("alert").waitFor();
     assert.equal(await select(11).inputValue(), "Evaluated");
@@ -150,7 +150,7 @@ test("inline Pipeline status browser flow (disposable data only)", { skip: liveS
     await page.route("**/api/status", async (route) => { await gate; await route.continue(); });
     await edit(13).click();
     await select(13).selectOption("Interview");
-    const search = page.getByPlaceholder("Search company or role…");
+    const search = page.getByPlaceholder("Firma oder Rolle suchen …");
     await search.fill("Fixture Beta");
     // The table filters on a deferred copy of the search (#5504), so the row
     // leaves on a later render, not on the keystroke.
@@ -192,12 +192,12 @@ test("inline Pipeline status browser flow (disposable data only)", { skip: liveS
 
   await t.test("detail-page dropdown retains the saved animation and persists", async () => {
     await page.goto(`${origin.origin}/pipeline/11`);
-    const detailSelect = page.getByLabel("status", { exact: true });
+    const detailSelect = page.getByLabel("Status", { exact: true });
     await detailSelect.waitFor();
     assert.equal(await detailSelect.inputValue(), "Applied");
-    assert.equal(await page.getByRole("button", { name: /^Edit status/ }).count(), 0);
+    assert.equal(await page.getByRole("button", { name: /^Status für .* bearbeiten/ }).count(), 0);
     await detailSelect.selectOption("Responded");
-    await page.locator(".animate-terminal-popup").filter({ hasText: "saved" }).waitFor();
+    await page.locator(".animate-terminal-popup").filter({ hasText: "Gespeichert" }).waitFor();
     await page.reload();
     assert.equal(await detailSelect.inputValue(), "Responded");
   });
@@ -208,7 +208,7 @@ test("inline Pipeline status browser flow (disposable data only)", { skip: liveS
     await edit(11).click();
     await select(11).waitFor();
     assert.equal(await select(11).evaluate((element) => element.getBoundingClientRect().height >= 44), true);
-    assert.equal(await row(11).getByRole("button", { name: /^Cancel editing/ }).evaluate((element) => element.getBoundingClientRect().height >= 44), true);
+    assert.equal(await row(11).getByRole("button", { name: /^Statusbearbeitung für .* abbrechen/ }).evaluate((element) => element.getBoundingClientRect().height >= 44), true);
     await select(11).press("Escape");
     await tab("INBOX").click();
     await page.waitForURL((value) => !value.searchParams.has("tab"));

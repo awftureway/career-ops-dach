@@ -548,7 +548,7 @@ export function AssistantConsole() {
       setAnnouncement("");
       await refreshChats();
     } catch (e) { setSaveError(e instanceof Error ? e.message : "Unterhaltung konnte nicht gelöscht werden"); }
-    finally { finishConversationAction(() => setChatPending(false), '[aria-label="New chat"]'); }
+    finally { finishConversationAction(() => setChatPending(false), '[aria-label="Neuer Chat"]'); }
   }
 
   useEffect(() => {

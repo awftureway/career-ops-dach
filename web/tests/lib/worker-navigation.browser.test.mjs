@@ -60,12 +60,12 @@ async function setup(t) {
 
   async function startFromPipeline(company, input) {
     await page.goto(`${url}/pipeline`);
-    await page.locator("li:visible").filter({ hasText: company }).getByRole("button", { name: /Save/ }).click();
-    await page.getByRole("button", { name: /^Score 1 ·/ }).click();
-    await page.getByRole("button", { name: "Score 1 now", exact: true }).click();
+    await page.locator("li:visible").filter({ hasText: company }).getByRole("button", { name: /Merken/ }).click();
+    await page.getByRole("button", { name: /^1 bewerten/ }).click();
+    await page.getByRole("button", { name: "Jetzt 1 bewerten", exact: true }).click();
     await until(() => workers.has(input), `the ${company} worker never reached /api/run`);
     send(input, { type: "status", label: "Fictional worker started" });
-    const pill = page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Running$/ });
+    const pill = page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Läuft$/ });
     await pill.waitFor();
     return pill;
   }
@@ -94,7 +94,7 @@ test("opening a running worker from its pill keeps the evaluation streaming to c
 
   await page.getByRole("complementary").getByRole("link", { name: "Pipeline", exact: true }).click();
   await page.waitForURL((u) => u.pathname === "/pipeline");
-  await page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Running$/ }).click();
+  await page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Läuft$/ }).click();
   await page.waitForURL((u) => u.pathname === href);
   assert.equal(await sameDocument(), true);
   assert.equal(workers.get(input).dropped, false);
@@ -105,8 +105,8 @@ test("opening a running worker from its pill keeps the evaluation streaming to c
   await page.getByText("4/5", { exact: true }).waitFor();
   await until(async () => (await stored())[0]?.status === "done", "the finished job was never stored as done");
   const [job] = await stored();
-  assert.equal(job.steps.some((s) => /Interrupted/.test(s.label)), false);
-  assert.equal(job.steps.at(-1).label, "Done");
+  assert.equal(job.steps.some((s) => /Unterbrochen/.test(s.label)), false);
+  assert.equal(job.steps.at(-1).label, "Fertig");
   await until(() => saves.length === 1, "the finished run was not saved");
   await new Promise((resolve) => setTimeout(resolve, 500));
   assert.equal(saves.length, 1);
@@ -130,5 +130,5 @@ test("a real reload still ends the run and the restored job reads as interrupted
   assert.equal(job.steps.at(-1).label, "Unterbrochen (Seite neu geladen)");
   assert.equal(job.result, undefined);
   assert.equal(saves.length, 0, "an interrupted run must not be saved as finished");
-  await page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Failed$/ }).waitFor();
+  await page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Fehlgeschlagen$/ }).waitFor();
 });

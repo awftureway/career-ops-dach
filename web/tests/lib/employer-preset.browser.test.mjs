@@ -50,10 +50,12 @@ test(
     });
     await page.goto(`${origin.origin}/explore`);
     const preset = page.getByRole("radio", {
-      name: "Public ATS network",
+      name: "join.com (ATS)",
       exact: true,
     });
     await preset.waitFor();
+    // DACH-Jobbörsen is the Explorer default; this test starts from the join.com (ATS) mode.
+    await preset.check();
     assert.equal(await preset.isChecked(), true);
     const roles = page.getByRole("textbox", {
       name: "Gesuchte Rollen",
@@ -328,10 +330,12 @@ test(
       });
       await page.goto(`${new URL(base).origin}/explore`);
       const preset = page.getByRole("radio", {
-        name: "Public ATS network",
+        name: "join.com (ATS)",
         exact: true,
       });
       await preset.waitFor();
+      // DACH-Jobbörsen is the Explorer default; start from the join.com (ATS) mode.
+      await preset.check();
       if (source === "tencent") {
         await preset.focus();
         await page.keyboard.press("ArrowRight");
@@ -351,12 +355,7 @@ test(
       assert.deepEqual(evaluated, []);
       if (source === "greenhouse") {
         assert.equal(scans[0].preset, undefined);
-        assert.deepEqual(scans[0].ats, [
-          "greenhouse",
-          "lever",
-          "ashby",
-          "workday",
-        ]);
+        assert.deepEqual(scans[0].ats, ["join"]);
       }
       await add.focus();
       const addResponse = page.waitForResponse((r) =>

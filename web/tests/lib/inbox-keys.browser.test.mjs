@@ -78,7 +78,7 @@ test("an unscored needs-review row keeps its review link and row-level Skip", { 
   await row.getByRole("link", { name: "Prüfung nötig", exact: true }).waitFor();
   assert.match(await row.innerText(), /nicht bewertet/);
   assert.equal(await row.locator('a[href="/jobs/review-fixture"]').count(), 1);
-  const skip = row.getByRole("button", { name: /Fixture Alpha überspringen/ });
+  const skip = row.getByRole("button", { name: /Fixture Alpha Engineer überspringen/ });
   assert.equal(await skip.count(), 1, "an unscored review row keeps its Skip button");
   const [response] = await Promise.all([
     page.waitForResponse(response => response.url() === `${origin.origin}/api/inbox/skip` && response.request().method() === "POST"),

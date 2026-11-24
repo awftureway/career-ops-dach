@@ -101,7 +101,7 @@ test("intentional evaluation stops and old missing-report history need review wi
     assert.equal(savedRuns.length, 0, "opening review does not run an evaluation");
     async function launch(message, wanted) {
       await input.fill(message);
-      await page.getByRole("button", { name: "Send", exact: true }).click();
+      await page.getByRole("button", { name: "Senden", exact: true }).click();
       const inputUrl = `https://example.com/${message.includes("fatal") ? "new-fatal" : "new-gate"}`;
       await until(async () => (await jobs()).some(j => j.input === inputUrl && j.status !== "running"), "fictional worker did not settle");
       return (await jobs()).find(j => j.input === inputUrl);
@@ -127,7 +127,7 @@ test("intentional evaluation stops and old missing-report history need review wi
     assert.equal(failed.gate, undefined);
     await page.goto(origin.origin + "/jobs/" + failed.id);
     assert.equal(await review.count(), 0);
-    assert.match(await page.locator("h1").locator("..").innerText(), /error/i);
+    assert.match(await page.locator("h1").locator("..").innerText(), /Fehler/i);
     await screenshot("fatal-error-retained");
     assert.deepEqual(unexpectedWrites, []);
   } finally { await browser.close(); }

@@ -8,7 +8,7 @@ const url = process.env.MOBILE_NAV_TEST_URL;
 
 // Chrome draws a blur out to three standard deviations, which is 1.5 times the blur radius.
 function drawerLeftPaintEdge() {
-  const el = document.querySelector('[role="dialog"][aria-label="Navigation menu"]');
+  const el = document.querySelector('[role="dialog"][aria-label="Navigationsmenü"]');
   const rect = el.getBoundingClientRect();
   let left = rect.left;
   const shadow = getComputedStyle(el).boxShadow;
@@ -30,8 +30,8 @@ test("mobile navigation drawer stays out of the viewport until opened", { skip: 
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const drawer = page.getByRole("dialog", { name: "Navigation menu", includeHidden: true });
-  const opener = page.getByRole("button", { name: "Open menu", exact: true });
+  const drawer = page.getByRole("dialog", { name: "Navigationsmenü", includeHidden: true });
+  const opener = page.getByRole("button", { name: "Menü öffnen", exact: true });
 
   await page.goto(`${origin.origin}/`);
   await drawer.waitFor({ state: "attached" });
@@ -45,18 +45,18 @@ test("mobile navigation drawer stays out of the viewport until opened", { skip: 
 
   await opener.click();
   await page.waitForFunction(() => {
-    const r = document.querySelector('[role="dialog"][aria-label="Navigation menu"]').getBoundingClientRect();
+    const r = document.querySelector('[role="dialog"][aria-label="Navigationsmenü"]').getBoundingClientRect();
     return r.width > 0 && r.left >= 0 && r.right <= document.documentElement.clientWidth;
   });
   assert.equal(await opener.getAttribute("aria-expanded"), "true");
-  const open = page.getByRole("dialog", { name: "Navigation menu" });
+  const open = page.getByRole("dialog", { name: "Navigationsmenü" });
   const link = open.getByRole("link").first();
   await link.focus();
   assert.ok(await link.evaluate((el) => el === document.activeElement), "a nav link takes focus");
 
   await page.keyboard.press("Escape");
   await page.waitForFunction(() => {
-    const r = document.querySelector('[role="dialog"][aria-label="Navigation menu"]').getBoundingClientRect();
+    const r = document.querySelector('[role="dialog"][aria-label="Navigationsmenü"]').getBoundingClientRect();
     return r.left >= document.documentElement.clientWidth;
   });
   assert.equal(await opener.getAttribute("aria-expanded"), "false");
@@ -70,7 +70,7 @@ test("mobile navigation drawer stays out of the viewport until opened", { skip: 
   await page.waitForFunction(() => document.body.style.overflow !== "hidden");
   assert.equal(await page.locator("body").evaluate((el) => el.style.overflow), "", "widening to desktop releases the scroll lock");
   // At desktop width the opener is md:hidden, so it is out of the accessibility tree.
-  const hiddenOpener = page.getByRole("button", { name: "Open menu", exact: true, includeHidden: true });
+  const hiddenOpener = page.getByRole("button", { name: "Menü öffnen", exact: true, includeHidden: true });
   assert.equal(await hiddenOpener.getAttribute("aria-expanded"), "false");
   assert.deepEqual(errors, []);
 });

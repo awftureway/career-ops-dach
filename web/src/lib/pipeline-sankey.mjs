@@ -20,7 +20,7 @@ import { canonStatus } from "./status-alias.mjs";
 export const NODE_DEFS = [
   { id: "tracked", label: "Erfasst", rank: 0, tone: "neutral" },
   { id: "skip", label: "SKIP", rank: 1, tone: "danger" },
-  { id: "evaluated", label: "Noch bewertet", rank: 1, tone: "muted" },
+  { id: "evaluated", label: "Nur bewertet", rank: 1, tone: "muted" },
   { id: "speculative", label: "Spekulativer Pitch", rank: 1, tone: "info" },
   { id: "other", label: "Anderer Status", rank: 1, tone: "muted" },
   { id: "discardedEarly", label: "Verworfen (keine Bewerbung erfasst)", rank: 1, tone: "muted" },

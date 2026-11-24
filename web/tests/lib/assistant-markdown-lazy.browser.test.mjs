@@ -36,9 +36,9 @@ test("Assistant markdown loads only once the console opens", { skip: liveServerS
   scripts = [];
   await page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true }).click();
   const panel = page.getByRole("region", { name: "Assistent", exact: true });
-  const greeting = panel.locator(".report-prose p", { hasText: "I'm your career-ops assistant" });
+  const greeting = panel.locator(".report-prose p", { hasText: "ich bin Ihr career-ops-Assistent" });
   await greeting.waitFor({ state: "visible" });
-  assert.match(await greeting.innerText(), /What would you like to do\?$/);
+  assert.match(await greeting.innerText(), /Was möchten Sie tun\?$/);
   assert.ok((await Promise.all(scripts)).some(hasParser), "opening the assistant loads the markdown parser");
   assert.deepEqual(unexpected, []);
 });

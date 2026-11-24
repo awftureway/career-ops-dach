@@ -37,7 +37,7 @@ test("application review labels, requirements and confirmation descriptions", { 
   });
   await page.addInitScript(() => localStorage.setItem("career-ops:config", JSON.stringify({ cliId: "fixture-cli" })));
   await page.goto(`${origin.origin}/apply`);
-  await page.getByPlaceholder("Paste an application form URL (Ashby, Lever, Greenhouse…)").fill("https://example.com/fictional-application");
+  await page.getByPlaceholder("URL eines Bewerbungsformulars einfügen (Ashby, Lever, Greenhouse …)").fill("https://example.com/fictional-application");
   await page.getByRole("button", { name: "Formular lesen", exact: true }).click();
   await page.getByRole("button", { name: "Aus meinem Lebenslauf vorausfüllen", exact: true }).waitFor();
 

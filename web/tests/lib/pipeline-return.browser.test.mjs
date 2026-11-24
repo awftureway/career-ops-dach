@@ -27,7 +27,7 @@ test("Pipeline detail links preserve the list context", { skip: liveServerSkip("
   const back = () => page.getByRole("link", { name: "Pipeline", exact: true }).filter({ has: page.locator("svg.lucide-arrow-left") });
 
   await page.goto(`${origin.origin}/pipeline?tab=EVALUATED&min=3.5&sort=company&dir=1`);
-  const search = page.getByPlaceholder("Search company or role…");
+  const search = page.getByPlaceholder("Firma oder Rolle suchen …");
   await search.fill("Fixture"); // detail links include this immediately; the list URL catches up after a short pause
   const row = page.locator("tbody tr").filter({ has: page.getByRole("link", { name: "#11", exact: true }) });
   await row.locator('a[href*="q=Fixture"]').first().waitFor();

@@ -90,7 +90,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   await page.keyboard.press("Shift+Enter");
   await page.keyboard.type("Second line");
   assert.equal(await composer(page).inputValue(), "First line\nSecond line");
-  await until(() => page.getByRole("button", { name: "Send", exact: true }).isEnabled());
+  await until(() => page.getByRole("button", { name: "Senden", exact: true }).isEnabled());
   await page.keyboard.press("Enter");
   await until(() => requests.length === 1);
   assert.equal(await focused(composer(page)), true);
@@ -108,7 +108,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   await page.getByText("Fictional reply while closed.", { exact: true }).waitFor();
 
   // Send-button activation has the same continuation as composer Enter.
-  const send = page.getByRole("button", { name: "Send", exact: true });
+  const send = page.getByRole("button", { name: "Senden", exact: true });
   await until(() => send.isEnabled());
   await tabTo(page, send);
   await page.keyboard.press("Space");
@@ -116,7 +116,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   assert.equal(await focused(composer(page)), true);
   assert.equal(requests[1].message, "Unsent draft");
   // Leave the modeless panel: replies and repeated open events cannot pull back.
-  const search = page.getByRole("searchbox", { name: "Search applications", exact: true });
+  const search = page.getByRole("searchbox", { name: "Bewerbungen durchsuchen", exact: true });
   await tabTo(page, search);
   await page.keyboard.press("Escape");
   assert.equal(await panel(page).count(), 1);
@@ -152,7 +152,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
 
   const home = await pageFor();
   await home.goto(origin.origin);
-  const setup = home.getByRole("button", { name: "Set me up with the assistant", exact: true });
+  const setup = home.getByRole("button", { name: "Mit dem Assistenten einrichten", exact: true });
   await openWithKeyboard(home, setup);
   assert.equal(await focused(composer(home)), true);
   await until(() => requests.length === 3);

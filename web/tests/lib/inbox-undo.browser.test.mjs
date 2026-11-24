@@ -26,9 +26,9 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   const row = (company) => page.locator("li").filter({ hasText: company });
-  const undo = () => page.getByRole("button", { name: "Undo", exact: true });
-  const retry = () => page.getByRole("button", { name: "Retry undo", exact: true });
-  const writeAlerts = () => page.getByRole("alert").filter({ hasText: /Could not skip|Some jobs could not be restored|Fixture .* busy/ });
+  const undo = () => page.getByRole("button", { name: "Rückgängig", exact: true });
+  const retry = () => page.getByRole("button", { name: "Erneut versuchen", exact: true });
+  const writeAlerts = () => page.getByRole("alert").filter({ hasText: /konnte nicht übersprungen|Nicht alle ausgewählten Rollen|Einige Stellen konnten nicht wiederhergestellt werden|Fixture .* busy/ });
   async function until(check) {
     const start = Date.now();
     while (!await check()) {
@@ -52,10 +52,10 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
     await gate;
     await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Fixture pipeline busy" }) });
   });
-  await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").click({ noWaitAfter: true });
+  await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").click({ noWaitAfter: true });
   await undo().focus();
   await page.keyboard.press("Enter");
-  const pending = page.getByRole("button", { name: "Undoing…", exact: true });
+  const pending = page.getByRole("button", { name: "Wird rückgängig gemacht …", exact: true });
   await pending.waitFor();
   assert.equal(await pending.isDisabled(), true);
   await page.waitForTimeout(5200); // the original toast timeout must not hide a pending restore
@@ -69,21 +69,21 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
   assert.equal(await retry().isVisible(), true);
   await page.unroute("**/api/inbox/skip");
   await retry().click();
-  await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").waitFor();
+  await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").waitFor();
   assert.ok(fs.readFileSync(pipeline, "utf8").includes("[ ] https://example.com/fixture-alpha"));
   assert.equal(await retry().count(), 0);
 
   // The last Skip refreshes the inbox to zero rows. Its Undo must stay mounted.
-  await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").click();
+  await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").click();
   await until(() => fs.readFileSync(pipeline, "utf8").includes("[x] https://example.com/fixture-alpha"));
   await page.setViewportSize({ width: 390, height: 844 });
-  await row("Fixture Beta").getByTitle("Skip — hide from the inbox").click();
+  await row("Fixture Beta").getByTitle("Überspringen – im Posteingang ausblenden").click();
   await until(() => fs.readFileSync(pipeline, "utf8").includes("[x] https://example.com/fixture-beta"));
-  await page.getByText("Your inbox is empty.", { exact: true }).waitFor();
+  await page.getByText("Ihr Posteingang ist leer.", { exact: true }).waitFor();
   assert.equal(await undo().isVisible(), true);
   assert.equal(await undo().evaluate((el) => el.getBoundingClientRect().height >= 44), true);
   await undo().click();
-  await row("Fixture Beta").getByTitle("Skip — hide from the inbox").waitFor();
+  await row("Fixture Beta").getByTitle("Überspringen – im Posteingang ausblenden").waitFor();
 
   async function resetInbox() {
     for (const company of ["alpha", "beta"]) {
@@ -92,7 +92,7 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
     }
     await page.evaluate(() => localStorage.removeItem("career-ops:hidden"));
     await page.reload();
-    await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").waitFor();
+    await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").waitFor();
   }
 
   await t.test("Undo waits for a failed Skip and restores the row without a stale error", async () => {
@@ -114,14 +114,14 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
       await route.continue();
     });
     try {
-      await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").click();
+      await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").click();
       await undo().click();
       releaseSkip();
       await until(() => undoRequests === 1);
       // Failure-handler completion is asserted deterministically in the unit
       // suite. This browser check covers request order and the restored UI.
       releaseUndo();
-      await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").waitFor();
+      await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").waitFor();
       assert.equal(await writeAlerts().count(), 0);
       assert.equal(await undo().count(), 0);
       assert.equal(undoRequests, 1);
@@ -138,7 +138,7 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
       "https://example.com/fixture-alpha", "https://example.com/fixture-beta",
     ])));
     await page.reload();
-    const restore = page.getByRole("button", { name: "2 hidden · restore", exact: true });
+    const restore = page.getByRole("button", { name: "2 ausgeblendet · wiederherstellen", exact: true });
     await restore.waitFor();
     const restoreGate = new Promise((resolve) => { release = resolve; });
     let requests = 0;
@@ -152,22 +152,22 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
     });
     try {
       await restore.evaluate((button) => { button.click(); button.click(); button.click(); });
-      const restoring = page.getByRole("button", { name: /hidden · restoring/ });
+      const restoring = page.getByRole("button", { name: /ausgeblendet · wird wiederhergestellt/ });
       await restoring.waitFor();
       assert.equal(await restoring.isDisabled(), true);
       assert.equal(await restoring.getAttribute("aria-busy"), "true");
       await until(() => requests === 2);
       release();
-      const remaining = page.getByRole("button", { name: "1 hidden · restore", exact: true });
+      const remaining = page.getByRole("button", { name: "1 ausgeblendet · wiederherstellen", exact: true });
       await remaining.waitFor();
       assert.equal(await remaining.isEnabled(), true);
       assert.equal(requests, 2);
-      await page.getByRole("alert").filter({ hasText: "Some jobs could not be restored" }).waitFor();
-      await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").waitFor();
+      await page.getByRole("alert").filter({ hasText: "Einige Stellen konnten nicht wiederhergestellt werden" }).waitFor();
+      await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").waitFor();
       assert.equal(await row("Fixture Beta").count(), 0);
       await page.unrouteAll({ behavior: "wait" });
       await remaining.click();
-      await row("Fixture Beta").getByTitle("Skip — hide from the inbox").waitFor();
+      await row("Fixture Beta").getByTitle("Überspringen – im Posteingang ausblenden").waitFor();
       assert.equal(await writeAlerts().count(), 0);
     } finally {
       release();
@@ -200,11 +200,11 @@ test("Inbox Undo remains retryable after failure", { skip: liveServerSkip("INBOX
     try {
       await row("Fixture Alpha").getByRole("checkbox").click();
       await row("Fixture Beta").getByRole("checkbox").click();
-      await page.getByRole("button", { name: "Skip selected", exact: true }).click();
+      await page.getByRole("button", { name: "Auswahl überspringen", exact: true }).click();
       // The same sentence is on the page and on the Undo notice. Either one
       // shows that the failed skip was reported. first() keeps the locator strict.
-      await page.getByRole("alert").filter({ hasText: "Could not skip every selected role." }).first().waitFor();
-      await row("Fixture Alpha").getByTitle("Skip — hide from the inbox").waitFor();
+      await page.getByRole("alert").filter({ hasText: "Nicht alle ausgewählten Rollen konnten übersprungen werden." }).first().waitFor();
+      await row("Fixture Alpha").getByTitle("Überspringen – im Posteingang ausblenden").waitFor();
       await until(() => betaSeen);
       assert.equal(await row("Fixture Beta").count(), 0);
       assert.equal(betaFinished, false);

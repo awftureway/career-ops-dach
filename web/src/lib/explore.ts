@@ -8,9 +8,13 @@ export type EmployerSource = "tencent" | "bytedance" | "meituan" | "arbeitsagent
 export type DiscoverySource = AtsSource | EmployerSource;
 export type EmployerScanOutcome = { state: "complete" | "partial" | "failed"; message: string };
 // DACH build: only European sources the full-directory scanner can sweep (join.com, Karlsruhe).
-export type AtsSource = "join";
+export type AtsSource = "greenhouse" | "lever" | "ashby" | "workday" | "join";
 export const ATS_SOURCES: AtsSource[] = ["join"];
 export const ATS_LABEL: Record<AtsSource, string> = {
+  greenhouse: "Greenhouse",
+  lever: "Lever",
+  ashby: "Ashby",
+  workday: "Workday",
   join: "join.com (DACH)",
 };
 
