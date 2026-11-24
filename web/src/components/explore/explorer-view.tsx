@@ -8,8 +8,8 @@ import { pageFrameWidthClass } from "@/components/page-frame";
 import { instrumentSerif } from "@/lib/fonts";
 import { normalizeTextKey } from "@/lib/core/normalize-text-key.mjs";
 import { matchEvaluatedPosting } from "@/lib/evaluated-posting.mjs";
-import { paramsToFilters, paramsToAi, type ExploreFilters } from "@/lib/explore";
-import { CHINA_PRESET } from "@/lib/employer-preset.mjs";
+import { paramsToFilters, paramsToAi, type ExploreFilters, type EmployerSource } from "@/lib/explore";
+import { isEmployerPreset, DACH_PRESET, DACH_SOURCES } from "@/lib/employer-preset.mjs";
 import { shouldStartScanOnLoad } from "@/lib/scan-on-load.mjs";
 import { FilterBuilder } from "./filter-builder";
 import { DiscoveringState } from "./discovering-state";
@@ -82,7 +82,9 @@ export function ExplorerView({
       initFilters(seed.filters);
       void loadFresh();
     } else {
-      initFilters(sp.toString() ? paramsToFilters(sp) : seed.filters);
+      const dachDefault = (f: ExploreFilters): ExploreFilters => ({ ...f, preset: DACH_PRESET, employers: [...DACH_SOURCES] as EmployerSource[] });
+      // A URL that names no source (older links, the CV hand-off) gets the DACH default; ?preset=ats keeps join.com.
+      initFilters(sp.toString() ? (sp.has("preset") ? paramsToFilters(sp) : dachDefault(paramsToFilters(sp))) : dachDefault(seed.filters));
       // Onboarding hand-off: ?run=1 on Explore starts the scan. Pipeline never does.
       if (shouldStartScanOnLoad(window.location.pathname, window.location.search)) {
         setFirstRun(true);
@@ -102,7 +104,7 @@ export function ExplorerView({
 
   const isAi = mode === "ai";
   const isResults = phase === "results";
-  const employer = filters.preset === CHINA_PRESET;
+  const employer = isEmployerPreset(filters.preset);
   const canDiscover = !running && (employer ? (filters.employers?.length ?? 0) > 0 : filters.ats.length > 0);
   const scanRunning = running && !isAi && !employer;
   // Keep one ResultsList mounted across scanning → revealing → results so
@@ -131,7 +133,7 @@ export function ExplorerView({
           <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">
             {isAi
               ? "Describe the role in plain language — an AI hunts the open web for it, on your own AI. Candidates are unverified until you evaluate."
-              : employer ? "Scan selected employer sites using your role and location terms, zero tokens. Open an original JD to check its details." : "Scan the public ATS network — Greenhouse, Lever, Ashby, Workday. Fresh postings matched to you, zero tokens. You only spend when you choose to evaluate one."}
+              : filters.preset === DACH_PRESET ? "Deutsche Jobbörsen durchsuchen (Bundesagentur für Arbeit, Arbeitnow, GermanTechJobs, stellenanzeigen.de) mit Ihren Rollen- und Ortsbegriffen, ohne Token-Kosten. Originalanzeige beim Arbeitgeber prüfen." : employer ? "Scan selected employer sites using your role and location terms, zero tokens. Open an original JD to check its details." : "Scan the public ATS network — join.com (DACH). Fresh postings matched to you, zero tokens. You only spend when you choose to evaluate one."}
           </p>
         )}
       </header>
@@ -268,13 +270,13 @@ function DiscoverBar({ canDiscover, onDiscover, label, filters }: { canDiscover:
         type="button"
         disabled={!canDiscover && !running}
         aria-disabled={!canDiscover}
-        aria-describedby={filters.preset === CHINA_PRESET ? "employer-selection" : undefined}
+        aria-describedby={isEmployerPreset(filters.preset) ? "employer-selection" : undefined}
         onClick={() => { if (canDiscover) onDiscover(); }}
         className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground shadow-sm transition-all hover:brightness-110 disabled:opacity-50 max-sm:min-h-[44px]"
       >
         <Compass className="size-4" /> {label}
       </button>
-      {filters.preset !== CHINA_PRESET && <ScheduleJobAction filters={filters} />}
+      {!isEmployerPreset(filters.preset) && <ScheduleJobAction filters={filters} />}
       <span className="inline-flex items-center gap-1.5 text-[12px] text-muted">
         <span className="size-1.5 rounded-full bg-emerald-500" />
         Evaluating a role later costs tokens. Discovering never does.

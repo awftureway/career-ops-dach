@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { ATS_LABEL, ATS_SOURCES, cleanChips, type AtsSource, type ExploreFilters } from "@/lib/explore";
 import { commitsOnPaste, commitsOnType, splitChipText } from "@/lib/chip-text.mjs";
 
-import { CHINA_PRESET, CHINA_SOURCES, EMPLOYER_LABEL } from "@/lib/employer-preset.mjs";
+import { CHINA_PRESET, CHINA_SOURCES, DACH_PRESET, DACH_SOURCES, EMPLOYER_LABEL, isEmployerPreset } from "@/lib/employer-preset.mjs";
 import type { EmployerSource } from "@/lib/explore";
 
 const RECENCY = [
@@ -129,7 +129,9 @@ export function FilterBuilder({
   seededFrom?: string[];
   disabled?: boolean;
 }) {
-  const employer = filters.preset === CHINA_PRESET;
+  const employer = isEmployerPreset(filters.preset);
+  const dach = filters.preset === DACH_PRESET;
+  const presetSources = dach ? DACH_SOURCES : CHINA_SOURCES;
   const [advanced, setAdvanced] = useState(false);
   const set = (patch: Partial<ExploreFilters>) => onChange({ ...filters, ...patch });
   const toggleAts = (a: AtsSource) => {
@@ -144,17 +146,18 @@ export function FilterBuilder({
       <fieldset>
         <legend className="mb-1.5 text-[13px] font-medium">Discovery sources</legend>
         <div className="flex flex-wrap gap-4 text-sm">
-          <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={!employer} onChange={() => set({ preset: undefined })} />Public ATS network</label>
-          <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={employer} onChange={() => set({ preset: CHINA_PRESET, employers: [...CHINA_SOURCES] as EmployerSource[] })} />China employer preset</label>
+          <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={dach} onChange={() => set({ preset: DACH_PRESET, employers: [...DACH_SOURCES] as EmployerSource[] })} />DACH-Jobbörsen</label>
+          <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={!employer} onChange={() => set({ preset: undefined })} />join.com (ATS)</label>
+          <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={filters.preset === CHINA_PRESET} onChange={() => set({ preset: CHINA_PRESET, employers: [...CHINA_SOURCES] as EmployerSource[] })} />China employer preset</label>
         </div>
       </fieldset>
       {employer && <fieldset aria-describedby="employer-scope employer-selection">
-        <legend className="mb-2 text-[13px] font-medium">Employers</legend>
-        <div className="flex flex-wrap gap-4">{CHINA_SOURCES.map(id => <label key={id} className="inline-flex items-center gap-2 text-sm">
+        <legend className="mb-2 text-[13px] font-medium">{dach ? "Jobbörsen" : "Employers"}</legend>
+        <div className="flex flex-wrap gap-4">{presetSources.map(id => <label key={id} className="inline-flex items-center gap-2 text-sm">
           <input type="checkbox" checked={filters.employers?.includes(id as EmployerSource) ?? false} onChange={e => set({ employers: e.target.checked ? [...(filters.employers ?? []), id as EmployerSource] : (filters.employers ?? []).filter(x => x !== id) })} />{EMPLOYER_LABEL[id as keyof typeof EMPLOYER_LABEL]}
         </label>)}</div>
         <p id="employer-selection" className="mt-2 text-xs text-muted">{filters.employers?.length ? "Only selected employers will be scanned." : "Select at least one employer to start a scan."}</p>
-        <p id="employer-scope" className="mt-2 text-xs text-muted">Employer selection does not guarantee mainland-China, technical or experienced-hire eligibility. Check the original JD. Role and location terms are optional; unknown locations may remain, and remote titles may match. Locations are term filters, not eligibility checks. No posting-date cutoff applies. Other ATS filters are inactive for this preset. Coverage is limited to 10 pages per employer; limits or source problems are reported as incomplete.</p>
+        {dach ? <p id="employer-scope" className="mt-2 text-xs text-muted">Rollen- und Ortsbegriffe sind optional (leer = alle Titel; Rollenbegriffe steuern auch die Suche bei Bundesagentur und stellenanzeigen.de, sonst gelten KI/Digitalisierung/Industrie 4.0). Kein Datumsfilter. Treffer bei Arbeitnow, GermanTechJobs und stellenanzeigen.de sind Aggregator-Listings: vor der Bewerbung beim Arbeitgeber bestätigen.</p> : <p id="employer-scope" className="mt-2 text-xs text-muted">Employer selection does not guarantee mainland-China, technical or experienced-hire eligibility. Check the original JD. Role and location terms are optional; unknown locations may remain, and remote titles may match. Locations are term filters, not eligibility checks. No posting-date cutoff applies. Other ATS filters are inactive for this preset. Coverage is limited to 10 pages per employer; limits or source problems are reported as incomplete.</p>}
       </fieldset>}
 
       <div>

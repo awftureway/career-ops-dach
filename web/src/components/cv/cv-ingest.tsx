@@ -264,7 +264,10 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
     // hard exclude (allow=[] passes everything). Recall over precision for the first reveal.
     const roles = seed?.roles?.length ? seed.roles : seed?.title ? [seed.title] : [];
     const f = { ...DEFAULT_FILTERS, ats: [...DEFAULT_FILTERS.ats], positive: roles, sinceDays: 30 };
-    const qs = filtersToParams(f);
+    // No source in the URL: the Explorer then applies its DACH default.
+    const params = new URLSearchParams(filtersToParams(f));
+    params.delete("preset");
+    const qs = params.toString();
     router.push(`/explore?${qs}${qs ? "&" : ""}run=1`);
   };
 

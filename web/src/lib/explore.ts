@@ -4,23 +4,21 @@
 // can never drift between the two halves. Server-only logic (spawning the scanner,
 // writing temp files) lives in lib/core/{scan,portals,pipeline}.ts.
 
-export type EmployerSource = "tencent" | "bytedance" | "meituan";
+export type EmployerSource = "tencent" | "bytedance" | "meituan" | "arbeitsagentur" | "arbeitnow" | "germantechjobs" | "stellenanzeigen";
 export type DiscoverySource = AtsSource | EmployerSource;
 export type EmployerScanOutcome = { state: "complete" | "partial" | "failed"; message: string };
-export type AtsSource = "greenhouse" | "lever" | "ashby" | "workday";
-export const ATS_SOURCES: AtsSource[] = ["greenhouse", "lever", "ashby", "workday"];
+// DACH build: only European sources the full-directory scanner can sweep (join.com, Karlsruhe).
+export type AtsSource = "join";
+export const ATS_SOURCES: AtsSource[] = ["join"];
 export const ATS_LABEL: Record<AtsSource, string> = {
-  greenhouse: "Greenhouse",
-  lever: "Lever",
-  ashby: "Ashby",
-  workday: "Workday",
+  join: "join.com (DACH)",
 };
 
 /** The full UI filter state. The keyword/location lists mirror scan.mjs's
  *  buildTitleFilter / buildLocationFilter semantics; sinceDays/ats/limitPerAts map
  *  to scan-ats-full.mjs's --since / --ats / --limit. */
 export type ExploreFilters = {
-  preset?: "china-employers";
+  preset?: "china-employers" | "dach-boards";
   employers?: EmployerSource[];
   positive: string[];
   negative: string[];
@@ -148,10 +146,10 @@ export function parseExplorePatch(
   merge = false,
 ): ExploreFilters {
   const next: ExploreFilters = { ...base, ats: [...base.ats] };
-  if (raw.preset === "china-employers") next.preset = "china-employers";
+  if (raw.preset === "china-employers" || raw.preset === "dach-boards") next.preset = raw.preset;
   else if (raw.preset !== undefined) next.preset = undefined;
   if (raw.employers !== undefined && Array.isArray(raw.employers)) {
-    next.employers = [...new Set(raw.employers.filter((id): id is EmployerSource => ["tencent", "bytedance", "meituan"].includes(String(id))))];
+    next.employers = [...new Set(raw.employers.filter((id): id is EmployerSource => ["tencent", "bytedance", "meituan", "arbeitsagentur", "arbeitnow", "germantechjobs", "stellenanzeigen"].includes(String(id))))];
   }
   const lists: [keyof ExploreFilters, string][] = [
     ["positive", "positive"],
@@ -177,9 +175,12 @@ export function parseExplorePatch(
 /** URL <-> filters codec (so a search is shareable/restorable). */
 export function filtersToParams(f: ExploreFilters): string {
   const sp = new URLSearchParams();
-  if (f.preset === "china-employers") {
+  if (f.preset === "china-employers" || f.preset === "dach-boards") {
     sp.set("preset", f.preset);
     sp.set("employers", (f.employers ?? []).join(","));
+  } else {
+    // Explicit, so a deliberate join.com search is not mistaken for "no source chosen" (DACH is the default).
+    sp.set("preset", "ats");
   }
   // An entry that holds a comma ("Portland, OR") is written in quotes, so the
   // reader does not split it in two (#7424). Others are written as before.

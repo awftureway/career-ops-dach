@@ -203,7 +203,7 @@ const liveOf = (v) => (v?.result === 'active' ? 'open' : v?.result === 'expired'
 // the shared list names builtin.com only, so the allowlist in providers/builtin.mjs covers the rest.
 // AGENTS.md (Aggregator Listings) also names boards the shared list lacks. They are
 // added here only: the shared list also drives dedup in merge-tracker and scan.
-const EXTRA_AGGREGATORS = ['instahyre.com', 'cutshort.io', 'internshala.com', 'naukri.com'];
+const EXTRA_AGGREGATORS = ['instahyre.com', 'cutshort.io', 'internshala.com', 'naukri.com', 'stellenanzeigen.de', 'arbeitnow.com', 'germantechjobs.com', 'arbeitsagentur.de'];
 const isAggregator = (u) => {
   try { if (isAggregatorUrl(u)) return true; } catch { /* fall through */ }
   const h = hostOf(u).replace(/\.$/, '');
