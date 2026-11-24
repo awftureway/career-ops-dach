@@ -2,7 +2,7 @@
 // puts `run=1` on /explore. Opening Pipeline never starts one, even if
 // that query is present.
 
-import { CHINA_PRESET } from "./employer-preset.mjs";
+import { isEmployerPreset } from "./employer-preset.mjs";
 
 export function pipelineFindRolesHref() {
   return "/explore";
@@ -17,6 +17,6 @@ export function shouldStartScanOnLoad(pathname, search) {
   if (path === "/pipeline" || path.startsWith("/pipeline/")) return false;
   if (path !== "/explore") return false;
   const params = new URLSearchParams(String(search ?? "").replace(/^\?/, ""));
-  if (params.get("preset") === CHINA_PRESET) return false;
+  if (isEmployerPreset(params.get("preset"))) return false;
   return params.get("run") === "1";
 }

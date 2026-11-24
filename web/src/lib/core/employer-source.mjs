@@ -1,7 +1,7 @@
 // Isolated, read-only worker: import core functions, never invoke scan.main().
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { EMPLOYER_ENTRIES } from "../employer-preset.mjs";
+import { EMPLOYER_ENTRIES, employerEntry } from "../employer-preset.mjs";
 
 export const EMPLOYER_PAGE_CAP = 10;
 
@@ -11,7 +11,8 @@ export async function scanEmployer(id, request, { provider, core, http }) {
   const locationMatches = core.buildLocationFilter({ allow: request.allow });
   let incomplete = "";
   let invalid = 0;
-  const ctx = {
+  const china = Object.hasOwn(EMPLOYER_ENTRIES, id);
+  const ctx = !china ? { ...http } : {
     ...http,
     fetchJson: async (url, options) => {
       try {
@@ -69,7 +70,7 @@ export async function scanEmployer(id, request, { provider, core, http }) {
   };
   // No keywords: provider fetches the board; core filters are the only matcher.
   const jobs = await provider.fetch(
-    { ...EMPLOYER_ENTRIES[id], max_pages: EMPLOYER_PAGE_CAP },
+    { ...employerEntry(id, request), ...(china ? { max_pages: EMPLOYER_PAGE_CAP } : {}) },
     ctx,
   );
   const offers = [];
@@ -135,17 +136,19 @@ export async function scanEmployer(id, request, { provider, core, http }) {
 if (process.argv[2] === "--worker") {
   const [codeRoot, id] = process.argv.slice(3);
   try {
-    if (!Object.hasOwn(EMPLOYER_ENTRIES, id)) throw new Error("Unknown source");
     let input = "";
     for await (const chunk of process.stdin) input += chunk;
+    const request = JSON.parse(input);
+    const entry = employerEntry(id, request);
+    if (!entry) throw new Error("Unknown source");
     const load = (relative) =>
       import(pathToFileURL(path.join(codeRoot, relative)).href);
     const [{ default: provider }, core, http] = await Promise.all([
-      load(`providers/${EMPLOYER_ENTRIES[id].provider || id}.mjs`),
+      load(`providers/${entry.provider || id}.mjs`),
       load("scan.mjs"),
       load("providers/_http.mjs"),
     ]);
-    const result = await scanEmployer(id, JSON.parse(input), {
+    const result = await scanEmployer(id, request, {
       provider,
       core,
       http: http.makeHttpCtx(),

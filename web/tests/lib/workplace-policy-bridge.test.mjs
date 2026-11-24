@@ -112,7 +112,7 @@ test('Discover retains saved policy and geography evidence with a separate data 
     Object.assign(env, { CAREER_OPS_ROOT: data, CAREER_OPS_CODE_ROOT: engine });
     const code = `
       const { runDiscovery } = await import(${JSON.stringify(source)});
-      const filters = { positive: ['Sales Engineer'], negative: [], allow: [], block: [], blockHard: [], alwaysAllow: [], sinceDays: 7, ats: ['ashby'], limitPerAts: 10 };
+      const filters = { positive: ['Sales Engineer'], negative: [], allow: [], block: [], blockHard: [], alwaysAllow: [], sinceDays: 7, ats: ['join'], limitPerAts: 10 };
       const events = [];
       const offers = await runDiscovery(filters, event => events.push(event));
       console.log(JSON.stringify({ offers, events }));
