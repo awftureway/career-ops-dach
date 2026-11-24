@@ -2209,6 +2209,13 @@ search_queries:
 #   max_pages: 3          # optional page cap (100 jobs/page, default 3, max 50)
 #   enabled: true
 #
+# - name: stellenanzeigen.de — KI & Digitalisierung   # DE job board, server-rendered result pages
+#   provider: stellenanzeigen
+#   stellenanzeigen:
+#     keywords: ["KI Berater", "Leiter Digitalisierung"]   # required, one search each (max 10)
+#     max_pages: 2        # pages per keyword (25 jobs/page, default 2, max 10)
+#   enabled: true
+#
 # - name: Flowxtra                        # board-wide, every company hosted on Flowxtra
 #   provider: flowxtra
 #   max_pages: 3          # optional page cap (100 jobs/page, default 3, max 50)
