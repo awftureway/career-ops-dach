@@ -12,20 +12,20 @@ export function CvPdfFileActions({ viewHref, className }: { viewHref: string; cl
       const res = await fetch(pdfRevealHref(viewHref), { method: "POST" });
       if (!res.ok) {
         const text = (await res.text()).trim();
-        setError(text || "Could not reveal the file.");
+        setError(text || "Datei konnte nicht angezeigt werden.");
       }
     } catch {
-      setError("Could not reveal the file.");
+      setError("Datei konnte nicht angezeigt werden.");
     }
   }
 
   return (
     <>
       <a href={pdfDownloadHref(viewHref)} className={className}>
-        Download PDF
+        PDF herunterladen
       </a>
-      <button type="button" className={className} title="Reveal the file" onClick={reveal}>
-        Show in Finder
+      <button type="button" className={className} title="Datei anzeigen" onClick={reveal}>
+        Im Finder zeigen
       </button>
       {error ? (
         <span role="alert" className="text-xs text-red-700 dark:text-red-400">

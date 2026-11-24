@@ -18,7 +18,7 @@ test("only the server's known lock timeout authorizes retry", async () => {
   let requests = 0;
   await assert.rejects(writeAssistantStatus("11", "Rejected", async () => {
     requests++; return response(503, { error: "Tracker busy", code: "lock-timeout" });
-  }), (e) => e instanceof StatusWriteError && e.retryable && !e.unconfirmed && /not saved/.test(e.message));
+  }), (e) => e instanceof StatusWriteError && e.retryable && !e.unconfirmed && /nicht gespeichert/.test(e.message));
   assert.equal(requests, 1, "no automatic retry");
 });
 for (const [status, body] of [
@@ -26,7 +26,7 @@ for (const [status, body] of [
   [409, { error: "Ambiguous row" }], [503, { code: "core-script-missing", error: "Data-only root" }],
 ]) test(`pre-write rejection ${status} is visible but not retried blindly`, async () => {
   await assert.rejects(writeAssistantStatus("11", "Rejected", async () => response(status, body)),
-    (e) => !e.retryable && !e.unconfirmed && /not saved/.test(e.message));
+    (e) => !e.retryable && !e.unconfirmed && /nicht gespeichert/.test(e.message));
 });
 for (const [status, body] of [
   [504, { error: "may or may not have been applied" }], [500, { error: "write failed" }],
@@ -34,7 +34,7 @@ for (const [status, body] of [
   [200, { ok: false }],
 ]) test(`ambiguous response ${status}/${JSON.stringify(body)} never confirms or enables retry`, async () => {
   await assert.rejects(writeAssistantStatus("11", "Rejected", async () => response(status, body)),
-    (e) => e.unconfirmed && !e.retryable && /Check the current tracker/.test(e.message));
+    (e) => e.unconfirmed && !e.retryable && /aktuellen Status im Tracker/.test(e.message));
 });
 test("network failures and unreadable success bodies remain unconfirmed", async () => {
   for (const fetchFn of [async () => { throw new Error("disconnected"); }, async () => new Response("broken json")]) {

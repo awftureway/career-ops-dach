@@ -11,7 +11,7 @@ test("a finished required setup with optional sections left collapses to a link,
   const panel = setupPanelMode({ missing: [], sections: OPTIONAL });
   assert.equal(panel.mode, "link");
   assert.equal(panel.remaining, 8);
-  assert.equal(setupPanelLabel(panel), "Optional profile details (8 left)");
+  assert.equal(setupPanelLabel(panel), "Optionale Profilangaben (8 offen)");
   assert.equal(/\d+\/\d+/.test(setupPanelLabel(panel)), false);
 });
 
@@ -22,7 +22,7 @@ test("a few filled optional sections stay collapsed, and the count is what is le
   const panel = setupPanelMode({ missing: [], sections });
   assert.equal(panel.mode, "link");
   assert.equal(panel.remaining, 3);
-  assert.equal(setupPanelLabel(panel), "Optional profile details (3 left)");
+  assert.equal(setupPanelLabel(panel), "Optionale Profilangaben (3 offen)");
 });
 
 test("missing required setup still shows the checklist", () => {
@@ -56,7 +56,7 @@ test("mixed filled, missing, and template optional sections collapse with the un
   const panel = setupPanelMode({ missing: [], sections });
   assert.equal(panel.mode, "link");
   assert.equal(panel.remaining, 2);
-  assert.equal(setupPanelLabel(panel), "Optional profile details (2 left)");
+  assert.equal(setupPanelLabel(panel), "Optionale Profilangaben (2 offen)");
 });
 
 test("one remaining template section still collapses to a singular link", () => {
@@ -68,5 +68,5 @@ test("one remaining template section still collapses to a singular link", () => 
   const panel = setupPanelMode({ missing: [], sections });
   assert.equal(panel.mode, "link");
   assert.equal(panel.remaining, 1);
-  assert.equal(setupPanelLabel(panel), "Optional profile details (1 left)");
+  assert.equal(setupPanelLabel(panel), "Optionale Profilangaben (1 offen)");
 });

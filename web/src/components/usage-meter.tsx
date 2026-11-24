@@ -12,7 +12,8 @@ type Usage = { window5h: { tokens: number }; window7d: { tokens: number }; plan?
 function planLabel(label: string): string {
   const m = label.replace(/^Current\s+/i, "").match(/^(\w+)\s*(?:\((.*)\))?$/);
   if (!m) return label;
-  const head = m[1][0].toUpperCase() + m[1].slice(1);
+  const word = m[1].toLowerCase();
+  const head = word === "session" ? "Sitzung" : word === "week" ? "Woche" : m[1][0].toUpperCase() + m[1].slice(1);
   return m[2] && !/^all models$/i.test(m[2]) ? `${head} · ${m[2]}` : head;
 }
 
@@ -80,7 +81,7 @@ export function UsageMeter() {
         label: planLabel(r.label),
         pct: Math.min(100, Math.round(r.percent)),
         text: `${Math.round(r.percent)}%`,
-        title: `${r.percent}% of your plan limit used${r.resets ? `, resets ${r.resets}` : ""}`,
+        title: `${r.percent} % Ihres Plan-Limits verbraucht${r.resets ? `, Reset ${r.resets}` : ""}`,
       }))
     : [
         { label: "5h", tokens: data.window5h?.tokens ?? 0, budget: budget.w5 },
@@ -91,14 +92,14 @@ export function UsageMeter() {
           label: r.label,
           pct,
           text: `${fmt(r.tokens)} · ${pct}%`,
-          title: `${r.tokens.toLocaleString()} tokens in the last ${r.label} (estimate; plan limits are unavailable)`,
+          title: `${r.tokens.toLocaleString("de-DE")} Tokens in den letzten ${r.label} (Schätzung; Plan-Limits nicht verfügbar)`,
         };
       });
 
   return (
     <div className="border-t border-border pt-3">
       <div className="mb-1.5 flex items-center gap-1.5 px-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-faint">
-        <Gauge className="size-3" /> Usage
+        <Gauge className="size-3" /> Nutzung
       </div>
       <div className="space-y-2 px-1">
         {rows.map((r) => (

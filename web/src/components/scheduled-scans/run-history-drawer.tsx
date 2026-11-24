@@ -24,7 +24,7 @@ export function RunHistoryDrawer({
         <div className="flex items-center justify-between border-b border-border p-4">
           <div className="flex items-center gap-2">
             <TerminalSquare className="size-5 text-brand-text" />
-            <h2 id="run-history-title" className="text-base font-semibold text-foreground">Execution Run History</h2>
+            <h2 id="run-history-title" className="text-base font-semibold text-foreground">Ausführungsverlauf</h2>
           </div>
           <button
             ref={closeRef}
@@ -39,7 +39,7 @@ export function RunHistoryDrawer({
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {runs.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted">
-              No scan executions recorded yet.
+              Noch keine Scan-Ausführungen erfasst.
             </div>
           ) : (
             runs.map((run, i) => {
@@ -67,7 +67,7 @@ export function RunHistoryDrawer({
                         <XCircle className="size-4 text-rose-500" />
                       )}
                       <span className={cn(tone === "success" ? "text-emerald-800 dark:text-emerald-400" : tone === "failed" ? "text-rose-500" : "text-muted")}>
-                        {isSuccess ? "Success" : isRunning ? "Running" : isQueued ? "Queued" : isCancelled ? "Cancelled" : "Failed"}
+                        {isSuccess ? "Erfolgreich" : isRunning ? "Läuft" : isQueued ? "In Warteschlange" : isCancelled ? "Abgebrochen" : "Fehlgeschlagen"}
                       </span>
                       {run.engine && (
                         <span className="rounded bg-surface-hover px-1.5 py-0.5 text-[10px] text-faint uppercase font-mono">
@@ -77,16 +77,16 @@ export function RunHistoryDrawer({
                     </div>
                     <span className="flex items-center gap-1 text-[11px] text-faint">
                       <Clock className="size-3" />
-                      {new Date(run.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                      {new Date(run.at).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
                     </span>
                   </div>
 
-                  <p className="mt-2 text-muted leading-relaxed">{run.message || "Execution completed"}</p>
+                  <p className="mt-2 text-muted leading-relaxed">{run.message || "Ausführung abgeschlossen"}</p>
 
                   <div className="mt-2 flex items-center justify-between text-[11px] text-faint border-t border-border/40 pt-1.5">
-                    <span>Date: {new Date(run.at).toLocaleDateString()}</span>
+                    <span>Datum: {new Date(run.at).toLocaleDateString("de-DE")}</span>
                     {typeof run.rolesFound === "number" && (
-                      <span className="font-semibold text-foreground">{run.rolesFound} roles found</span>
+                      <span className="font-semibold text-foreground">{run.rolesFound} Stellen gefunden</span>
                     )}
                   </div>
                 </div>

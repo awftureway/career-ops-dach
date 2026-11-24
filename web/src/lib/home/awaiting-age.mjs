@@ -43,16 +43,16 @@ export function awaitingAge(facts, today, closesAt = "") {
   };
 }
 
-const ago = (n) => (n === 0 ? "today" : `${n} ${n === 1 ? "day" : "days"} ago`);
+const ago = (n) => (n === 0 ? "heute" : `vor ${n} ${n === 1 ? "Tag" : "Tagen"}`);
 
 export function ageLabels(age) {
   const { foundDays, postedDays, open } = age;
   return {
-    found: foundDays === null ? "Found: unknown" : `Found ${ago(foundDays)}`,
-    posted: postedDays === null ? "Posted: unknown" : `Posted ${ago(postedDays)}`,
+    found: foundDays === null ? "Gefunden: unbekannt" : `Gefunden ${ago(foundDays)}`,
+    posted: postedDays === null ? "Veröffentlicht: unbekannt" : `Veröffentlicht ${ago(postedDays)}`,
     open:
-      open.state === "closed" ? (open.checkedDays === null ? "Closed" : `Closed, checked ${ago(open.checkedDays)}`)
-      : open.state === "open" ? `Open, checked ${open.checkedDays === null ? "earlier" : ago(open.checkedDays)}`
-      : "Not checked",
+      open.state === "closed" ? (open.checkedDays === null ? "Geschlossen" : `Geschlossen, geprüft ${ago(open.checkedDays)}`)
+      : open.state === "open" ? `Offen, geprüft ${open.checkedDays === null ? "zuvor" : ago(open.checkedDays)}`
+      : "Nicht geprüft",
   };
 }

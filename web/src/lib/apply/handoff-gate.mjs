@@ -35,20 +35,20 @@ export function screeningKind(label) {
 }
 
 const SCREENING_LEAD = {
-  sponsorship: "Required sponsorship question is still empty",
-  authorization: "Required work authorization question is still empty",
-  compensation: "Required compensation question is still empty",
+  sponsorship: "Die Pflichtfrage zum Visa-Sponsoring ist noch leer",
+  authorization: "Die Pflichtfrage zur Arbeitserlaubnis ist noch leer",
+  compensation: "Die Pflichtfrage zum Gehalt ist noch leer",
 };
 
 function screeningMessage(kind, label) {
-  return `${SCREENING_LEAD[kind]} (${label}). Fill it on this page before the employer form opens.`;
+  return `${SCREENING_LEAD[kind]} (${label}). Füllen Sie sie auf dieser Seite aus, bevor sich das Arbeitgeber-Formular öffnet.`;
 }
 
 function resumeMessage(label, cvAttached) {
   if (!cvAttached) {
-    return `No tailored CV was resolved for ${label}, so nothing will be attached. Open the report in another tab and choose Generate tailored CV, then retry filling here. The employer form stays on this page until a file is attached.`;
+    return `Für ${label} wurde kein angepasster Lebenslauf gefunden, daher wird nichts angehängt. Öffnen Sie den Bericht in einem anderen Tab und wählen Sie „Angepassten Lebenslauf erstellen“. Versuchen Sie danach das Ausfüllen hier erneut. Das Arbeitgeber-Formular bleibt auf dieser Seite, bis eine Datei angehängt ist.`;
   }
-  return `The tailored CV did not attach to ${label}. The employer form stays on this page until that file is on the form.`;
+  return `Der angepasste Lebenslauf wurde nicht an ${label} angehängt. Das Arbeitgeber-Formular bleibt auf dieser Seite, bis die Datei im Formular ist.`;
 }
 
 /**
@@ -59,15 +59,15 @@ function resumeMessage(label, cvAttached) {
  */
 export function resumeFieldNotice({ label, cvAttached = false } = {}) {
   if (!isResumeLabel(label)) {
-    return { claim: false, text: "Attach this file yourself on the real form at the handoff." };
+    return { claim: false, text: "Hängen Sie diese Datei bei der Übergabe selbst im echten Formular an." };
   }
   if (cvAttached) {
     return {
       claim: true,
-      text: "Your tailored CV (PDF) will be attached automatically. You can swap it on the real form.",
+      text: "Ihr angepasster Lebenslauf (PDF) wird automatisch angehängt. Sie können ihn im echten Formular austauschen.",
     };
   }
-  return { claim: false, text: "No tailored CV was resolved, so this file will not be attached." };
+  return { claim: false, text: "Es wurde kein angepasster Lebenslauf gefunden, daher wird diese Datei nicht angehängt." };
 }
 
 function blank(value) {
@@ -340,7 +340,7 @@ function uniqueIndex(fields, keyOf) {
  * @param {{ label?: string } | null | undefined} [source]
  */
 function suppliedLabel(item, source) {
-  return fieldLabel(source) || fieldLabel(item) || String(item?.id || "").trim() || "A field";
+  return fieldLabel(source) || fieldLabel(item) || String(item?.id || "").trim() || "Ein Feld";
 }
 
 /**

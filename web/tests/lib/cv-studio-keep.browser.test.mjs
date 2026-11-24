@@ -29,8 +29,8 @@ test("hiding a bullet and leaving the studio keeps the hide, and the status does
 
   await page.goto(`${origin.origin}/pipeline/11/cv-studio`);
   await page.getByRole("heading", { name: "Fixture Alpha", exact: true }).waitFor();
-  const status = () => page.getByRole("status").filter({ hasText: /^(?:Unsaved|Saving|Saved)$/ });
-  await status().filter({ hasText: /^Saved$/ }).waitFor();
+  const status = () => page.getByRole("status").filter({ hasText: /^(?:Nicht gespeichert|Speichert …|Gespeichert)$/ });
+  await status().filter({ hasText: /^Gespeichert$/ }).waitFor();
 
   // Hold the autosave through the click and the navigation. The exit flush
   // is a second PUT, and that is the one that must land while the first is held.
@@ -63,10 +63,10 @@ test("hiding a bullet and leaving the studio keeps the hide, and the status does
     markExit();
   });
 
-  await page.getByRole("button", { name: "Hide bullet", exact: true }).click();
+  await page.getByRole("button", { name: "Stichpunkt ausblenden", exact: true }).click();
   const dirty = (await status().innerText()).trim();
-  assert.notEqual(dirty, "Saved");
-  assert.match(dirty, /^(?:Unsaved|Saving)$/);
+  assert.notEqual(dirty, "Gespeichert");
+  assert.match(dirty, /^(?:Nicht gespeichert|Speichert …)$/);
   await autosaveSeen;
   const left = page.waitForURL((next) => new URL(next).pathname === "/");
   await page.getByRole("complementary").getByRole("link", { name: "Today", exact: true }).click();
@@ -88,7 +88,7 @@ test("hiding a bullet and leaving the studio keeps the hide, and the status does
   await page.unroute("**/api/cv-studio/**");
 
   await page.goto(`${origin.origin}/pipeline/11/cv-studio`);
-  await page.getByRole("button", { name: "Show bullet", exact: true }).waitFor();
-  await status().filter({ hasText: /^Saved$/ }).waitFor({ timeout: 8_000 });
+  await page.getByRole("button", { name: "Stichpunkt einblenden", exact: true }).waitFor();
+  await status().filter({ hasText: /^Gespeichert$/ }).waitFor({ timeout: 8_000 });
   assert.deepEqual(errors, []);
 });

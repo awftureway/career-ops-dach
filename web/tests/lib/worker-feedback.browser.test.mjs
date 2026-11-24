@@ -43,7 +43,7 @@ test("workers expose task-specific state and notify once without moving focus", 
       window.__workerNotices = [];
       let previous = "";
       new MutationObserver(() => {
-        const text = document.querySelector('[role="status"][aria-label="Worker task status"]')?.textContent.trim() || "";
+        const text = document.querySelector('[role="status"][aria-label="Status der Worker-Aufgaben"]')?.textContent.trim() || "";
         if (text && text !== previous) window.__workerNotices.push(text);
         previous = text;
       }).observe(document, { childList: true, subtree: true, characterData: true });
@@ -70,9 +70,9 @@ test("workers expose task-specific state and notify once without moving focus", 
     } }));
     await page.route('**/api/runs/save', (route) => route.fulfill({ json: { ok: true } }));
     for (const path of ['assistant', 'run']) await page.route('**/api/' + path, (route) => route.continue({ url: 'http://127.0.0.1:' + fixture.address().port + '/' + path }));
-    const input = page.getByRole('textbox', { name: 'Message to assistant', exact: true });
-    const opener = page.getByRole('button', { name: 'Ask the assistant', exact: true });
-    const status = page.getByRole('status', { name: 'Assistant request status', exact: true });
+    const input = page.getByRole('textbox', { name: 'Nachricht an den Assistenten', exact: true });
+    const opener = page.getByRole('button', { name: 'Fragen Sie den Assistenten', exact: true });
+    const status = page.getByRole('status', { name: 'Status der Assistenten-Anfrage', exact: true });
     async function until(check, message) {
       for (let i = 0; i < 300; i++) { if (await check()) return; await new Promise((r) => setTimeout(r, 30)); }
       throw new Error(message || 'Expected state not reached');
@@ -92,10 +92,10 @@ test("workers expose task-specific state and notify once without moving focus", 
       await page.keyboard.press('Enter');
       await until(() => replies.has(message), 'Assistant fixture not requested');
       replies.get(message).end(reply);
-      await until(async () => (await status.innerText()).startsWith('Reply ready.'));
+      await until(async () => (await status.innerText()).startsWith('Antwort bereit.'));
     }
-    const taskStatus = page.getByRole('status', { name: 'Worker task status', exact: true });
-    const latest = page.getByRole('group', { name: 'Latest assistant reply', exact: true });
+    const taskStatus = page.getByRole('status', { name: 'Status der Worker-Aufgaben', exact: true });
+    const latest = page.getByRole('group', { name: 'Letzte Antwort des Assistenten', exact: true });
     const tray = page.getByRole('complementary');
     const notices = () => page.evaluate(() => window.__workerNotices);
     const focused = (locator) => locator.evaluate((el) => el === document.activeElement);
@@ -125,11 +125,11 @@ test("workers expose task-specific state and notify once without moving focus", 
     await opener.waitFor(); await tabTo(opener); await page.keyboard.press('Enter'); await input.waitFor();
     assert.equal(await taskStatus.count(), 1);
     assert.equal(await taskStatus.innerText(), '');
-    assert.ok(await treeHas('status', 'Worker task status', ['live', 'polite']));
-    assert.ok(await treeHas('status', 'Worker task status', ['atomic', true]));
+    assert.ok(await treeHas('status', 'Status der Worker-Aufgaben', ['live', 'polite']));
+    assert.ok(await treeHas('status', 'Status der Worker-Aufgaben', ['atomic', true]));
 
     const alpha = await launch('Alpha', 'Alpha · Engineer');
-    const runningName = 'Open worker: Alpha · Engineer — Running';
+    const runningName = 'Worker öffnen: Alpha · Engineer — Running';
     const runningLink = tray.getByRole('link', { name: runningName, exact: true });
     await runningLink.waitFor(); await tabTo(runningLink);
     assert.ok(await treeHas('link', runningName, ['focused', true]));
@@ -149,7 +149,7 @@ test("workers expose task-specific state and notify once without moving focus", 
     assert.deepEqual(await notices(), ['Alpha · Engineer: completed.']);
     assert.equal(await focused(input), true);
     assert.equal(await input.inputValue(), 'Keep this draft');
-    const completedName = 'Open worker: Alpha · Engineer — Completed';
+    const completedName = 'Worker öffnen: Alpha · Engineer — Completed';
     assert.ok(await treeHas('link', completedName));
     assert.ok(await treeHas('group', 'Alpha · Engineer'));
     assert.equal(await latest.getByRole('link', { name: completedName, exact: true }).count(), 1);
@@ -161,19 +161,19 @@ test("workers expose task-specific state and notify once without moving focus", 
     finish(beta, { type: 'error', msg: 'Fictional evaluation failed' });
     await until(async () => (await notices()).length === 2);
     assert.equal((await notices()).at(-1), 'Beta · Analyst: failed.');
-    assert.ok(await treeHas('link', 'Open worker: Beta · Analyst — Failed'));
+    assert.ok(await treeHas('link', 'Worker öffnen: Beta · Analyst — Failed'));
     assert.equal(await focused(input), true);
 
     await send('Batch', 'Review this fictional batch.\n<<act:evaluateCompany {"company":"FixtureCo"}>>');
-    const confirm = page.getByRole('button', { name: /^Confirm: Evaluate 2 FixtureCo postings/ });
+    const confirm = page.getByRole('button', { name: /^Bestätigen: Evaluate 2 FixtureCo postings/ });
     await confirm.waitFor();
     assert.equal(workers.has('https://example.com/batch-platform'), false, 'batch must wait for human confirmation');
     await tabTo(confirm); await page.keyboard.press('Enter');
     await until(() => workers.has('https://example.com/batch-platform') && workers.has('https://example.com/batch-design'));
     await tabTo(input);
     await latest.getByText('2 running', { exact: true }).waitFor();
-    assert.ok(await treeHas('link', 'Open worker: Evaluate · FixtureCo · Platform Engineer — Running'));
-    assert.ok(await treeHas('link', 'Open worker: Evaluate · FixtureCo · Product Designer — Running'));
+    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Platform Engineer — Running'));
+    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Product Designer — Running'));
     assert.equal(await latest.getByText('Platform Engineer · Running', { exact: true }).count(), 1);
     finish('https://example.com/batch-platform', { type: 'done', tokens: 200 });
     finish('https://example.com/batch-design', { type: 'error', msg: 'Fictional evaluation failed' });
@@ -181,7 +181,7 @@ test("workers expose task-specific state and notify once without moving focus", 
     assert.equal((await notices()).at(-1), 'Evaluate · FixtureCo · Platform Engineer: completed. Evaluate · FixtureCo · Product Designer: failed.');
     await latest.getByText('1 completed, 1 failed', { exact: true }).waitFor();
     await snapshot('mixed-batch-settled');
-    assert.ok(await treeHas('link', 'Open worker: Evaluate · FixtureCo · Product Designer — Failed'));
+    assert.ok(await treeHas('link', 'Worker öffnen: Evaluate · FixtureCo · Product Designer — Failed'));
     assert.equal(await focused(input), true);
 
     // Global worker feedback survives closing the Assistant; it never steals focus.
@@ -229,16 +229,16 @@ test("workers expose task-specific state and notify once without moving focus", 
     await opener.waitFor(); await tabTo(opener); await page.keyboard.press('Enter'); await input.waitFor();
     await pause(650); assert.deepEqual(await notices(), []);
 
-    const failedLink = tray.getByRole('link', { name: 'Open worker: Gamma · Researcher — Failed', exact: true });
+    const failedLink = tray.getByRole('link', { name: 'Worker öffnen: Gamma · Researcher — Failed', exact: true });
     await tabTo(failedLink);
-    assert.ok(await treeHas('link', 'Open worker: Gamma · Researcher — Failed', ['focused', true]));
+    assert.ok(await treeHas('link', 'Worker öffnen: Gamma · Researcher — Failed', ['focused', true]));
     await page.keyboard.press('Enter'); await page.waitForURL('**/jobs/job-*');
     await page.locator('h1').waitFor();
     assert.deepEqual(await notices(), [], 'client navigation/mounts do not replay history');
-    const dismiss = tray.getByRole('button', { name: 'Dismiss worker: Gamma · Researcher', exact: true });
+    const dismiss = tray.getByRole('button', { name: 'Worker ausblenden: Gamma · Researcher', exact: true });
     await tabTo(dismiss);
     await until(async () => (await dismiss.evaluate((el) => getComputedStyle(el).opacity)) === '1');
-    assert.ok(await treeHas('button', 'Dismiss worker: Gamma · Researcher', ['focused', true]));
+    assert.ok(await treeHas('button', 'Worker ausblenden: Gamma · Researcher', ['focused', true]));
     await page.keyboard.press('Enter');
     await until(async () => !(await jobs()).some((j) => j.title === 'Gamma · Researcher'));
     assert.deepEqual(unexpectedWrites, []);
@@ -281,7 +281,7 @@ test("worker dismiss stays discoverable without hover and by keyboard", { skip: 
           ? page.getByRole("dialog", { name: "Navigation menu", exact: true })
           : page.getByRole("complementary");
         if (mode.width < 768) await page.getByRole("button", { name: "Open menu", exact: true }).tap();
-        const dismiss = tray.getByRole("button", { name: "Dismiss worker: Fictional evaluation · Engineer", exact: true });
+        const dismiss = tray.getByRole("button", { name: "Worker ausblenden: Fictional evaluation · Engineer", exact: true });
         await dismiss.waitFor();
         async function until(check, message) {
           for (let i = 0; i < 200; i++) { if (await check()) return; await new Promise((r) => setTimeout(r, 25)); }
@@ -294,7 +294,7 @@ test("worker dismiss stays discoverable without hover and by keyboard", { skip: 
           await dismiss.tap();
         } else {
           await until(async () => (await opacity()) === "0", "desktop default stays hidden");
-          await tray.getByRole("link", { name: "Open worker: Fictional evaluation · Engineer — Completed", exact: true }).hover();
+          await tray.getByRole("link", { name: "Worker öffnen: Fictional evaluation · Engineer — Completed", exact: true }).hover();
           await until(async () => (await opacity()) === "1", "pointer hover reveals dismiss");
           await page.mouse.move(1100, 850);
           await until(async () => (await opacity()) === "0", "leaving hover hides dismiss");
@@ -303,7 +303,7 @@ test("worker dismiss stays discoverable without hover and by keyboard", { skip: 
           await until(async () => (await opacity()) === "1", "keyboard focus reveals dismiss without hover");
           const cdp = await context.newCDPSession(page);
           const { nodes } = await cdp.send("Accessibility.getFullAXTree");
-          assert.ok(nodes.some((n) => !n.ignored && n.role?.value === "button" && n.name?.value === "Dismiss worker: Fictional evaluation · Engineer" && n.properties?.some((p) => p.name === "focused" && p.value.value === true)));
+          assert.ok(nodes.some((n) => !n.ignored && n.role?.value === "button" && n.name?.value === "Worker ausblenden: Fictional evaluation · Engineer" && n.properties?.some((p) => p.name === "focused" && p.value.value === true)));
           await page.keyboard.press("Enter");
         }
         await until(() => page.evaluate(() => JSON.parse(localStorage.getItem("career-ops:jobs") || "[]").length === 0), "dismiss removes the worker");

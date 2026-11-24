@@ -14,20 +14,20 @@ export function trackerEmptyMessage({ shape, query, min, tab }) {
   if (shape === "malformed") {
     return {
       kind: "malformed",
-      title: "Tracker file is not a table",
-      detail: "data/applications.md is not a tracker table. The file was not changed.",
+      title: "Die Tracker-Datei ist keine Tabelle",
+      detail: "data/applications.md ist keine Tracker-Tabelle. Die Datei wurde nicht geändert.",
     };
   }
   if (shape === "rows") {
     return {
       kind: "filtered",
-      title: "No matches",
-      detail: "Try a different tab or clear the search.",
+      title: "Keine Treffer",
+      detail: "Wechseln Sie den Tab oder setzen Sie die Suche zurück.",
     };
   }
   return {
     kind: "empty",
-    title: "No applications yet",
-    detail: "Evaluated and added roles will show up here.",
+    title: "Noch keine Bewerbungen",
+    detail: "Bewertete und hinzugefügte Rollen erscheinen hier.",
   };
 }

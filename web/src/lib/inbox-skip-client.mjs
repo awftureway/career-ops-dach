@@ -48,7 +48,7 @@ export function restoreSkippedUrls(urls, persist, onRestored) {
     if (failures.length === 0) return;
     const error = failures[0];
     if (error instanceof Error) throw error;
-    throw new Error("Could not undo every skip. Please try again.");
+    throw new Error("Nicht alle Überspringen-Aktionen konnten rückgängig gemacht werden. Bitte erneut versuchen.");
   });
 }
 
@@ -69,10 +69,10 @@ export function queueInboxSkip(chains, url, done, request = fetch) {
     });
     const result = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new Error(typeof result?.error === "string" ? result.error : "Could not save the inbox change. Please try again.");
+      throw new Error(typeof result?.error === "string" ? result.error : "Die Änderung im Posteingang konnte nicht gespeichert werden. Bitte erneut versuchen.");
     }
     if (result?.ok !== true || result.done !== done) {
-      throw new Error("Could not confirm the inbox change. Please try again.");
+      throw new Error("Die Änderung im Posteingang konnte nicht bestätigt werden. Bitte erneut versuchen.");
     }
   });
   // Only the queue tail absorbs rejection; callers receive the original result.

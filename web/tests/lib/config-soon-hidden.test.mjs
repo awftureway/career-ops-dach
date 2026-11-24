@@ -14,7 +14,7 @@ const src = readFileSync(
 
 test("Config does not offer Coming soon choices", () => {
   assert.doesNotMatch(src, /Coming soon/);
-  assert.match(src, /Use an AI tool you have/);
+  assert.match(src, /Vorhandenes KI-Tool nutzen/);
 });
 
 test("Config offers exactly one engine card, and not the two that were removed", () => {

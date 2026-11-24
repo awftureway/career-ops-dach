@@ -54,9 +54,9 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
       <BackLink href={`/pipeline?${backQuery || "tab=ALL"}`} className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-brand-text">
         <ArrowLeft className="size-4" /> Pipeline
       </BackLink>
-      <h1 className="mt-5 font-display text-2xl tracking-tight text-landing">Compare</h1>
+      <h1 className="mt-5 font-display text-2xl tracking-tight text-landing">Vergleichen</h1>
       {columns.length < 2 ? (
-        <p className="mt-4 text-sm text-muted">Select two or three applications in the Pipeline to compare them.</p>
+        <p className="mt-4 text-sm text-muted">Wählen Sie in der Pipeline zwei oder drei Bewerbungen zum Vergleichen aus.</p>
       ) : (
         <div className="mt-6 overflow-x-auto rounded-2xl border border-border">
           <table className="w-full min-w-[40rem] table-fixed text-sm">
@@ -84,7 +84,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                 ))}
               </tr>
               <tr>
-                <th scope="row" className="px-4 py-2.5 text-left text-xs font-medium text-faint">Legitimacy</th>
+                <th scope="row" className="px-4 py-2.5 text-left text-xs font-medium text-faint">Seriosität</th>
                 {columns.map((c) => (
                   <td key={c.n} className="px-4 py-2.5">
                     {c.legitimacy && <Badge tone={legitimacyTone(c.legitimacy)}>{c.legitimacy}</Badge>}

@@ -68,7 +68,7 @@ export async function POST(req: Request) {
   try {
     mode = fs.readFileSync(path.join(resolveCodeRoot(process.cwd(), process.env), "modes", "discover.md"), "utf8");
   } catch {
-    return Response.json({ code: "MODE_MISSING", error: "AI search needs a newer career-ops — update to enable it." }, { status: 400 });
+    return Response.json({ code: "MODE_MISSING", error: "Die KI-Suche benötigt ein neueres career-ops. Aktualisieren Sie, um sie zu nutzen." }, { status: 400 });
   }
 
   const { lines, urls: knownUrls } = assembleDedupContext();
@@ -85,7 +85,7 @@ export async function POST(req: Request) {
       {
         code: "CODEX_UNSUPPORTED",
         error:
-          "Codex CLI does not support the required read-only execution flags. Update Codex and try again.",
+          "Die Codex CLI unterstützt die erforderlichen schreibgeschützten Ausführungs-Flags nicht. Aktualisieren Sie Codex und versuchen Sie es erneut.",
       },
       { status: 400 },
     );
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
       return Response.json(
         {
           code: "CODEX_TEMP_DIR_FAILED",
-          error: "AI search could not create an isolated Codex workspace.",
+          error: "Die KI-Suche konnte keinen isolierten Codex-Arbeitsbereich anlegen.",
         },
         { status: 400 },
       );
@@ -206,7 +206,7 @@ export async function POST(req: Request) {
     // as an unhandled rejection and an unstructured 500.
     spill?.cleanup?.();
     cleanupChildCwd();
-    return Response.json({ error: e instanceof Error ? e.message : "failed to start the CLI" }, { status: 500 });
+    return Response.json({ error: e instanceof Error ? e.message : "Die CLI konnte nicht gestartet werden" }, { status: 500 });
   }
 
   const encoder = new TextEncoder();

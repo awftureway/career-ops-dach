@@ -86,7 +86,7 @@ test("opening does not write the empty list over a saved running worker", () => 
   const restored = restoreStoredJobs(stored, 50);
   assert.equal(restored[0].status, "error");
   assert.equal(restored[0].title, "Evaluate Fixture Co");
-  assert.equal(restored[0].steps.at(-1).label, "Interrupted (page reloaded)");
+  assert.equal(restored[0].steps.at(-1).label, "Unterbrochen (Seite neu geladen)");
   assert.equal(restored[0].steps[0].label, "Started");
   assert.equal(stored[0].status, "running", "restore does not edit the stored object");
 

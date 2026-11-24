@@ -20,14 +20,14 @@ function sticky(className) {
 }
 
 test("the Actions column sticks to the right and holds Log and Next date", () => {
-  const header = src.match(/<th className="([^"]*)">\s*Actions\s*<\/th>/);
+  const header = src.match(/<th className="([^"]*)">\s*Aktionen\s*<\/th>/);
   assert.ok(header, "expected an Actions header cell");
   assert.equal(sticky(header[1]), true, `Actions header must stick right: ${header[1]}`);
 
   const cell = src.match(/<td className="([^"]*)">\s*<span className="inline-flex items-center gap-0\.5">([\s\S]*?)<\/span>\s*<\/td>/);
   assert.ok(cell, "expected the actions cell");
   assert.equal(sticky(cell[1]), true, `actions cell must stick right: ${cell[1]}`);
-  assert.match(cell[2], />\s*Log\s*</);
-  assert.match(cell[2], /Next date/);
+  assert.match(cell[2], />\s*Protokoll\s*</);
+  assert.match(cell[2], /Nächster Termin/);
   assert.doesNotMatch(cell[2], /hidden xl:inline/, "Next date stays written out, not only at xl");
 });

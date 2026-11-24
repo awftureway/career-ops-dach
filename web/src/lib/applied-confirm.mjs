@@ -1,5 +1,5 @@
-export const APPLIED_CONFIRM_PROMPT = "Did you submit this application?";
-export const APPLIED_CONFIRM_YES = "Yes, mark applied";
+export const APPLIED_CONFIRM_PROMPT = "Haben Sie diese Bewerbung abgeschickt?";
+export const APPLIED_CONFIRM_YES = "Ja, als beworben markieren";
 
 /**
  * @param {Iterable<string>} keys

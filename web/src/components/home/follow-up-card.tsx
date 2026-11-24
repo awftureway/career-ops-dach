@@ -72,7 +72,7 @@ export function FollowUpCard({ followup, onLogged }: { followup: FollowUp; onLog
             {followup.role && <span className="text-muted"> · {followup.role}</span>}
           </p>
           <p className="flex items-center gap-1 text-[11px] text-faint">
-            <Clock className="size-3" /> {followup.appliedDate ? `applied ${followup.appliedDate}` : "follow-up due"}
+            <Clock className="size-3" /> {followup.appliedDate ? `beworben ${followup.appliedDate}` : "Nachfassen fällig"}
           </p>
         </div>
       </div>
@@ -88,23 +88,23 @@ export function FollowUpCard({ followup, onLogged }: { followup: FollowUp; onLog
           )}
         >
           {state === "logging" ? <Loader2 className="size-3.5 animate-spin" /> : <Check className="size-3.5" />}{" "}
-          <span className="hidden max-w-48 truncate sm:inline">{state === "error" ? `${errorMsg ?? "Failed"} — retry` : "Mark followed up"}</span>
-          <span className="sm:hidden">{state === "error" ? "Retry" : "Followed up"}</span>
+          <span className="hidden max-w-48 truncate sm:inline">{state === "error" ? `${errorMsg ?? "Fehlgeschlagen"} — erneut versuchen` : "Als nachgefasst markieren"}</span>
+          <span className="sm:hidden">{state === "error" ? "Erneut" : "Nachgefasst"}</span>
         </button>
         {followup.num != null && (
-          <a href={`/pipeline/${followup.num}`} title="Open report"  aria-label={`Open report for ${followup.company}`} className="inline-flex shrink-0 items-center justify-center gap-1 rounded p-1 text-xs text-faint transition hover:text-brand-text max-sm:min-h-[44px] max-sm:min-w-[44px]">
+          <a href={`/pipeline/${followup.num}`} title="Bericht öffnen"  aria-label={`Bericht öffnen für ${followup.company}`} className="inline-flex shrink-0 items-center justify-center gap-1 rounded p-1 text-xs text-faint transition hover:text-brand-text max-sm:min-h-[44px] max-sm:min-w-[44px]">
             <FileText className="size-4" />
-            <span>Open</span>
+            <span>Öffnen</span>
           </a>
         )}
         <button
           type="button"
           disabled={state === "logging" || followup.num == null}
           onClick={() => setShowNextDate(true)}
-          title={followup.num == null ? "An application number is required to snooze this follow-up." : "Choose the next follow-up date"}
+          title={followup.num == null ? "Zum Verschieben dieses Nachfassens ist eine Bewerbungsnummer nötig." : "Nächsten Nachfass-Termin wählen"}
           className="inline-flex shrink-0 items-center justify-center text-[11px] text-faint transition hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60 max-sm:min-h-[44px] max-sm:min-w-[44px]"
         >
-          Snooze
+          Verschieben
         </button>
       </div>
       {showNextDate && followup.num != null && (

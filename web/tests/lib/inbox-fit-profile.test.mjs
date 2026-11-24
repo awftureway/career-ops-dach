@@ -29,7 +29,7 @@ test("a profile load that throws without a message uses one fallback line", () =
     throw "no";
   }, () => job);
   assert.equal(result.jobs, jobs);
-  assert.equal(result.error, "config/profile.yml could not be read.");
+  assert.equal(result.error, "config/profile.yml konnte nicht gelesen werden.");
 });
 
 test("a profile load that returns targets ranks each row", () => {

@@ -12,17 +12,17 @@ import { isFencingNotice } from "@/lib/cli-fencing.mjs";
 // Humanize raw agent tool names into what the user actually cares about, so a
 // multi-minute evaluation reads as progress instead of a cryptic tool dump (#8).
 const STEP_LABELS: Record<string, string> = {
-  WebFetch: "Reading the posting",
-  WebSearch: "Searching the web",
-  Read: "Reading your CV & profile",
-  Glob: "Looking through your files",
-  Grep: "Looking through your files",
-  Write: "Writing the report",
-  Edit: "Updating the report",
-  NotebookEdit: "Updating the report",
-  Bash: "Saving to your tracker",
-  TodoWrite: "Planning the steps",
-  Task: "Working",
+  WebFetch: "Stellenanzeige wird gelesen",
+  WebSearch: "Websuche läuft",
+  Read: "Lebenslauf und Profil werden gelesen",
+  Glob: "Dateien werden durchsucht",
+  Grep: "Dateien werden durchsucht",
+  Write: "Bericht wird geschrieben",
+  Edit: "Bericht wird aktualisiert",
+  NotebookEdit: "Bericht wird aktualisiert",
+  Bash: "Speichern im Tracker",
+  TodoWrite: "Schritte werden geplant",
+  Task: "Arbeitet",
 };
 const humanizeStep = (label: string): string => STEP_LABELS[label] ?? label;
 
@@ -140,7 +140,7 @@ export function WorkerCard({
       </div>
       {(bottom || running) && (
         <div className={cn("mt-1 truncate text-faint", inline ? "text-xs" : "text-[10px]")}>
-          {running ? `${last ?? "Working"} · ${fmtElapsed(elapsed)}` : bottom}
+          {running ? `${last ?? "Arbeitet"} · ${fmtElapsed(elapsed)}` : bottom}
         </div>
       )}
       {errorHint && (
@@ -155,7 +155,7 @@ export function WorkerCard({
       )}
       {tokens > 0 && (
         <div className={cn("mt-1 text-faint tabular-nums", inline ? "text-xs" : "text-[10px]")}>
-          {fmtTokens(tokens)} tokens{job.cost?.usd != null ? ` · $${job.cost.usd.toFixed(2)}` : ""}
+          {fmtTokens(tokens)} Tokens{job.cost?.usd != null ? ` · $${job.cost.usd.toFixed(2)}` : ""}
         </div>
       )}
     </div>

@@ -91,7 +91,7 @@ test("an unknown status is not Still evaluated", () => {
   const v = Object.fromEntries(g.nodes.map((n) => [n.id, n.value]));
   assert.equal(v.evaluated, 1);
   assert.equal(v.other, 1);
-  assert.equal(g.nodes.find((n) => n.id === "other")?.label, "Other status");
+  assert.equal(g.nodes.find((n) => n.id === "other")?.label, "Anderer Status");
   assert.equal(
     v.tracked,
     (v.skip || 0) + (v.evaluated || 0) + (v.other || 0) + (v.discardedEarly || 0) + (v.submitted || 0),

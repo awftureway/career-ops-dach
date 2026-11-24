@@ -207,7 +207,7 @@ async function headedBrowser(): Promise<Browser> {
     try {
       nb = await chromium.launch(await withEgressFilter(BUNDLED_HEADED_LAUNCH));
     } catch {
-      throw new Error("The apply feature needs Google Chrome. Install Chrome (or run: npx playwright install chromium) and try again.");
+      throw new Error("Die Bewerbungsfunktion benötigt Google Chrome. Installieren Sie Chrome (oder führen Sie aus: npx playwright install chromium) und versuchen Sie es erneut.");
     }
   }
   globalThis.__coHeadedBrowser = nb;
@@ -446,7 +446,7 @@ export async function openSession(url: string, cliId?: string, forceAgent?: bool
   const issues: ApplyIssue[] = [...consentIssues];
   if (cap) issues.push(cap);
   if (multi) issues.push(multi);
-  if (aiInterpreted) issues.push({ level: "info", code: "ai-interpreted", message: "This form had an uncommon layout, so AI read its fields live — give them an extra check before submitting." });
+  if (aiInterpreted) issues.push({ level: "info", code: "ai-interpreted", message: "Dieses Formular hat ein ungewöhnliches Layout, daher hat die KI die Felder live gelesen. Prüfen Sie sie vor dem Absenden besonders sorgfältig." });
   // interpretFormWithAgent just ran the user's chosen CLI over this form. If that
   // runtime has no verified fencing mechanism it read the page with its default
   // access, and the user should know — agent-interpret.ts has no stream of its
@@ -459,7 +459,7 @@ export async function openSession(url: string, cliId?: string, forceAgent?: bool
   if (interpretFencing?.notice) issues.push({ level: "warn", code: "cli-unfenced", message: interpretFencing.notice });
   // The fencing check refused to start the interpreter (#2507). Say why rather
   // than leave the user with fields the fallback never got to read.
-  if (agentRefused) issues.push({ level: "warn", code: "ai-interpret-refused", message: `AI couldn't read this form's fields: ${agentRefused}` });
+  if (agentRefused) issues.push({ level: "warn", code: "ai-interpret-refused", message: `Die KI konnte die Felder dieses Formulars nicht lesen: ${agentRefused}` });
   if (unlabeled > 0) issues.push({ level: "warn", code: "unlabeled-fields", message: `${unlabeled} field${unlabeled > 1 ? "s" : ""} couldn't be labelled cleanly — double-check ${unlabeled > 1 ? "them" : "it"} before submitting.` });
 
   const id = `apply-${crypto.randomUUID()}`;
@@ -562,8 +562,8 @@ export async function finalizeDrivenSession(id: string, cliId?: string): Promise
   s.frame = frame;
   s.fields = form.fields;
   if (form.title) s.title = form.title;
-  const issues: ApplyIssue[] = [{ level: "info", code: "ai-navigated", message: "AI navigated to reach this application form on your machine — review the fields before submitting." }];
-  if (aiInterpreted) issues.push({ level: "info", code: "ai-interpreted", message: "AI also read the fields live (uncommon layout) — give them an extra check." });
+  const issues: ApplyIssue[] = [{ level: "info", code: "ai-navigated", message: "Die KI ist auf Ihrem Rechner zu diesem Bewerbungsformular navigiert. Prüfen Sie die Felder vor dem Absenden." }];
+  if (aiInterpreted) issues.push({ level: "info", code: "ai-interpreted", message: "Die KI hat die Felder zusätzlich live gelesen (ungewöhnliches Layout). Prüfen Sie sie besonders sorgfältig." });
   // interpretFormWithAgent just ran the user's chosen CLI over this form. If that
   // runtime has no verified fencing mechanism it read the page with its default
   // access, and the user should know — agent-interpret.ts has no stream of its
@@ -576,7 +576,7 @@ export async function finalizeDrivenSession(id: string, cliId?: string): Promise
   if (interpretFencing?.notice) issues.push({ level: "warn", code: "cli-unfenced", message: interpretFencing.notice });
   // The fencing check refused to start the interpreter (#2507). Say why rather
   // than leave the user with fields the fallback never got to read.
-  if (agentRefused) issues.push({ level: "warn", code: "ai-interpret-refused", message: `AI couldn't read this form's fields: ${agentRefused}` });
+  if (agentRefused) issues.push({ level: "warn", code: "ai-interpret-refused", message: `Die KI konnte die Felder dieses Formulars nicht lesen: ${agentRefused}` });
   const cap = await captchaWarning(s.page);
   if (cap) issues.push(cap);
   return { title: s.title, fields: s.fields, issues };
@@ -610,7 +610,7 @@ export async function fillSession(
   readbackAnswers?: Record<string, string>,
 ): Promise<{ steps: FillStep[]; navigated: boolean; issues: ApplyIssue[] }> {
   const s = SESSIONS.get(id);
-  if (!s) throw new Error("apply session not found (it may have expired)");
+  if (!s) throw new Error("Bewerbungssitzung nicht gefunden (möglicherweise abgelaufen)");
   if (formHasPassword({ title: s.title, url: s.url, fields: fieldsMeta }) || await pageHasPassword(s.page)) {
     return { steps: [], navigated: false, issues: [{ level: "block", code: "login-wall", message: LOGIN_WALL_MESSAGE }] };
   }
@@ -796,7 +796,7 @@ export async function fillSession(
   // Read the real form back: did every answer actually land? any validation
   // error? — so we warn the user about silent divergence before the handoff.
   const issues = await verifyFill(s.frame, fieldsMeta, readbackAnswers ?? answers).catch(() => [
-    { level: "warn" as const, code: "fill-unverified", message: "Couldn't read the form back, so it is not counted as pre-filled." },
+    { level: "warn" as const, code: "fill-unverified", message: "Das Formular ließ sich nicht zurücklesen und zählt daher nicht als vorausgefüllt." },
   ] as ApplyIssue[]);
   return { steps, navigated: endPath !== startPath, issues };
 }

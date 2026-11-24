@@ -19,6 +19,6 @@ test("server rejections retain the reason needed to retry or correct a write", (
 
 test("unconfirmed and mismatched results cannot silently remove a card", () => {
   for (const result of [null, {}, { ok: false }, { ok: true }, { ok: true, status: "Discarded" }, { error: "" }]) {
-    assert.match(statusWriteError(true, result, "Applied"), /Could not confirm the change/);
+    assert.match(statusWriteError(true, result, "Applied"), /Die Änderung konnte nicht bestätigt werden/);
   }
 });

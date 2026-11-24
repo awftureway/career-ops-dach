@@ -73,7 +73,7 @@ test("a stale cadence revision is refused and the first save stays", async () =>
     }));
     assert.equal(conflict.status, 409);
     const conflictBody = await conflict.json();
-    assert.match(conflictBody.error, /another tab/);
+    assert.match(conflictBody.error, /anderen Tab/);
 
     const written = yaml.load(readFileSync(file, "utf8"));
     assert.equal(written.followup_cadence.applied_first_days, 16);
@@ -90,7 +90,7 @@ test("an unreadable profile is an error, not defaults the form can save", async 
     assert.equal(blocked.status, 500);
     const blockedBody = await blocked.json();
     assert.equal(blockedBody.revision, undefined);
-    assert.match(blockedBody.error, /could not be read/);
+    assert.match(blockedBody.error, /konnte nicht gelesen werden/);
 
     rmSync(file, { recursive: true });
     writeFileSync(file, PROFILE);
@@ -109,7 +109,7 @@ test("malformed profile YAML is an error, not defaults the form can save", async
     const blockedBody = await blocked.json();
     assert.equal(blockedBody.revision, undefined);
     assert.equal(blockedBody.defaults, undefined);
-    assert.match(blockedBody.error, /could not be read as YAML/);
+    assert.match(blockedBody.error, /nicht als YAML gelesen/);
 
     const saved = await POST(post({ applied_first_days: 3 }));
     assert.equal(saved.status, 409);
@@ -126,7 +126,7 @@ test("a profile that is a list is an error, not defaults the form can save", asy
     const blockedBody = await blocked.json();
     assert.equal(blockedBody.revision, undefined);
     assert.equal(blockedBody.defaults, undefined);
-    assert.match(blockedBody.error, /named settings/);
+    assert.match(blockedBody.error, /benannte Einstellungen/);
 
     const saved = await POST(post({ applied_first_days: 3 }));
     assert.equal(saved.status, 409);

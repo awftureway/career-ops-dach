@@ -16,16 +16,16 @@ export async function writeAssistantStatus(n, status, fetchFn = fetch) {
       body: JSON.stringify({ n, status }), signal: AbortSignal.timeout(35_000),
     });
   } catch {
-    throw new StatusWriteError("The status change could not be confirmed. Check the current tracker status before trying again.", { unconfirmed: true });
+    throw new StatusWriteError("Die Statusänderung konnte nicht bestätigt werden. Prüfen Sie den aktuellen Status im Tracker, bevor Sie es erneut versuchen.", { unconfirmed: true });
   }
   const data = await response.json().catch(() => null);
   if (response.ok && data?.ok === true && data.status === status) return;
   const reason = typeof data?.error === "string" ? data.error : `HTTP ${response.status}`;
   if (response.status === 503 && data?.code === "lock-timeout") {
-    throw new StatusWriteError(`Status was not saved: ${reason}. You can retry when the tracker is available.`, { retryable: true });
+    throw new StatusWriteError(`Status nicht gespeichert: ${reason}. Sie können es erneut versuchen, sobald der Tracker verfügbar ist.`, { retryable: true });
   }
   if ([400, 404, 409].includes(response.status) || (response.status === 503 && data?.code === "core-script-missing")) {
-    throw new StatusWriteError(`Status was not saved: ${reason}. Check the tracker before making a corrected request.`);
+    throw new StatusWriteError(`Status nicht gespeichert: ${reason}. Prüfen Sie den Tracker, bevor Sie eine korrigierte Anfrage senden.`);
   }
-  throw new StatusWriteError(`The status change could not be confirmed (${reason}). Check the current tracker status before trying again.`, { unconfirmed: true });
+  throw new StatusWriteError(`Die Statusänderung konnte nicht bestätigt werden (${reason}). Prüfen Sie den aktuellen Status im Tracker, bevor Sie es erneut versuchen.`, { unconfirmed: true });
 }

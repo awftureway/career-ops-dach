@@ -56,11 +56,11 @@ export async function settleChoice(save, { applied, reload, failed }) {
   try {
     outcome = await save();
   } catch {
-    failed("Could not save.");
+    failed("Speichern fehlgeschlagen.");
     return;
   }
   if (!outcome.ok) {
-    failed(outcome.error || "Could not save.");
+    failed(outcome.error || "Speichern fehlgeschlagen.");
     return;
   }
   applied();

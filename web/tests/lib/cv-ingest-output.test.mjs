@@ -36,7 +36,7 @@ test("real CLI failures and empty output are distinguished from unreadable PDFs"
   output.stderr(Buffer.from("Error: authentication required"));
   assert.equal(output.finish(1), "cli-failed");
   assert.equal(cvOutputReader({ cliId: "codex", onText: () => {} }).finish(0), "no-output");
-  assert.match(cvStreamErrorMessage("cli-failed"), /CLI.*Config/);
-  assert.doesNotMatch(cvStreamErrorMessage("cli-failed"), /scanned|unreadable/);
-  assert.match(cvStreamErrorMessage("unreadable"), /scanned/);
+  assert.match(cvStreamErrorMessage("cli-failed"), /CLI.*Einstellungen/);
+  assert.doesNotMatch(cvStreamErrorMessage("cli-failed"), /gescannt|unreadable/);
+  assert.match(cvStreamErrorMessage("unreadable"), /gescannt/);
 });

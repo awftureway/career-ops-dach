@@ -66,12 +66,12 @@ test('known work survives an unrelated outage', () => {
   assert.equal(state, 'queue-partial');
   assert.equal(showsQueue(state), true);
   assert.equal(mayClaimAllClear(state), false);
-  assert.equal(missingSourceLabel({ followupsError: true, freshError: false }), 'Follow-ups');
+  assert.equal(missingSourceLabel({ followupsError: true, freshError: false }), 'Nachfassen');
 
   // Mirrored: discovery down, follow-ups answered with work due.
   const other = resolveHeroState({ ...CLEAR, freshError: true, overdue: 3 });
   assert.equal(other, 'queue-partial');
-  assert.equal(missingSourceLabel({ followupsError: false, freshError: true }), 'New matches');
+  assert.equal(missingSourceLabel({ followupsError: false, freshError: true }), 'Neue Treffer');
 });
 
 test('a failed source contributes 0 rather than its stale count', () => {
@@ -89,7 +89,7 @@ test('awaiting decisions come from the server snapshot, so they always count', (
   const state = resolveHeroState({ ...CLEAR, followupsError: true, freshError: true, awaitingCount: 2 });
   assert.equal(state, 'queue-partial');
   assert.equal(knownWork({ ...CLEAR, followupsError: true, freshError: true, awaitingCount: 2 }), 2);
-  assert.equal(missingSourceLabel({ followupsError: true, freshError: true }), 'Follow-ups and new matches');
+  assert.equal(missingSourceLabel({ followupsError: true, freshError: true }), 'Nachfassen und neue Treffer');
 });
 
 test('counts that are not usable numbers do not become work', () => {

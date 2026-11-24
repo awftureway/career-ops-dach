@@ -12,27 +12,27 @@ const EDUCATION_RE = /^education\b/i;
 export const PORTAL_TIPS = [
   {
     portal: "Workday",
-    tip: "Create an account on that company's Workday site first. The session expires, so keep the tab open while you paste.",
+    tip: "Legen Sie zuerst ein Konto auf der Workday-Seite der Firma an. Die Sitzung läuft ab, lassen Sie den Tab daher beim Einfügen geöffnet.",
   },
   {
     portal: "iCIMS",
-    tip: "Create an account first. The form does not keep a draft without one.",
+    tip: "Legen Sie zuerst ein Konto an. Ohne Konto speichert das Formular keinen Entwurf.",
   },
   {
     portal: "UKG",
-    tip: "Create an account first. The session expires, so keep the tab open while you paste.",
+    tip: "Legen Sie zuerst ein Konto an. Die Sitzung läuft ab, lassen Sie den Tab daher beim Einfügen geöffnet.",
   },
   {
     portal: "Greenhouse",
-    tip: "No account. Upload the PDF, then paste the fields below.",
+    tip: "Kein Konto nötig. Laden Sie das PDF hoch und fügen Sie dann die Felder unten ein.",
   },
   {
     portal: "Lever",
-    tip: "No account. The form is one page.",
+    tip: "Kein Konto nötig. Das Formular hat nur eine Seite.",
   },
   {
     portal: "Ashby",
-    tip: "No account. The form is short.",
+    tip: "Kein Konto nötig. Das Formular ist kurz.",
   },
 ];
 
@@ -74,7 +74,7 @@ function jobBlocks(lines) {
     if (!started) return;
     const body = plainBlock(buf);
     const text = [label, body].filter(Boolean).join("\n");
-    if (text) jobs.push({ label: label || "Role", text });
+    if (text) jobs.push({ label: label || "Rolle", text });
     buf = [];
   };
   for (const line of lines) {
@@ -121,9 +121,9 @@ export function cvCopyFields(cvText) {
 }
 
 function emptyCopy(kind, from) {
-  if (from === "none") return "cv.md is not in this workspace.";
-  if (from === "cv") return kind === "work" ? "No work history in cv.md." : "No education section in cv.md.";
-  return kind === "work" ? "No work history in this resume." : "No education section in this resume.";
+  if (from === "none") return "cv.md liegt nicht in diesem Arbeitsbereich.";
+  if (from === "cv") return kind === "work" ? "Keine Berufserfahrung in cv.md." : "Kein Abschnitt zur Ausbildung in cv.md.";
+  return kind === "work" ? "Keine Berufserfahrung in diesem Lebenslauf." : "Kein Abschnitt zur Ausbildung in diesem Lebenslauf.";
 }
 
 function titleKind(title) {
@@ -315,7 +315,7 @@ function visibleText(html) {
 
 function copyBlock(text) {
   if (!text) return null;
-  const label = text.split("\n").find((line) => line.trim()) || "Role";
+  const label = text.split("\n").find((line) => line.trim()) || "Rolle";
   return { label, text };
 }
 
@@ -424,7 +424,7 @@ export function tailoredResumeText(indexText, pdfRelative, root, readFile) {
 function pushItem(items, label, text) {
   const value = String(text ?? "").trim();
   if (!value) return;
-  items.push({ label: String(label || "Answer").trim() || "Answer", text: value });
+  items.push({ label: String(label || "Antwort").trim() || "Antwort", text: value });
 }
 
 /**

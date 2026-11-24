@@ -16,7 +16,7 @@ export function paletteItems(pages, applications) {
       kind: /** @type {const} */ ("page"),
       label,
       detail: "",
-      tag: "Page",
+      tag: "Seite",
       href,
       search: label.toLowerCase(),
     })),

@@ -19,21 +19,21 @@ test("conversation controls restore focus without stealing Tab or later focus", 
     return route.fulfill({ json: new URL(route.request().url()).searchParams.has("id") ? chat : { chats: deleted ? [] : [chat], errors: [] } });
   });
   await page.goto(`${process.env.ASSISTANT_CONVERSATION_FOCUS_TEST_URL}/pipeline?tab=ALL`);
-  await page.getByRole("button", { name: "Ask the assistant", exact: true }).click();
-  const panel = page.getByRole("region", { name: "Assistant", exact: true });
+  await page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true }).click();
+  const panel = page.getByRole("region", { name: "Assistent", exact: true });
   const history = panel.getByRole("combobox");
-  const editor = panel.getByRole("textbox", { name: "Conversation name", exact: true });
-  const rename = panel.getByRole("button", { name: "Rename", exact: true });
+  const editor = panel.getByRole("textbox", { name: "Name der Unterhaltung", exact: true });
+  const rename = panel.getByRole("button", { name: "Umbenennen", exact: true });
   const focused = async locator => {
     await page.waitForFunction(() => document.activeElement !== document.body);
     assert.equal(await locator.evaluate(el => el === document.activeElement), true);
   };
-  for (const exit of ["Enter", "Escape", "Save name", "Cancel"]) {
+  for (const exit of ["Enter", "Escape", "Namen speichern", "Abbrechen"]) {
     await rename.click();
     await editor.fill(`Renamed ${exit}`);
     if (exit === "Enter" || exit === "Escape") await editor.press(exit);
     else await panel.getByRole("button", { name: exit, exact: true }).click();
-    await page.waitForFunction(() => !document.querySelector('[aria-label="Conversation name"]') && !document.querySelector('[role="combobox"]').disabled);
+    await page.waitForFunction(() => !document.querySelector('[aria-label="Name der Unterhaltung"]') && !document.querySelector('[role="combobox"]').disabled);
     await focused(history);
   }
   await rename.click();
@@ -48,7 +48,7 @@ test("conversation controls restore focus without stealing Tab or later focus", 
     await editor.fill(title);
     fail = title === "Failed rename";
     await editor.press("Enter");
-    await page.waitForFunction(() => !document.querySelector('[aria-label="Conversation name"]') && !document.querySelector('[role="combobox"]').disabled);
+    await page.waitForFunction(() => !document.querySelector('[aria-label="Name der Unterhaltung"]') && !document.querySelector('[role="combobox"]').disabled);
     await focused(history);
     fail = false;
   }
@@ -70,7 +70,7 @@ test("conversation controls restore focus without stealing Tab or later focus", 
     fail = shouldFail;
     await page.keyboard.press("Enter");
     await page.waitForFunction(() => {
-      const control = document.querySelector('[aria-label="Conversation history"]');
+      const control = document.querySelector('[aria-label="Unterhaltungsverlauf"]');
       return control?.getAttribute("aria-expanded") === "false" && !control.disabled;
     });
     await focused(history);
@@ -81,23 +81,23 @@ test("conversation controls restore focus without stealing Tab or later focus", 
   await history.click();
   hold = new Promise(resolve => { release = resolve; });
   await page.getByRole("option", { name: chat.title, exact: true }).click();
-  const close = panel.getByRole("button", { name: "Close assistant", exact: true });
+  const close = panel.getByRole("button", { name: "Assistent schließen", exact: true });
   await close.focus();
   release();
   await page.waitForFunction(() => !document.querySelector('[role="combobox"]').disabled);
   await focused(close);
 
-  const remove = panel.getByRole("button", { name: "Delete", exact: true });
+  const remove = panel.getByRole("button", { name: "Löschen", exact: true });
   await remove.click();
-  const dialog = page.getByRole("dialog", { name: "Delete conversation?" });
-  await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Unterhaltung löschen?" });
+  await dialog.getByRole("button", { name: "Abbrechen", exact: true }).click();
   await focused(remove);
   for (const shouldFail of [true, false]) {
     await remove.click();
     fail = shouldFail;
-    await dialog.getByRole("button", { name: "Delete", exact: true }).click();
-    const newChat = panel.getByRole("button", { name: "New chat", exact: true });
-    await page.waitForFunction(() => !document.querySelector('[aria-labelledby="delete-chat-title"]') && !document.querySelector('[aria-label="New chat"]').disabled);
+    await dialog.getByRole("button", { name: "Löschen", exact: true }).click();
+    const newChat = panel.getByRole("button", { name: "Neuer Chat", exact: true });
+    await page.waitForFunction(() => !document.querySelector('[aria-labelledby="delete-chat-title"]') && !document.querySelector('[aria-label="Neuer Chat"]').disabled);
     await focused(newChat);
     fail = false;
   }

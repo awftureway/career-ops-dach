@@ -15,9 +15,9 @@ import { COVER_TONES } from "./cover-tones.mjs";
 
 /** Step 6's A–C prompts as the report page asks them. D is the tone. */
 export const COVER_QUESTIONS = Object.freeze([
-  Object.freeze({ step: "A", name: "why", label: "Why this role or company?", hint: "One or two angles: scale, mission, stage, or what you would learn." }),
-  Object.freeze({ step: "B", name: "problem", label: "What problem would you solve for them?", hint: "The research step checks this against what the company says publicly." }),
-  Object.freeze({ step: "C", name: "approach", label: "How would you approach it on day one?", hint: "One or two sentences. This is the most specific part of the letter." }),
+  Object.freeze({ step: "A", name: "why", label: "Warum diese Stelle oder diese Firma?", hint: "Ein oder zwei Aspekte: Größe, Mission, Phase oder was Sie dort lernen würden." }),
+  Object.freeze({ step: "B", name: "problem", label: "Welches Problem würden Sie für die Firma lösen?", hint: "Die Recherche gleicht das mit den öffentlichen Aussagen der Firma ab." }),
+  Object.freeze({ step: "C", name: "approach", label: "Wie würden Sie am ersten Tag vorgehen?", hint: "Ein oder zwei Sätze. Das ist der konkreteste Teil des Anschreibens." }),
 ]);
 
 /**

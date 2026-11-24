@@ -49,7 +49,7 @@ test("keepalives and future events cannot confirm completion", async () => {
 
 test("confirmed completion forwards progress and preserves the reported usage", async () => {
   const events = [
-    { type: "status", label: "Rendering PDF…" },
+    { type: "status", label: "Erstellt PDF …" },
     { type: "tool", name: "Read" },
     { type: "text", text: "CV rendered." },
   ];
@@ -103,12 +103,12 @@ test("malformed JSON cannot be skipped on the way to a successful completion", a
 
 test("a connection failure before confirmation stays a connection error", async () => {
   const { result } = await read([record({ type: "text", text: "Almost done" })], { error: new TypeError("network failed") });
-  assert.deepEqual(result, { status: "error", message: "Connection error" });
+  assert.deepEqual(result, { status: "error", message: "Verbindungsfehler" });
 });
 
 test("an aborted reader reports interruption rather than completion", async () => {
   const { result } = await read([], { error: new DOMException("The operation was aborted", "AbortError") });
-  assert.deepEqual(result, { status: "error", message: "Interrupted. Check the pipeline before retrying." });
+  assert.deepEqual(result, { status: "error", message: "Unterbrochen. Prüfen Sie die Pipeline, bevor Sie es erneut versuchen." });
 });
 
 test("a terminal error releases a response whose producer has not closed", async () => {

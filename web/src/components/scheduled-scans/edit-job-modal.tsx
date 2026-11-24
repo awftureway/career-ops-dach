@@ -69,7 +69,7 @@ export function EditJobModal({
       onUpdated();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error updating job");
+      setError(err instanceof Error ? err.message : "Fehler beim Aktualisieren des Jobs");
     } finally {
       setSubmitting(false);
     }
@@ -83,8 +83,8 @@ export function EditJobModal({
               <Edit3 className="size-5" />
             </div>
             <div>
-              <h2 id="edit-scheduled-scan-title" className="text-lg font-semibold text-foreground">Edit Scheduled Scan</h2>
-              <p className="text-xs text-muted">Update name, filters, schedule, and location scope.</p>
+              <h2 id="edit-scheduled-scan-title" className="text-lg font-semibold text-foreground">Geplanten Scan bearbeiten</h2>
+              <p className="text-xs text-muted">Passen Sie Name, Filter, Zeitplan und Ortsbereich an.</p>
             </div>
           </div>
           <button
@@ -101,7 +101,7 @@ export function EditJobModal({
 
           {/* ─── Name + Engine + Cadence ─── */}
           <div>
-            <label className="mb-1 block text-[13px] font-medium text-foreground">Scan Name</label>
+            <label className="mb-1 block text-[13px] font-medium text-foreground">Name des Scans</label>
             <input
               ref={nameRef}
               type="text"
@@ -109,13 +109,13 @@ export function EditJobModal({
               onChange={(e) => setName(e.target.value)}
               required
               className="w-full rounded-xl border border-border bg-surface-hover/60 px-3.5 py-2 text-sm text-foreground outline-none focus:border-brand/60 focus:ring-2 focus:ring-brand/20"
-              placeholder="e.g. Roles matching my profile"
+              placeholder="z. B. Stellen passend zu meinem Profil"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-[13px] font-medium text-foreground">Where to check</label>
+              <label className="mb-1 block text-[13px] font-medium text-foreground">Wo prüfen</label>
               <select
                 value={engine}
                 onChange={(e) => setEngine(e.target.value as ScanEngine)}
@@ -127,7 +127,7 @@ export function EditJobModal({
             </div>
 
             <div>
-              <label className="mb-1 block text-[13px] font-medium text-foreground">Repeat Cadence</label>
+              <label className="mb-1 block text-[13px] font-medium text-foreground">Wiederholung</label>
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -145,9 +145,9 @@ export function EditJobModal({
                   }}
                   className="flex-1 rounded-xl border border-border bg-surface-hover/60 px-3.5 py-2 text-sm text-foreground outline-none focus:border-brand/60"
                 >
-                  <option value="hours">Hours</option>
-                  <option value="days">Days</option>
-                  <option value="minutes">Minutes</option>
+                  <option value="hours">Stunden</option>
+                  <option value="days">Tage</option>
+                  <option value="minutes">Minuten</option>
                 </select>
               </div>
             </div>
@@ -165,7 +165,7 @@ export function EditJobModal({
               onClick={onClose}
               className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
             >
-              Cancel
+              Abbrechen
             </button>
             <button
               type="submit"
@@ -173,7 +173,7 @@ export function EditJobModal({
               className="inline-flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-xs font-medium text-brand-foreground shadow transition-colors hover:bg-brand-200 disabled:opacity-50"
             >
               {submitting ? <Loader2 className="size-4 animate-spin" /> : <Edit3 className="size-4" />}
-              {submitting ? "Saving…" : "Save Changes"}
+              {submitting ? "Speichere …" : "Änderungen speichern"}
             </button>
           </div>
         </form>

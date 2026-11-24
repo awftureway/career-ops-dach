@@ -27,7 +27,7 @@ test("a failed regenerate keeps the earlier CV link and still shows the reason",
 test("a failed run with no status step still names a failure", () => {
   assert.deepEqual(pdfButtonState({ id: "job-8", status: "error", steps: [] }, false), {
     kind: "idle",
-    failure: { jobId: "job-8", reason: "The run stopped before it finished." },
+    failure: { jobId: "job-8", reason: "Der Lauf wurde vor dem Ende abgebrochen." },
   });
 });
 
@@ -72,7 +72,7 @@ test("a finished cover job with a usable score is ready without a CV file on dis
 });
 
 test("a finished cover job with no usable score stays a retry", () => {
-  const fallback = "The cover run finished without a usable draft.";
+  const fallback = "Der Anschreiben-Lauf endete ohne brauchbaren Entwurf.";
   assert.deepEqual(coverDraftButtonState({ id: "cover-4", status: "done", steps: [], result: { score: null, summary: "" } }), {
     kind: "idle",
     failure: { jobId: "cover-4", reason: fallback },

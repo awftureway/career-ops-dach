@@ -15,7 +15,7 @@ export async function GET() {
     return NextResponse.json({ content: fs.readFileSync(cvPath(), "utf8"), exists: true });
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return NextResponse.json({ content: "", exists: false });
-    return NextResponse.json({ error: "Couldn't read cv.md." }, { status: 500 });
+    return NextResponse.json({ error: "cv.md konnte nicht gelesen werden." }, { status: 500 });
   }
 }
 

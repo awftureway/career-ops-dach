@@ -78,6 +78,6 @@ export function cvReadiness(md) {
   const scoreable = hasRole || (words >= 80 && (hasSkills || words >= 200));
   /** @type {string | undefined} */
   let hint;
-  if (!scoreable) hint = words < 40 ? "That's very short — add your experience for real matches (you can save anyway)." : "Looks thin — add a role or two for better matches (you can save anyway).";
+  if (!scoreable) hint = words < 40 ? "Das ist sehr kurz. Ergänzen Sie Ihre Berufserfahrung für echte Treffer (Speichern ist trotzdem möglich)." : "Wirkt dünn. Ergänzen Sie ein, zwei Stationen für bessere Treffer (Speichern ist trotzdem möglich).";
   return { scoreable, words, hasExperience, hasSkills, hint };
 }

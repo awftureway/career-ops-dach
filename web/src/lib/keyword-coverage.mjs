@@ -23,14 +23,14 @@ export function splitTiers(result) {
   return [
     {
       key: "covered",
-      label: "Covered",
-      hint: "matched in the CV",
+      label: "Abgedeckt",
+      hint: "im Lebenslauf gefunden",
       terms: arr(result?.present),
     },
     {
       key: "missing",
-      label: "Missing",
-      hint: "keyword unmatched. Your CV may describe the skill in other words.",
+      label: "Fehlt",
+      hint: "Keyword nicht gefunden. Ihr Lebenslauf beschreibt den Skill womöglich mit anderen Worten.",
       terms: arr(result?.missing),
     },
   ];

@@ -20,9 +20,9 @@ test("a rejected draft does not count as Saved, and a later autosave keeps the f
   const failed = withPdfExport(edits, null, { ok: false, error: "Fact check failed" });
   assert.equal(failed.pdfExport.error, "Fact check failed");
   assert.equal(parseEdits(failed, "hash").stale, false);
-  assert.equal(editSaveStatus(JSON.stringify(edits), JSON.stringify(edits), null, null, false, true), "Not in the PDF");
-  assert.equal(editSaveStatus(JSON.stringify(edits), JSON.stringify({ ...edits, hidden: ["b1"] }), null, null, false, true), "Unsaved");
-  assert.equal(editSaveStatus(JSON.stringify(edits), JSON.stringify(edits), null, null, false, false), "Saved");
+  assert.equal(editSaveStatus(JSON.stringify(edits), JSON.stringify(edits), null, null, false, true), "Nicht im PDF");
+  assert.equal(editSaveStatus(JSON.stringify(edits), JSON.stringify({ ...edits, hidden: ["b1"] }), null, null, false, true), "Nicht gespeichert");
+  assert.equal(editSaveStatus(JSON.stringify(edits), JSON.stringify(edits), null, null, false, false), "Gespeichert");
 
   const kept = withPdfExport({ ...edits, hidden: ["b1"] }, failed.pdfExport, undefined);
   assert.equal(kept.pdfExport.error, "Fact check failed");

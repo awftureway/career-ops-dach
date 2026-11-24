@@ -9,22 +9,22 @@ export function workerIdentity(job) {
 
 /** @param {string} status */
 export function workerState(status) {
-  return status === "gated" ? "Needs review" : status === "done" ? "Completed" : status === "error" ? "Failed" : "Running";
+  return status === "gated" ? "Prüfung nötig" : status === "done" ? "Abgeschlossen" : status === "error" ? "Fehlgeschlagen" : "Läuft";
 }
 
 /** Stable during timer/tool updates; includes the visible task identity. @param {Worker} job */
 export function workerDetailsLabel(job) {
-  return `Open worker: ${workerIdentity(job)} — ${jobStateLabel(job)}`;
+  return `Worker öffnen: ${workerIdentity(job)} — ${jobStateLabel(job)}`;
 }
 
 /** @param {Worker[]} jobs @param {number} total */
 export function workerBatchSummary(jobs, total = jobs.length) {
   const counts = [
-    ["running", jobs.filter((j) => j.status === "running").length],
-    ["completed", jobs.filter((j) => j.status === "done").length],
-    ["needs review", jobs.filter((j) => j.status === "gated" || evaluationGateForJob(j)).length],
-    ["failed", jobs.filter((j) => j.status === "error" && !evaluationGateForJob(j)).length],
-    ["unavailable", Math.max(0, total - jobs.length)],
+    ["läuft", jobs.filter((j) => j.status === "running").length],
+    ["abgeschlossen", jobs.filter((j) => j.status === "done").length],
+    ["Prüfung nötig", jobs.filter((j) => j.status === "gated" || evaluationGateForJob(j)).length],
+    ["fehlgeschlagen", jobs.filter((j) => j.status === "error" && !evaluationGateForJob(j)).length],
+    ["nicht verfügbar", Math.max(0, total - jobs.length)],
   ];
   return counts.filter(([, count]) => count).map(([state, count]) => `${count} ${state}`).join(", ");
 }
@@ -61,7 +61,7 @@ export function createWorkerFeedback(publish, { schedule = setTimeout, cancel = 
         timer = undefined;
         publish(batch.length <= 3
           ? batch.map((j) => `${workerIdentity(j)}: ${jobStateLabel(j).toLowerCase()}.`).join(" ")
-          : `${batch.length} workers: ${workerBatchSummary(batch)}. Open Worker history for details.`);
+          : `${batch.length} Worker: ${workerBatchSummary(batch)}. Details im Worker-Verlauf.`);
       }, delay);
     },
     dispose() {

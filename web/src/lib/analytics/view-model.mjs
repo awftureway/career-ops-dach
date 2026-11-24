@@ -82,17 +82,17 @@ export function progressModel(stats) {
   // everInterview ⊇ everOffer nesting stats.mjs guarantees. Rendered in this
   // order so a later stage can never appear larger than an earlier one.
   const stages = [
-    { key: "everApplied", label: "Applied", value: n(funnel.everApplied) },
-    { key: "everResponded", label: "Responded", value: n(funnel.everResponded) },
-    { key: "everInterview", label: "Interviewed", value: n(funnel.everInterview) },
-    { key: "everOffer", label: "Offers", value: n(funnel.everOffer) },
+    { key: "everApplied", label: "Beworben", value: n(funnel.everApplied) },
+    { key: "everResponded", label: "Antworten", value: n(funnel.everResponded) },
+    { key: "everInterview", label: "Interviews", value: n(funnel.everInterview) },
+    { key: "everOffer", label: "Angebote", value: n(funnel.everOffer) },
   ];
 
   // Each rate is gated on the count it is taken over, not on its own value.
   const rates = [
-    { key: "responseRate", label: "Response rate", value: rateOrNull(funnel.responseRate, funnel.everApplied) },
-    { key: "interviewRate", label: "Interview rate", value: rateOrNull(funnel.interviewRate, funnel.everApplied) },
-    { key: "offerRate", label: "Offer rate", value: rateOrNull(funnel.offerRate, funnel.everApplied) },
+    { key: "responseRate", label: "Antwortquote", value: rateOrNull(funnel.responseRate, funnel.everApplied) },
+    { key: "interviewRate", label: "Interviewquote", value: rateOrNull(funnel.interviewRate, funnel.everApplied) },
+    { key: "offerRate", label: "Angebotsquote", value: rateOrNull(funnel.offerRate, funnel.everApplied) },
   ];
 
   return {
@@ -154,7 +154,7 @@ export function statsModel(patterns) {
   if (t && (Number.isFinite(t.recommended) || typeof t.reasoning === "string")) {
     sections.push({
       key: "threshold",
-      label: "Quality threshold",
+      label: "Qualitätsschwelle",
       value: t.sufficientSample === true && Number.isFinite(t.recommended) ? t.recommended : null,
       note: typeof t.reasoning === "string" ? t.reasoning : null,
       sampleSize: Number.isFinite(t.sampleSize) ? t.sampleSize : null,
@@ -167,9 +167,9 @@ export function statsModel(patterns) {
   // 100% invites the reader to conclude something about their search from the
   // absence of a field.
   for (const [key, label, rows, dim] of [
-    ["archetype", "Archetype mix", patterns.archetypeBreakdown, "archetype"],
-    ["remote", "Work mode", patterns.remotePolicy, "policy"],
-    ["companySize", "Company size", patterns.companySizeBreakdown, "size"],
+    ["archetype", "Archetyp-Mix", patterns.archetypeBreakdown, "archetype"],
+    ["remote", "Arbeitsmodell", patterns.remotePolicy, "policy"],
+    ["companySize", "Firmengröße", patterns.companySizeBreakdown, "size"],
   ]) {
     const list = Array.isArray(rows) ? rows.filter((r) => Number.isFinite(r?.total) && r.total > 0) : [];
     const named = list.filter((r) => !isUnlabelled(r?.[dim]));
@@ -196,7 +196,7 @@ export function statsModel(patterns) {
     const enough = identified >= need && Array.isArray(v.breakdown) && v.breakdown.length > 0;
     sections.push({
       key: "vendor",
-      label: "By ATS vendor",
+      label: "Nach ATS-Anbieter",
       // Per ROW, not just per panel. `enough` above is an aggregate — enough of
       // the pipeline was identified for the panel to make any claim — and it
       // says nothing about an individual vendor. The core marks each row

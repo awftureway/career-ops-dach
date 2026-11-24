@@ -140,9 +140,9 @@ test('toggleBand returns a new set and flips membership', () => {
 });
 
 test('labels read naturally', () => {
-  assert.equal(sortSummary([{ key: 'fit', dir: 'desc' }, { key: 'company', dir: 'asc' }]), 'Fit ↓ › Company ↑');
-  assert.equal(sortSummary(DEFAULT_SORT), 'Fresh ↓');
-  assert.equal(dirLabel('fit', 'desc'), 'Strongest first');
-  assert.equal(dirLabel('fresh', 'asc'), 'Oldest first');
+  assert.equal(sortSummary([{ key: 'fit', dir: 'desc' }, { key: 'company', dir: 'asc' }]), 'Passung ↓ › Firma ↑');
+  assert.equal(sortSummary(DEFAULT_SORT), 'Aktualität ↓');
+  assert.equal(dirLabel('fit', 'desc'), 'Beste zuerst');
+  assert.equal(dirLabel('fresh', 'asc'), 'Älteste zuerst');
   assert.equal(dirLabel('title', 'desc'), 'Z–A');
 });

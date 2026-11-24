@@ -7,14 +7,14 @@ const READY = new Set(["ready", "prefilling", "filling", "done"]);
  */
 export function markAppliedEnabled({ status, issues } = {}) {
   if (READING.has(status)) {
-    return { enabled: false, reason: "reading", hint: "Available after the form finishes loading." };
+    return { enabled: false, reason: "reading", hint: "Verfügbar, sobald das Formular geladen ist." };
   }
   const blocked = Array.isArray(issues) && issues.some((issue) => issue && (issue.code === "not-found" || issue.level === "block"));
   if (status === "error" || blocked) {
-    return { enabled: false, reason: "error", hint: "This form did not load, so it cannot be marked applied." };
+    return { enabled: false, reason: "error", hint: "Dieses Formular wurde nicht geladen und kann daher nicht als beworben markiert werden." };
   }
   if (!READY.has(status)) {
-    return { enabled: false, reason: "idle", hint: "Open a form before marking it applied." };
+    return { enabled: false, reason: "idle", hint: "Öffnen Sie ein Formular, bevor Sie es als beworben markieren." };
   }
-  return { enabled: true, reason: "ready", hint: "Click this once you have submitted the real form yourself." };
+  return { enabled: true, reason: "ready", hint: "Klicken Sie hier, nachdem Sie das echte Formular selbst abgeschickt haben." };
 }

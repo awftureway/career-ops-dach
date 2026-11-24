@@ -7,7 +7,7 @@ test("Applied does not write until the user confirms they submitted", () => {
   assert.equal(blocked.write, false);
   assert.equal(blocked.prompt, APPLIED_CONFIRM_PROMPT);
   assert.equal(blocked.yesLabel, APPLIED_CONFIRM_YES);
-  assert.match(blocked.prompt, /Did you submit this application\?/);
+  assert.match(blocked.prompt, /Haben Sie diese Bewerbung abgeschickt\?/);
 
   const allowed = appliedWriteAllowed({ status: "Applied", confirmed: true });
   assert.equal(allowed.write, true);

@@ -213,7 +213,7 @@ test("a résumé resolve failure does not skip a blank required screening answer
     answers: [{ id: "visa", label: "Will you require visa sponsorship?", value: "" }],
   })).find((event) => event.t === "done");
   assert.equal(done.filled, false);
-  assert.ok(done.gaps.some((gap) => /sponsorship question is still empty/.test(gap.message)));
+  assert.ok(done.gaps.some((gap) => /Pflichtfrage zum Visa-Sponsoring ist noch leer/.test(gap.message)));
   assert.ok(done.gaps.some((gap) => gap.message === "reports directory is unreadable"));
   assert.equal(globalThis.__applyFixture.handoffCalls.length, 0);
 });
@@ -316,7 +316,7 @@ test("a wrong radio on the drive path stays in the done gaps", async () => {
     { id: "visa", type: "radio", label: "Will you require visa sponsorship?", required: true },
   ];
   globalThis.__applyFixture.verifyIssues = [
-    { level: "warn", code: "fill-mismatch", message: "These answers didn't seem to land on the real form — check them: Will you require visa sponsorship?." },
+    { level: "warn", code: "fill-mismatch", message: "Diese Antworten sind im echten Formular offenbar nicht angekommen. Bitte prüfen: Will you require visa sponsorship?." },
   ];
   const done = (await postDrive({
     answers: [{ id: "visa", label: "Will you require visa sponsorship?", value: "Yes" }],

@@ -139,9 +139,9 @@ test("stats canonicalizes dimensions and computes pay distribution", () => {
     app("Applied", "2.9/5", "2026-09-18", { archetype: "Agentic / Automation", workMode: "Remote", location: "Berlin", payMax: 90000, paySource: "POSTED", role: "Staff Automation Engineer" }),
   ]);
 
-  assert.equal(metrics.archetypes[0].label, "Agentic & Automation");
+  assert.equal(metrics.archetypes[0].label, "Agentisch & Automatisierung");
   assert.equal(metrics.workModes[0].label, "Remote");
-  assert.equal(metrics.locations[0].label, "Munich");
+  assert.equal(metrics.locations[0].label, "München");
   assert.equal(metrics.pay.count, 3);
   assert.equal(metrics.pay.medianPayMax, 120000);
   assert.equal(metrics.pay.maxPayMax, 180000);
@@ -150,15 +150,15 @@ test("stats canonicalizes dimensions and computes pay distribution", () => {
 });
 
 test("canonicalization and seniority helpers retain TUI vocabulary", () => {
-  assert.equal(canonicalizeArchetype("Applied AI Engineer"), "AI & ML Engineering");
-  assert.equal(canonicalizeArchetype(""), "Unclassified");
-  assert.equal(canonicalizeLocation("münchen"), "Munich");
+  assert.equal(canonicalizeArchetype("Applied AI Engineer"), "KI- & ML-Engineering");
+  assert.equal(canonicalizeArchetype(""), "Nicht klassifiziert");
+  assert.equal(canonicalizeLocation("münchen"), "München");
   assert.equal(canonicalizeLocation("Kuala lumpur, malaysia"), "Kuala Lumpur");
   assert.equal(canonicalizeLocation("**Blank.** The pasted JD's workplace type carries no value."), "");
   assert.equal(canonicalizeLocation("Azure"), "");
   assert.equal(deriveSeniority("Principal Platform Engineer"), "Staff / Principal");
-  assert.equal(deriveSeniority("Graduate Data Engineer"), "Junior / Entry");
-  assert.equal(deriveSeniority("Data Engineer"), "Mid-Level");
+  assert.equal(deriveSeniority("Graduate Data Engineer"), "Junior / Einstieg");
+  assert.equal(deriveSeniority("Data Engineer"), "Mittelstufe");
 });
 
 test("stats caps locations, preserves work-mode counts and salary boundaries", () => {
@@ -174,7 +174,7 @@ test("stats caps locations, preserves work-mode counts and salary boundaries", (
   assert.equal(metrics.locations.length, 8);
   assert.equal(metrics.workModes.find((row) => row.label === "Hybrid").count, 5);
   assert.deepEqual(metrics.payHistogram.map((row) => row.count), [1, 2, 2, 2, 1]);
-  assert.equal(metrics.archetypes.every((row) => row.label !== "Unclassified"), true);
+  assert.equal(metrics.archetypes.every((row) => row.label !== "Nicht klassifiziert"), true);
 });
 
 test("strategic insights are deterministic with complete and missing data", () => {
@@ -184,9 +184,9 @@ test("strategic insights are deterministic with complete and missing data", () =
     app("Applied", "3.5/5", "2026-09-18", { archetype: "Data Engineer", workMode: "Remote", payMax: 90000 }),
   ]);
   const insights = generateInsights(full);
-  assert.match(insights[0], /AI & ML Engineering/);
+  assert.match(insights[0], /KI- & ML-Engineering/);
   assert.match(insights[1], /Hybrid/);
-  assert.match(insights[2], /median top pay/);
+  assert.match(insights[2], /Median des Höchstgehalts/);
   assert.deepEqual(generateInsights(computeStatsMetrics([])), []);
 });
 
@@ -201,28 +201,28 @@ test("empty progress and Search stats metrics are stable", () => {
 });
 
 test("archetype IT operations bucket matches admin as a word", () => {
-  assert.equal(canonicalizeArchetype("Badminton Coach"), "Other / Cross-Functional");
-  assert.equal(canonicalizeArchetype("Sys Admin"), "IT & Technical Operations");
-  assert.equal(canonicalizeArchetype("Database Administrator"), "Data & Analytics");
-  assert.equal(canonicalizeArchetype("Systems Administrator"), "IT & Technical Operations");
+  assert.equal(canonicalizeArchetype("Badminton Coach"), "Sonstige / Funktionsübergreifend");
+  assert.equal(canonicalizeArchetype("Sys Admin"), "IT & technischer Betrieb");
+  assert.equal(canonicalizeArchetype("Database Administrator"), "Daten & Auswertung");
+  assert.equal(canonicalizeArchetype("Systems Administrator"), "IT & technischer Betrieb");
 });
 
 test("archetype buckets match ai and pm as words, not inside other words", () => {
-  assert.equal(canonicalizeArchetype("Supply Chain Product Manager"), "Product & Program Mgmt");
-  assert.equal(canonicalizeArchetype("GenAI Product Manager"), "Technical AI PM");
-  assert.equal(canonicalizeArchetype("Software Development"), "Other / Cross-Functional");
-  assert.equal(canonicalizeArchetype("Domain Expert"), "Other / Cross-Functional");
-  assert.equal(canonicalizeArchetype("AI PM"), "Technical AI PM");
-  assert.equal(canonicalizeArchetype("AI Product Manager"), "Technical AI PM");
-  assert.equal(canonicalizeArchetype("Senior PM, Payments"), "Product & Program Mgmt");
+  assert.equal(canonicalizeArchetype("Supply Chain Product Manager"), "Produkt- & Programmmanagement");
+  assert.equal(canonicalizeArchetype("GenAI Product Manager"), "Technisches KI-PM");
+  assert.equal(canonicalizeArchetype("Software Development"), "Sonstige / Funktionsübergreifend");
+  assert.equal(canonicalizeArchetype("Domain Expert"), "Sonstige / Funktionsübergreifend");
+  assert.equal(canonicalizeArchetype("AI PM"), "Technisches KI-PM");
+  assert.equal(canonicalizeArchetype("AI Product Manager"), "Technisches KI-PM");
+  assert.equal(canonicalizeArchetype("Senior PM, Payments"), "Produkt- & Programmmanagement");
 });
 
 test("executive in a title is not an executive level on its own", () => {
-  assert.equal(deriveSeniority("Account Executive"), "Mid-Level");
+  assert.equal(deriveSeniority("Account Executive"), "Mittelstufe");
   assert.equal(deriveSeniority("Senior Account Executive"), "Senior");
-  assert.equal(deriveSeniority("Executive Assistant"), "Mid-Level");
-  assert.equal(deriveSeniority("Executive Director, Engineering"), "Executive");
-  assert.equal(deriveSeniority("Chief Executive Officer"), "Executive");
+  assert.equal(deriveSeniority("Executive Assistant"), "Mittelstufe");
+  assert.equal(deriveSeniority("Executive Director, Engineering"), "Führungsebene");
+  assert.equal(deriveSeniority("Chief Executive Officer"), "Führungsebene");
 });
 
 test("location junk filter drops form labels but keeps places that share a prefix", () => {

@@ -32,7 +32,7 @@ test("intentional evaluation stops and old missing-report history need review wi
       localStorage.setItem("career-ops:first-score-seen", "1");
       window.__gateDoneEvents = 0;
       window.addEventListener("co-job-done", () => { window.__gateDoneEvents++; });
-    }, { legacy: fixture("legacy-location", legacyText), agency: fixture("legacy-agency", agencyText), failure: fixture("real-connection-error", legacyText, "Connection error") });
+    }, { legacy: fixture("legacy-location", legacyText), agency: fixture("legacy-agency", agencyText), failure: fixture("real-connection-error", legacyText, "Verbindungsfehler") });
     await page.route("**/api/**", route => {
       if (route.request().method() === "GET") return route.continue();
       unexpectedWrites.push(route.request().url());
@@ -74,14 +74,14 @@ test("intentional evaluation stops and old missing-report history need review wi
     }
 
     await page.goto(origin.origin + "/jobs/legacy-location");
-    const review = page.getByRole("region", { name: "Evaluation needs review" });
+    const review = page.getByRole("region", { name: "Bewertung erfordert Prüfung" });
     await review.waitFor();
-    assert.match(await review.innerText(), /process exit could not be verified/);
-    assert.match(await page.locator("h1").locator("..").innerText(), /needs review/i);
+    assert.match(await review.innerText(), /Prozessende des früheren Laufs konnte nicht verifiziert werden/);
+    assert.match(await page.locator("h1").locator("..").innerText(), /Prüfung nötig/i);
     assert.equal(await page.getByText(missing, { exact: true }).isVisible(), false);
-    await page.getByText("Earlier run details", { exact: true }).click();
+    await page.getByText("Details des früheren Laufs", { exact: true }).click();
     assert.equal(await page.getByText(missing, { exact: true }).isVisible(), true);
-    await page.getByText("Earlier run details", { exact: true }).click();
+    await page.getByText("Details des früheren Laufs", { exact: true }).click();
     await screenshot("legacy-stop");
     await page.reload(); await review.waitFor();
     assert.equal((await jobs()).find(j => j.id === "legacy-location").status, "error", "legacy process truth is not rewritten");
@@ -91,12 +91,12 @@ test("intentional evaluation stops and old missing-report history need review wi
     assert.match(await review.innerText(), /Confirm the intermediary/);
     await page.goto(origin.origin + "/jobs/real-connection-error");
     assert.equal(await review.count(), 0);
-    assert.match(await page.locator("h1").locator("..").innerText(), /error/i);
+    assert.match(await page.locator("h1").locator("..").innerText(), /Fehler/i);
 
     await page.goto(origin.origin + "/jobs/legacy-location");
     await review.waitFor();
-    await review.getByRole("button", { name: "Open assistant to review", exact: true }).click();
-    const input = page.getByRole("textbox", { name: "Message to assistant", exact: true });
+    await review.getByRole("button", { name: "Assistenten zur Prüfung öffnen", exact: true }).click();
+    const input = page.getByRole("textbox", { name: "Nachricht an den Assistenten", exact: true });
     await input.waitFor();
     assert.equal(savedRuns.length, 0, "opening review does not run an evaluation");
     async function launch(message, wanted) {
@@ -116,12 +116,12 @@ test("intentional evaluation stops and old missing-report history need review wi
     assert.equal(savedRuns[0].result, undefined);
     await page.goto(origin.origin + "/jobs/" + current.id);
     await review.waitFor();
-    assert.match(await review.innerText(), /No score or evaluation report was created/);
+    assert.match(await review.innerText(), /Es wurde kein Score und kein Bewertungsbericht erstellt/);
     const primaryOutput = page.locator(".report-prose");
     assert.doesNotMatch(await primaryOutput.innerText(), /<<evaluation-gate>>|"status":"needs_confirmation"/);
-    assert.equal(await page.getByText("Raw worker output", { exact: true }).isVisible(), true);
+    assert.equal(await page.getByText("Rohausgabe des Workers", { exact: true }).isVisible(), true);
     await screenshot("confirmed-stop");
-    await review.getByRole("button", { name: "Open assistant to review", exact: true }).click();
+    await review.getByRole("button", { name: "Assistenten zur Prüfung öffnen", exact: true }).click();
     const failed = await launch("fatal fixture", "Fatal fixture");
     assert.equal(failed.status, "error");
     assert.equal(failed.gate, undefined);

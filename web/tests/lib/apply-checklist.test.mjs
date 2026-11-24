@@ -112,8 +112,8 @@ test("an empty tailored section does not also show the master CV", () => {
   const fields = pasteCopyFields(html, MASTER_CV);
   assert.deepEqual(fields.work, []);
   assert.equal(fields.education, "");
-  assert.equal(fields.workEmpty, "No work history in this resume.");
-  assert.equal(fields.educationEmpty, "No education section in this resume.");
+  assert.equal(fields.workEmpty, "Keine Berufserfahrung in diesem Lebenslauf.");
+  assert.equal(fields.educationEmpty, "Kein Abschnitt zur Ausbildung in diesem Lebenslauf.");
 });
 
 test("the apply page pastes from the tailored HTML of the indexed resume, not cvCopyFields(cv.md)", () => {
@@ -269,8 +269,8 @@ test("with no tailored HTML, paste blocks stay on cv.md", () => {
   const gone = pasteCopyFields(null, null);
   assert.deepEqual(gone.work, []);
   assert.equal(gone.education, "");
-  assert.equal(gone.workEmpty, "cv.md is not in this workspace.");
-  assert.equal(gone.educationEmpty, "cv.md is not in this workspace.");
+  assert.equal(gone.workEmpty, "cv.md liegt nicht in diesem Arbeitsbereich.");
+  assert.equal(gone.educationEmpty, "cv.md liegt nicht in diesem Arbeitsbereich.");
 });
 
 test("answerCopyItems follows the application-answers format and skips empty values", () => {
@@ -325,5 +325,5 @@ test("indexedPdf returns a workspace-relative path only when the file is under o
 test("portal tips name the boards and tell iCIMS to create an account first", () => {
   assert.deepEqual(PORTAL_TIPS.map((tip) => tip.portal), ["Workday", "iCIMS", "UKG", "Greenhouse", "Lever", "Ashby"]);
   const icims = PORTAL_TIPS.find((tip) => tip.portal === "iCIMS");
-  assert.match(icims.tip, /Create an account first/);
+  assert.match(icims.tip, /Legen Sie zuerst ein Konto an/);
 });

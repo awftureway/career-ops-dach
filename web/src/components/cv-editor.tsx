@@ -75,7 +75,7 @@ export function CvEditor() {
           dispatch({
             type: "save-failed",
             content: snapshot,
-            error: body.error || "Could not save. Your text is still in this tab.",
+            error: body.error || "Speichern fehlgeschlagen. Ihr Text bleibt in diesem Tab erhalten.",
             conflict: res.status === 409,
           });
           return;
@@ -94,7 +94,7 @@ export function CvEditor() {
         dispatch({
           type: "save-failed",
           content: snapshot,
-          error: "Could not save. Your text is still in this tab.",
+          error: "Speichern fehlgeschlagen. Ihr Text bleibt in diesem Tab erhalten.",
         });
       });
   }, []);
@@ -126,7 +126,7 @@ export function CvEditor() {
         if (!live) return;
         dispatch({
           type: "load-failed",
-          error: "The CV could not be loaded. Reload the page before editing, so an empty page cannot replace it.",
+          error: "Der Lebenslauf konnte nicht geladen werden. Laden Sie die Seite neu, bevor Sie bearbeiten, damit eine leere Seite ihn nicht ersetzt.",
         });
       });
     return () => {
@@ -166,11 +166,11 @@ export function CvEditor() {
     <div className="mx-auto max-w-6xl px-6 py-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl tracking-tight text-landing">CV editor</h1>
+          <h1 className="font-display text-2xl tracking-tight text-landing">Lebenslauf-Editor</h1>
           <p className="mt-1 text-sm text-muted">
-            Edit <code className="text-foreground">cv.md</code> with live preview.
+            Bearbeiten Sie <code className="text-foreground">cv.md</code> mit Live-Vorschau.
             {state.phase === "ready" && !state.exists && state.content === "" && (
-              <span className="ml-1 text-faint">No cv.md yet — start typing to create it.</span>
+              <span className="ml-1 text-faint">Noch keine cv.md — tippen Sie los, um sie anzulegen.</span>
             )}
           </p>
         </div>
@@ -183,7 +183,7 @@ export function CvEditor() {
             onClick={() => setImporting(!importing)}
             className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand/40 hover:text-brand-text disabled:opacity-50 max-sm:min-h-[44px]"
           >
-            <Upload className="size-4" /> {importing ? "Close upload" : "Upload PDF / TeX"}
+            <Upload className="size-4" /> {importing ? "Upload schließen" : "PDF / TeX hochladen"}
           </button>
           <p role="status" className="text-sm text-muted">
             {status.label}
@@ -199,8 +199,8 @@ export function CvEditor() {
                 : "border border-border bg-surface text-muted",
             )}
           >
-            {status.label === "Saving" ? <Loader2 className="size-4 animate-spin" /> : status.label === "Saved" ? <Check className="size-4" /> : null}
-            Save
+            {status.label === "Speichert …" ? <Loader2 className="size-4 animate-spin" /> : status.label === "Gespeichert" ? <Check className="size-4" /> : null}
+            Speichern
           </button>
         </div>
       </div>
@@ -208,15 +208,15 @@ export function CvEditor() {
       {state.error && (
         <p role="alert" className="mt-3 text-sm text-red-700 dark:text-red-300">
           {state.error}
-          {state.conflict && " Reloading drops this text, because the file changed."}
+          {state.conflict && " Neu laden verwirft diesen Text, da sich die Datei geändert hat."}
         </p>
       )}
 
       {importing && state.phase === "ready" && !state.conflict && (
-        <section id="cv-import" aria-label="Import CV" className="mt-6">
+        <section id="cv-import" aria-label="Lebenslauf importieren" className="mt-6">
           <p className="mb-3 text-sm text-muted">
-            Upload your CV, review the conversion, then update cv.md.
-            {state.content !== state.saved && " Your unsaved edits stay in the editor until you update."}
+            Laden Sie Ihren Lebenslauf hoch, prüfen Sie die Umwandlung und aktualisieren Sie dann cv.md.
+            {state.content !== state.saved && " Ihre ungespeicherten Änderungen bleiben im Editor, bis Sie aktualisieren."}
           </p>
           <CvIngest
             variant="editor"
@@ -232,23 +232,23 @@ export function CvEditor() {
       )}
 
       {state.phase === "loading" ? (
-        <div className="mt-6 text-sm text-muted">Loading…</div>
+        <div className="mt-6 text-sm text-muted">Lädt …</div>
       ) : state.phase === "load-error" ? null : (
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <textarea
-            aria-label="CV Markdown"
+            aria-label="Lebenslauf-Markdown"
             disabled={importing}
             value={state.content}
             onChange={(e) => dispatch({ type: "edit", content: e.target.value })}
             spellCheck={false}
-            placeholder="# Your Name&#10;&#10;## Summary&#10;..."
+            placeholder="# Ihr Name&#10;&#10;## Profil&#10;..."
             className="min-h-[60vh] w-full resize-none rounded-2xl border border-border bg-surface/50 p-4 font-mono text-sm leading-relaxed outline-none transition-colors placeholder:text-faint focus:border-brand/40"
           />
           <article className="report-prose min-h-[60vh] [&_p]:whitespace-pre-line overflow-auto rounded-2xl border border-border bg-surface/30 p-5">
             {state.content.trim() ? (
               <ReactMarkdown remarkPlugins={[remarkGfm]} {...noMarkdownImages}>{state.content}</ReactMarkdown>
             ) : (
-              <p className="text-muted">Preview appears here.</p>
+              <p className="text-muted">Die Vorschau erscheint hier.</p>
             )}
           </article>
         </div>

@@ -102,22 +102,22 @@ export function ConfigForm() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="font-display text-2xl tracking-tight text-landing">Config</h1>
+      <h1 className="font-display text-2xl tracking-tight text-landing">Einstellungen</h1>
       <p className="mt-1 text-sm text-muted">
-        Run career-ops on your own AI, right on your computer. Your CV and data never leave your machine.
+        Betreiben Sie career-ops mit Ihrer eigenen KI, direkt auf Ihrem Rechner. Ihr Lebenslauf und Ihre Daten verlassen Ihren Rechner nie.
       </p>
 
       {/* Engine mode */}
       <label className="mt-8 mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-        AI Engine
+        KI-Engine
       </label>
       <div>
         <ModeCard
           active={mode === "cli"}
           onClick={() => setMode("cli")}
           icon={Terminal}
-          title="Use an AI tool you have"
-          hint="Recommended"
+          title="Vorhandenes KI-Tool nutzen"
+          hint="Empfohlen"
         />
       </div>
 
@@ -125,18 +125,18 @@ export function ConfigForm() {
         {mode === "cli" && (
           <div>
             <p className="mb-1 text-sm text-muted">
-              career-ops uses an AI tool you already have — signed in, your own usage, nothing to paste.
+              career-ops nutzt ein KI-Tool, das Sie bereits haben — angemeldet, mit Ihrem eigenen Kontingent, nichts einzufügen.
             </p>
-            <p className="mb-3 text-xs text-faint">Works with Claude Code, Codex, OpenCode and more — free ones work great.</p>
+            <p className="mb-3 text-xs text-faint">Funktioniert mit Claude Code, Codex, OpenCode und mehr — kostenlose Tools reichen völlig.</p>
             {clis === null ? (
               <div className="flex items-center gap-2 text-sm text-muted">
-                <Loader2 className="size-4 animate-spin" /> Checking what&apos;s on your computer…
+                <Loader2 className="size-4 animate-spin" /> Prüfe, was auf Ihrem Rechner installiert ist …
               </div>
             ) : installed.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border bg-surface/30 p-4 text-sm text-muted">
-                No AI tool yet? Free options like <span className="text-foreground">OpenCode</span> with Qwen or GLM work great.{" "}
+                Noch kein KI-Tool? Kostenlose Optionen wie <span className="text-foreground">OpenCode</span> mit Qwen oder GLM funktionieren sehr gut.{" "}
                 <a href="https://career-ops.org/docs/free-ai-engine" target="_blank" rel="noreferrer" className="inline-flex items-center gap-0.5 text-brand-text hover:underline">
-                  Get one free <ExternalLink className="size-3" />
+                  Kostenlos holen <ExternalLink className="size-3" />
                 </a>
               </div>
             ) : (
@@ -197,19 +197,19 @@ export function ConfigForm() {
                         rel="noreferrer"
                         className="inline-flex shrink-0 items-center justify-center gap-1 text-xs text-brand-text hover:underline max-sm:min-h-[44px]"
                       >
-                        Install <ExternalLink className="size-3" />
+                        Installieren <ExternalLink className="size-3" />
                       </a>
                     </div>
                   );
                 })}
                 {installed.length === 0 && (
                   <p className="rounded-xl border border-dashed border-border bg-surface/30 p-4 text-xs text-muted">
-                    No supported CLI found on your PATH. Install one (e.g. Claude Code, Gemini CLI, OpenCode) to get started.
+                    Keine unterstützte CLI im PATH gefunden. Installieren Sie eine (z. B. Claude Code, Gemini CLI, OpenCode), um zu starten.
                   </p>
                 )}
                 <p className="mt-2 text-[11px] leading-relaxed text-faint">
-                  Best on <span className="text-muted">Claude Code</span> (live progress, the agentic apply + AI search,
-                  reliable evaluation persistence). Other CLIs work for the core flows with reduced features.
+                  Am besten mit <span className="text-muted">Claude Code</span> (Live-Fortschritt, agentisches Bewerben + KI-Suche,
+                  zuverlässiges Speichern der Bewertungen). Andere CLIs decken die Kernabläufe mit eingeschränktem Funktionsumfang ab.
                 </p>
               </div>
             )}
@@ -220,7 +220,7 @@ export function ConfigForm() {
           <div className="space-y-5">
             <div>
               <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                Provider
+                Anbieter
               </label>
               <div className="grid gap-2 sm:grid-cols-2">
                 {PROVIDERS.map((p) => (
@@ -242,9 +242,9 @@ export function ConfigForm() {
             </div>
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-                Paste an AI key
+                KI-Schlüssel einfügen
               </label>
-              <p className="mb-2 text-xs text-faint">Bring a key from OpenAI, Anthropic, and others.</p>
+              <p className="mb-2 text-xs text-faint">Verwenden Sie einen Schlüssel von OpenAI, Anthropic und anderen.</p>
               <input
                 type="password"
                 value={apiKey}
@@ -254,7 +254,7 @@ export function ConfigForm() {
                 className="w-full rounded-xl border border-border bg-surface/60 px-4 py-2.5 font-mono text-sm outline-none transition-colors placeholder:text-faint focus:border-brand/50"
               />
               <p className="mt-2 text-xs text-faint">
-                Stored only in this browser — never sent anywhere but your chosen provider.
+                Nur in diesem Browser gespeichert — wird nur an den von Ihnen gewählten Anbieter gesendet.
               </p>
             </div>
           </div>
@@ -262,14 +262,14 @@ export function ConfigForm() {
 
         {mode === "manual" && (
           <div className="rounded-xl border border-dashed border-border bg-surface/30 p-4 text-sm text-muted">
-            The easiest way in — no keys, nothing to set up. On the roadmap.
+            Der einfachste Einstieg — keine Schlüssel, nichts einzurichten. Auf der Roadmap.
           </div>
         )}
       </div>
 
       {/* Appearance / privacy */}
       <label className="mt-8 mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-muted">
-        Appearance
+        Darstellung
       </label>
       <button
         type="button"
@@ -277,10 +277,10 @@ export function ConfigForm() {
         className="flex w-full items-center justify-between gap-4 rounded-xl border border-border bg-surface/50 px-4 py-3 text-left transition-colors hover:bg-surface-hover"
       >
         <span className="min-w-0">
-          <span className="block text-sm font-medium text-foreground">Company logos</span>
+          <span className="block text-sm font-medium text-foreground">Firmenlogos</span>
           <span className="mt-0.5 block text-xs text-faint">
-            Show each company&apos;s real logo. Fetched once through your local server and cached on
-            disk — only the employer domain is sent to a third party. Off = colored monograms only.
+            Zeigt das echte Logo jeder Firma. Wird einmal über Ihren lokalen Server geladen und auf der
+            Festplatte zwischengespeichert — nur die Domain des Arbeitgebers wird an Dritte gesendet. Aus = nur farbige Monogramme.
           </span>
         </span>
         <span
@@ -311,9 +311,9 @@ export function ConfigForm() {
           className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200 max-sm:min-h-[44px]"
         >
           {saved ? <Check className="size-4" /> : null}
-          {saved ? "Saved" : "Save config"}
+          {saved ? "Gespeichert" : "Einstellungen speichern"}
         </button>
-        <span className="text-xs text-faint">Local-first · on our roadmap</span>
+        <span className="text-xs text-faint">Lokal zuerst · auf unserer Roadmap</span>
       </div>
     </div>
   );

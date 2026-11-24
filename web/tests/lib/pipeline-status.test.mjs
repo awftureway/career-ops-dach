@@ -65,18 +65,18 @@ for (const code of [400, 404, 409, 503, 504]) {
 }
 
 test("non-JSON error and network failure remain failures", async () => {
-  await assert.rejects(saveStatus("11", "Evaluated", "Applied", async () => new Response("unavailable", { status: 503 })), /Could not save/);
+  await assert.rejects(saveStatus("11", "Evaluated", "Applied", async () => new Response("unavailable", { status: 503 })), /nicht gespeichert werden/);
   await assert.rejects(saveStatus("11", "Evaluated", "Applied", async () => { throw new Error("offline"); }), /offline/);
 });
 
 for (const body of [null, {}, { ok: false, status: "Applied" }, { ok: true }, { ok: true, status: "Hired" }]) {
   test(`malformed or mismatched 200 (${JSON.stringify(body)}) is not confirmation`, async () => {
-    await assert.rejects(saveStatus("11", "Evaluated", "Applied", async () => Response.json(body)), /Could not confirm/);
+    await assert.rejects(saveStatus("11", "Evaluated", "Applied", async () => Response.json(body)), /nicht bestätigt werden/);
   });
 }
 
 test("HTML 200 is not confirmation", async () => {
-  await assert.rejects(saveStatus("11", "Evaluated", "Applied", async () => new Response("<html>login</html>")), /Could not confirm/);
+  await assert.rejects(saveStatus("11", "Evaluated", "Applied", async () => new Response("<html>login</html>")), /nicht bestätigt werden/);
 });
 
 test("undo asks the status endpoint to take back the row's last change", async () => {
@@ -91,5 +91,5 @@ test("undo asks the status endpoint to take back the row's last change", async (
 
 test("undo failures carry the endpoint's message", async () => {
   await assert.rejects(undoStatus("11", async () => Response.json({ error: "#11 has no logged status change to undo", code: "nothing-to-undo" }, { status: 404 })), /no logged status change/);
-  await assert.rejects(undoStatus("11", async () => Response.json({ ok: true })), /Could not confirm/);
+  await assert.rejects(undoStatus("11", async () => Response.json({ ok: true })), /nicht bestätigt werden/);
 });

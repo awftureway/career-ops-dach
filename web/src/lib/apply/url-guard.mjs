@@ -10,8 +10,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 // Next 16 cannot resolve that parent path without moving the root (which
 // reintroduces the two-lockfile Windows RAM loop in next.config.mjs).
 
-export const APPLY_URL_REQUIRED_MESSAGE = "A valid application URL (https://…) is required";
-export const APPLY_URL_BLOCKED_MESSAGE = "This application URL is not allowed";
+export const APPLY_URL_REQUIRED_MESSAGE = "Eine gültige Bewerbungs-URL (https://…) ist erforderlich";
+export const APPLY_URL_BLOCKED_MESSAGE = "Diese Bewerbungs-URL ist nicht erlaubt";
 
 export class UnsafeApplyUrlError extends Error {
   /** @type {number} */

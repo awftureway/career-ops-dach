@@ -88,7 +88,7 @@ test("cv/ingest/route.ts resolves the CLI once before extracting a PDF or checki
   assert.match(src, /resolved \?\?= resolveCliOrFallback\(cliId\)/, "pasted text must reuse an upload's resolution, not resolve again");
   const unavailable = src.search(/cliUnavailableError\(cliId\)/);
   const pdfCheck = src.search(/await pdfText\(bytes\)/);
-  const wordCheck = src.search(/Word upload needs Claude Code/);
+  const wordCheck = src.search(/Für den Word-Upload wird Claude Code benötigt/);
   assert.ok(unavailable !== -1 && pdfCheck !== -1 && wordCheck !== -1);
   assert.ok(unavailable < pdfCheck && unavailable < wordCheck, "the unavailable CLI error must come before extraction or capability checks");
   assert.doesNotMatch(src, /\?\.spec\.id \?\? cliId/, "the PDF check must not fall back to the stale id");

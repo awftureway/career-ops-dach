@@ -18,24 +18,24 @@ import { canonStatus } from "./status-alias.mjs";
 /** @typedef {{ source: string, target: string, value: number }} SankeyLink */
 
 export const NODE_DEFS = [
-  { id: "tracked", label: "Tracked", rank: 0, tone: "neutral" },
+  { id: "tracked", label: "Erfasst", rank: 0, tone: "neutral" },
   { id: "skip", label: "SKIP", rank: 1, tone: "danger" },
-  { id: "evaluated", label: "Still evaluated", rank: 1, tone: "muted" },
-  { id: "speculative", label: "Speculative pitch", rank: 1, tone: "info" },
-  { id: "other", label: "Other status", rank: 1, tone: "muted" },
-  { id: "discardedEarly", label: "Discarded (no application recorded)", rank: 1, tone: "muted" },
-  { id: "submitted", label: "Submitted", rank: 1, tone: "info" },
-  { id: "waiting", label: "Waiting", rank: 2, tone: "warn" },
-  { id: "engaged", label: "Company engaged", rank: 2, tone: "info" },
-  { id: "rejectedApply", label: "Rejected (no interview)", rank: 2, tone: "danger" },
-  { id: "discarded", label: "Discarded", rank: 2, tone: "muted" },
+  { id: "evaluated", label: "Noch bewertet", rank: 1, tone: "muted" },
+  { id: "speculative", label: "Spekulativer Pitch", rank: 1, tone: "info" },
+  { id: "other", label: "Anderer Status", rank: 1, tone: "muted" },
+  { id: "discardedEarly", label: "Verworfen (keine Bewerbung erfasst)", rank: 1, tone: "muted" },
+  { id: "submitted", label: "Gesendet", rank: 1, tone: "info" },
+  { id: "waiting", label: "Wartet", rank: 2, tone: "warn" },
+  { id: "engaged", label: "Firma reagiert", rank: 2, tone: "info" },
+  { id: "rejectedApply", label: "Abgelehnt (ohne Interview)", rank: 2, tone: "danger" },
+  { id: "discarded", label: "Verworfen", rank: 2, tone: "muted" },
   { id: "screening", label: "Screening", rank: 3, tone: "info" },
   { id: "assessment", label: "Assessment", rank: 3, tone: "info" },
   { id: "interview", label: "Interview", rank: 3, tone: "success" },
-  { id: "offer", label: "Offer", rank: 3, tone: "success" },
-  { id: "hired", label: "Hired", rank: 3, tone: "success" },
-  { id: "rejectedInterview", label: "Rejected after interview", rank: 3, tone: "danger" },
-  { id: "discardedInterview", label: "Discarded after interview", rank: 3, tone: "muted" },
+  { id: "offer", label: "Angebot", rank: 3, tone: "success" },
+  { id: "hired", label: "Eingestellt", rank: 3, tone: "success" },
+  { id: "rejectedInterview", label: "Abgelehnt nach Interview", rank: 3, tone: "danger" },
+  { id: "discardedInterview", label: "Verworfen nach Interview", rank: 3, tone: "muted" },
 ];
 
 const ADVANCED = new Set(["INTERVIEW", "OFFER", "HIRED"]);

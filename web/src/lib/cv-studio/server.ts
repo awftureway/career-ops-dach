@@ -298,7 +298,7 @@ export async function renderEditedPdf(load: Extract<StudioLoad, { ok: true }>, e
   }
   const warnings = render.stderr.split("\n").map((l: string) => l.trim()).filter(Boolean);
   const mark = await markTrackerReady({ spawnFn: spawn, execPath: process.execPath, coreRoot: resolveCodeRoot(process.cwd(), process.env), dataRoot: root, reportNum: load.reportNum });
-  if (!mark.ok) warnings.push(`PDF rendered, but the tracker's PDF column was not updated${mark.data?.error ? `: ${mark.data.error}` : "."}`);
+  if (!mark.ok) warnings.push(`PDF erstellt, aber die PDF-Spalte im Tracker wurde nicht aktualisiert${mark.data?.error ? `: ${mark.data.error}` : "."}`);
   const index = await pdfPathStatusForReport(load.reportNum);
   return { ok: true, pdf: path.basename(editedPdf), indexed: index.status === "found" && index.path === path.resolve(editedPdf), warnings };
 }

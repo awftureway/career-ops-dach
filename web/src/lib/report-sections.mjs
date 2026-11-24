@@ -291,7 +291,7 @@ export function sectionPreview(md) {
   const plain = (s) => s.replace(/[*_`>#|]/g, "").replace(/\s+/g, " ").trim();
   const table = parsePipeTable(md);
   const n = table?.rows.length ?? 0;
-  if (table && isStarTableHeader(table.header)) return `${n} interview stor${n === 1 ? "y" : "ies"}`;
+  if (table && isStarTableHeader(table.header)) return `${n} Interview-Geschichte${n === 1 ? "" : "n"}`;
   const text = plain(
     md
       .replace(/^#+\s.*$/gm, "")
@@ -303,7 +303,7 @@ export function sectionPreview(md) {
   if (table.header.length === 2) {
     return clip(table.rows.map(([k, v]) => `${plain(k ?? "")}: ${plain(v ?? "")}`).join(" · "));
   }
-  return `${n} row${n === 1 ? "" : "s"}`;
+  return `${n} Zeile${n === 1 ? "" : "n"}`;
 }
 
 /**
@@ -316,5 +316,5 @@ export function sectionPreview(md) {
 export function archetypeCaption(value) {
   const text = String(value ?? "").trim();
   if (!text) return "";
-  return `Archetype: ${text}`;
+  return `Archetyp: ${text}`;
 }

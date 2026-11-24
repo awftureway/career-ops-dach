@@ -39,7 +39,7 @@ export function coverDraftButtonState(job) {
       kind: "idle",
       failure: {
         jobId: job.id,
-        reason: job.result?.summary || "The cover run finished without a usable draft.",
+        reason: job.result?.summary || "Der Anschreiben-Lauf endete ohne brauchbaren Entwurf.",
       },
     };
   }
@@ -49,5 +49,5 @@ export function coverDraftButtonState(job) {
 /** @param {PdfJob} job */
 function failureReason(job) {
   const last = job.steps.findLast((s) => s.kind === "status");
-  return last?.label || "The run stopped before it finished.";
+  return last?.label || "Der Lauf wurde vor dem Ende abgebrochen.";
 }

@@ -41,7 +41,7 @@ export const SCANNER_MISSING_CODE = "SCANNER_MISSING";
 export const SCANNER_MISSING_STATUS = 400;
 
 /** Default copy for the panel. Lives here so the route and its test share one string. */
-export const SCANNER_MISSING_MESSAGE = "The discovery scanner isn't available in this checkout yet.";
+export const SCANNER_MISSING_MESSAGE = "Der Discovery-Scanner ist in dieser Installation noch nicht verfügbar.";
 
 /**
  * The exact JSON body the route returns for case 1.

@@ -79,12 +79,12 @@ export function CommandPalette({ followupsEnabled }: { followupsEnabled: boolean
       <button
         type="button"
         onClick={open}
-        aria-label="Search"
+        aria-label="Suche"
         aria-keyshortcuts="Control+K Meta+K"
         className="mb-4 flex items-center gap-3 rounded-md border border-border px-3 py-2 text-sm text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
       >
         <Search className="size-4" />
-        Search
+        Suche
         {shortcut && (
           <kbd className="ml-auto rounded border border-border px-1.5 py-0.5 font-mono text-[10px] text-faint">{shortcut}</kbd>
         )}
@@ -105,8 +105,8 @@ export function CommandPalette({ followupsEnabled }: { followupsEnabled: boolean
             aria-expanded="true"
             aria-controls={listId}
             aria-activedescendant={results.length ? optionId(current) : undefined}
-            aria-label="Jump to a page or application"
-            placeholder="Jump to a page, company, role or #number"
+            aria-label="Zu einer Seite oder Bewerbung springen"
+            placeholder="Zu Seite, Firma, Stelle oder #Nummer springen"
             autoComplete="off"
             spellCheck={false}
             value={query}
@@ -118,7 +118,7 @@ export function CommandPalette({ followupsEnabled }: { followupsEnabled: boolean
             className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-faint"
           />
         </div>
-        <ul ref={listRef} id={listId} role="listbox" aria-label="Results" className="max-h-[min(60vh,24rem)] overflow-y-auto p-1.5">
+        <ul ref={listRef} id={listId} role="listbox" aria-label="Ergebnisse" className="max-h-[min(60vh,24rem)] overflow-y-auto p-1.5">
           {results.map((item, index) => (
             <li
               key={item.id}
@@ -141,9 +141,9 @@ export function CommandPalette({ followupsEnabled }: { followupsEnabled: boolean
           ))}
         </ul>
         {results.length === 0 && (
-          <p className="px-4 pb-4 pt-1 text-sm text-muted">No page or application matches {`"${query.trim()}"`}</p>
+          <p className="px-4 pb-4 pt-1 text-sm text-muted">Keine Seite oder Bewerbung passt zu {`"${query.trim()}"`}</p>
         )}
-        {loading && applications.length === 0 && <p className="px-4 pb-3 text-xs text-faint">Loading applications</p>}
+        {loading && applications.length === 0 && <p className="px-4 pb-3 text-xs text-faint">Lädt Bewerbungen …</p>}
       </dialog>,
       document.body,
       )}

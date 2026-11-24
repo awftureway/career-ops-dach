@@ -11,8 +11,8 @@
  */
 export async function ingestErrorMessage(r) {
   if (r.ok) return null;
-  if (r.status === 404) return "Connect an AI CLI in Config first — it parses your CV locally.";
+  if (r.status === 404) return "Verbinden Sie zuerst eine KI-CLI in den Einstellungen. Sie liest Ihren Lebenslauf lokal ein.";
   const body = await r.json().catch(() => null);
   const reason = typeof body?.error === "string" ? body.error.trim() : "";
-  return reason || `Couldn't read your CV (error ${r.status}) — paste the text instead.`;
+  return reason || `Ihr Lebenslauf konnte nicht gelesen werden (Fehler ${r.status}). Fügen Sie stattdessen den Text ein.`;
 }

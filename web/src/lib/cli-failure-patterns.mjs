@@ -15,6 +15,6 @@ export const KEY_STATUS_RE = /\b(?:succeed(?:ed)?|success(?:ful(?:ly)?)?|loaded|
 export const KEY_FAILURE_RE = /(?:invalid|missing|expired|rejected|revoked|denied)\s+(?:\w+\s+){0,3}(?:credentials?|api[ -]?key)|(?:not|no)\s+(?:valid\s+)?(?:credentials?|api[ -]?key)|(?:credentials?|api[ -]?key)\s+(?:(?:is|was|has|have|had)\s+)?(?:invalid|missing|expired|rejected|revoked|denied|not\b)/i;
 
 /** Hint only. A missing CLI or key is a sign-in failure. "proxy not configured" is not. */
-export const NOT_CONFIGURED_RE = /\bno\s+(?:cli|api[ -]?key|credentials?)\s+configured\b|\b(?:cli|api[ -]?key|credentials?)\s+not\s+configured\b/i;
+export const NOT_CONFIGURED_RE = /\bno\s+(?:cli|api[ -]?key|credentials?)\s+configured\b|\bkeine\s+cli\s+konfiguriert\b|\b(?:cli|api[ -]?key|credentials?)\s+not\s+configured\b/i;
 
 export const CLAUDE_CODE_TIP = " (career-ops is best on Claude Code.)";

@@ -32,8 +32,8 @@ test("Unreadable and missing reports keep the app shell and a way back", { skip:
   await page.goto(`${origin.origin}/pipeline/12?${query}`);
   await main().getByRole("heading", { name: /#12\b/ }).waitFor({ timeout: 15_000 });
   assert.ok(await sidebar().isVisible(), "sidebar navigation stays on an unreadable report");
-  const tryAgain = main().getByRole("button", { name: "Try again" });
-  assert.ok(await tryAgain.isVisible(), "unreadable report offers Try again");
+  const tryAgain = main().getByRole("button", { name: "Erneut versuchen" });
+  assert.ok(await tryAgain.isVisible(), "unreadable report offers Erneut versuchen");
   await tryAgain.click();
   await main().getByRole("heading", { name: /#12\b/ }).waitFor({ timeout: 15_000 });
   assert.equal(await back().getAttribute("href"), `/pipeline?${query}`, "unreadable report preserves pipeline filters");
@@ -52,13 +52,13 @@ test("Unreadable and missing reports keep the app shell and a way back", { skip:
   const broken = path.join(root, "reports/012-fixture-broken.md");
   fs.rmdirSync(broken);
   fs.writeFileSync(broken, "# Fixture Broken Co — Designer\n\n**URL:** https://jobs.fixture-broken.example/designer\n\nFictional browser test report.\n");
-  await main().getByRole("button", { name: "Try again" }).click();
+  await main().getByRole("button", { name: "Erneut versuchen" }).click();
   await main().getByRole("heading", { name: "Fixture Broken Co", exact: true }).waitFor({ timeout: 15_000 });
   await main().getByText("Fictional browser test report.", { exact: true }).waitFor({ timeout: 15_000 });
-  assert.equal(await page.getByText("Report #12 could not be read").count(), 0, "Try again shows the repaired report");
+  assert.equal(await page.getByText("Bericht #12 konnte nicht gelesen werden").count(), 0, "Erneut versuchen shows the repaired report");
 
   await page.goto(`${origin.origin}/pipeline/11`);
   await main().getByRole("heading", { name: "Fixture States Co", exact: true }).waitFor({ timeout: 15_000 });
-  assert.equal(await main().getByRole("button", { name: "Try again" }).count(), 0, "a readable report renders normally");
+  assert.equal(await main().getByRole("button", { name: "Erneut versuchen" }).count(), 0, "a readable report renders normally");
   assert.deepEqual(errors, []);
 });

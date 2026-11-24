@@ -16,7 +16,7 @@ export async function createScheduledJobRequest(payload, fetcher = fetch) {
     body: JSON.stringify(payload),
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error || "Could not create the scheduled scan.");
+  if (!response.ok) throw new Error(body.error || "Geplanter Scan konnte nicht angelegt werden.");
   return body;
 }
 
@@ -27,6 +27,6 @@ export async function updateScheduledJobRequest(id, payload, fetcher = fetch) {
     body: JSON.stringify(payload),
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error || "Could not update the scheduled scan.");
+  if (!response.ok) throw new Error(body.error || "Geplanter Scan konnte nicht aktualisiert werden.");
   return body;
 }

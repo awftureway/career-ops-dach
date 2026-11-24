@@ -87,7 +87,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
       return;
     }
     setWaitingForBase(true);
-    setTrace("Reading the CV already on this machine…");
+    setTrace("Der bereits auf diesem Rechner vorhandene Lebenslauf wird gelesen …");
     setPhase("parsing");
   }, []);
   useEffect(() => {
@@ -108,7 +108,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
   // Stream the ingest, parsing markers live.
   const runStream = useCallback(async (init: RequestInit) => {
     setPhase("parsing");
-    setTrace("Reading your CV…");
+    setTrace("Ihr Lebenslauf wird gelesen …");
     setErr("");
     setMd("");
     setSeed(null);
@@ -125,7 +125,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
         return;
       }
       if (!r.body) {
-        setErr("No response.");
+        setErr("Keine Antwort.");
         setPhase("error");
         return;
       }
@@ -143,14 +143,14 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
           await reader.cancel();
           return;
         }
-        if (parsed.trace) setTrace(parsed.trace.split("\n").filter(Boolean).slice(-1)[0] || "Reading your CV…");
+        if (parsed.trace) setTrace(parsed.trace.split("\n").filter(Boolean).slice(-1)[0] || "Ihr Lebenslauf wird gelesen …");
         if (parsed.markdown) setMd(parsed.markdown);
         if (parsed.seed) setSeed(parsed.seed);
       }
       buf += dec.decode();
       const final = parseCvStream(buf);
       if (final.error || !buf.includes("<<cv:end>>") || !final.markdown.trim()) {
-        setErr("Couldn't finish reading the CV. Try again or paste the text instead.");
+        setErr("Der Lebenslauf konnte nicht fertig gelesen werden. Versuchen Sie es erneut oder fügen Sie den Text stattdessen ein.");
         setPhase("error");
         return;
       }
@@ -167,7 +167,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
   const ingestText = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed) {
-      setErr("That looks empty — paste your CV instead.");
+      setErr("Das wirkt leer – fügen Sie stattdessen Ihren Lebenslauf ein.");
       setPhase("error");
       return;
     }
@@ -196,7 +196,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
         .text()
         .then((t) => {
           if (!t.trim()) {
-            setErr("That file looks empty — paste your CV instead.");
+            setErr("Diese Datei wirkt leer – fügen Sie stattdessen Ihren Lebenslauf ein.");
             setPhase("error");
             return;
           }
@@ -205,7 +205,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
           enterReview();
         })
         .catch(() => {
-          setErr("Couldn't read that file — paste your CV instead.");
+          setErr("Die Datei konnte nicht gelesen werden – fügen Sie stattdessen Ihren Lebenslauf ein.");
           setPhase("error");
         });
       return;
@@ -221,7 +221,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
 
   const save = async () => {
     if (!md.trim()) {
-      setSaveErr("Your CV looks empty — paste it again.");
+      setSaveErr("Ihr Lebenslauf wirkt leer – fügen Sie ihn erneut ein.");
       return;
     }
     setSaveErr("");
@@ -229,8 +229,8 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
     if (!plan.post) {
       setSaveErr(
         plan.reason === "conflict"
-          ? "cv.md changed somewhere else. Load the current file, then save again if you still want to replace it."
-          : "The current CV was not read. Load it before saving.",
+          ? "cv.md wurde anderswo geändert. Laden Sie die aktuelle Datei und speichern Sie erneut, falls Sie sie weiterhin ersetzen möchten."
+          : "Der aktuelle Lebenslauf wurde nicht gelesen. Laden Sie ihn vor dem Speichern.",
       );
       setPhase("review");
       return;
@@ -245,12 +245,12 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
       if (!r.ok) {
         const d = await r.json().catch(() => ({}));
         if (r.status === 409) setConflict(true);
-        setSaveErr(d.error || "Couldn't save your CV — try again.");
+        setSaveErr(d.error || "Ihr Lebenslauf konnte nicht gespeichert werden – versuchen Sie es erneut.");
         setPhase("review"); // keep the parsed CV so they don't lose it
         return;
       }
     } catch {
-      setSaveErr("Couldn't save your CV — check your connection and try again.");
+      setSaveErr("Ihr Lebenslauf konnte nicht gespeichert werden – prüfen Sie Ihre Verbindung und versuchen Sie es erneut.");
       setPhase("review");
       return;
     }
@@ -297,7 +297,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
             onKeyDown={(e) => {
               if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && paste.trim()) ingestText(paste.trim());
             }}
-            placeholder="Paste your CV here — or drop a PDF, TeX or Markdown file below. We'll convert it to cv.md."
+            placeholder="Fügen Sie Ihren Lebenslauf hier ein – oder legen Sie unten eine PDF-, TeX- oder Markdown-Datei ab. Wir wandeln sie in cv.md um."
             className="h-32 w-full resize-none bg-transparent text-[14px] leading-relaxed outline-none placeholder:text-faint"
           />
           <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-border pt-3">
@@ -306,15 +306,15 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
               onClick={() => fileRef.current?.click()}
               className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface/50 px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px] max-sm:px-4"
             >
-              <Upload className="size-3.5" /> Choose file
+              <Upload className="size-3.5" /> Datei wählen
             </button>
-            <input ref={fileRef} aria-label="Upload CV file" type="file" accept={CV_UPLOAD_ACCEPT} hidden onChange={(e) => {
+            <input ref={fileRef} aria-label="Lebenslauf-Datei hochladen" type="file" accept={CV_UPLOAD_ACCEPT} hidden onChange={(e) => {
               const file = e.target.files?.[0];
               e.target.value = "";
               if (file) ingestFile(file);
             }} />
             <span className="inline-flex items-center gap-1 text-[11px] text-faint">
-              <Lock className="size-3" /> Converted with your configured AI CLI.
+              <Lock className="size-3" /> Umwandlung mit Ihrer eingerichteten KI-CLI.
             </span>
             <button
               type="button"
@@ -322,7 +322,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
               onClick={() => ingestText(paste.trim())}
               className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground shadow-sm transition hover:brightness-110 disabled:opacity-50 max-sm:min-h-[44px]"
             >
-              Read my CV <ArrowRight className="size-4" />
+              Lebenslauf einlesen <ArrowRight className="size-4" />
             </button>
           </div>
         </div>
@@ -330,9 +330,9 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
           (err === "needs-cli" ? (
             <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-[13px] text-amber-800 dark:text-amber-300">
               <AlertTriangle className="size-3.5 shrink-0" />
-              <span>To convert a PDF, TeX or Word file, connect an AI CLI in Config. Paste or drop .md / .txt to start without one.</span>
+              <span>Um eine PDF-, TeX- oder Word-Datei umzuwandeln, verbinden Sie in den Einstellungen eine KI-CLI. Fügen Sie .md / .txt ein oder legen Sie sie ab, um ohne CLI zu starten.</span>
               <Link href="/config" className="ml-auto inline-flex items-center gap-1 rounded-md bg-amber-500/20 px-2.5 py-1 font-medium text-amber-800 transition hover:bg-amber-500/30 dark:text-amber-200">
-                Connect your AI CLI <ArrowRight className="size-3.5" />
+                KI-CLI verbinden <ArrowRight className="size-3.5" />
               </Link>
             </div>
           ) : (
@@ -350,7 +350,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
     try {
       await loadBase(true);
     } catch {
-      const message = "The current CV could not be read. Load it again before saving.";
+      const message = "Der aktuelle Lebenslauf konnte nicht gelesen werden. Laden Sie ihn vor dem Speichern erneut.";
       if (waitingForBase) setErr(message);
       else setSaveErr(message);
     }
@@ -378,23 +378,23 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
         {waitingForBase && baseFailed ? (
           <div className="space-y-3">
             <p className="flex items-center gap-1.5 text-[13px] text-amber-800 dark:text-amber-400">
-              <AlertTriangle className="size-3.5 shrink-0" /> The current CV could not be read. Load it again before review.
+              <AlertTriangle className="size-3.5 shrink-0" /> Der aktuelle Lebenslauf konnte nicht gelesen werden. Laden Sie ihn vor der Prüfung erneut.+"+'
             </p>
             <button
               type="button"
               onClick={() => void acceptCurrentFile()}
               className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface/50 px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-brand/40"
             >
-              Load the current CV
+              Aktuellen Lebenslauf laden
             </button>
           </div>
         ) : (
           <>
             <div className="flex items-center gap-2.5">
               <Loader2 className="size-4 animate-spin text-brand-text" />
-              <span className={`${instrumentSerif.className} text-lg text-foreground`}>{trace || "Reading your CV…"}</span>
+              <span className={`${instrumentSerif.className} text-lg text-foreground`}>{trace || "Ihr Lebenslauf wird gelesen …"}</span>
             </div>
-            <p className="mt-3 text-xs text-muted">Converting to Markdown with your configured AI CLI…</p>
+            <p className="mt-3 text-xs text-muted">Umwandlung in Markdown mit Ihrer eingerichteten KI-CLI …</p>
             {md && <div className="co-cvtrace mt-4 max-h-40 overflow-hidden rounded-lg border border-border bg-surface/40 p-3 text-[11px] text-faint">{md.slice(0, 400)}…</div>}
           </>
         )}
@@ -408,7 +408,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
       <style>{STYLE}</style>
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <FileText className="size-4 text-brand-text" />
-        <h3 className={`${instrumentSerif.className} text-lg text-foreground`}>Here&apos;s your CV — review and save</h3>
+        <h3 className={`${instrumentSerif.className} text-lg text-foreground`}>Hier ist Ihr Lebenslauf – prüfen und speichern</h3>
         {readiness && (
           <span
             className={cn(
@@ -417,7 +417,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
             )}
           >
             {readiness.scoreable ? <Check className="size-3" /> : <AlertTriangle className="size-3" />}
-            {readiness.scoreable ? "Ready to match" : "A bit thin"}
+            {readiness.scoreable ? "Bereit zum Abgleich" : "Etwas dünn"}
           </span>
         )}
       </div>
@@ -433,14 +433,14 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
               onClick={() => void acceptCurrentFile()}
               className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface/50 px-3 py-1.5 text-xs font-medium text-foreground transition hover:border-brand/40"
             >
-              Use the CV file as it is now
+              Lebenslauf-Datei im aktuellen Stand verwenden
             </button>
           )}
         </div>
       )}
       <div className="grid gap-3 md:grid-cols-2">
         <textarea
-          aria-label="Imported CV Markdown"
+          aria-label="Importierter Lebenslauf (Markdown)"
           value={md}
           disabled={phase === "saving"}
           onChange={(e) => setMd(e.target.value)}
@@ -458,7 +458,7 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
           className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:brightness-110 disabled:opacity-60"
         >
           {phase === "saving" ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
-          {phase === "saving" ? "Saving…" : variant === "editor" ? "Update cv.md" : "Save & find my matches"}
+          {phase === "saving" ? "Speichert …" : variant === "editor" ? "cv.md aktualisieren" : "Speichern und Treffer finden"}
         </button>
         <button
           type="button"
@@ -466,10 +466,10 @@ export function CvIngest({ onSaved, onSavingChange, variant = "onboarding" }: { 
           onClick={startOver}
           className="inline-flex items-center gap-1.5 text-[13px] text-muted transition hover:text-foreground"
         >
-          <RotateCcw className="size-3.5" /> Start over
+          <RotateCcw className="size-3.5" /> Neu beginnen
         </button>
         <span className="ml-auto inline-flex items-center gap-1 text-[11px] text-faint">
-          <Lock className="size-3" /> {variant === "editor" ? "Save updates cv.md and backs up the previous version" : "Nothing is saved until you click Save."}
+          <Lock className="size-3" /> {variant === "editor" ? "Speichern aktualisiert cv.md und sichert die vorherige Version" : "Nichts wird gespeichert, bis Sie auf Speichern klicken."}
         </span>
       </div>
     </div>

@@ -7,7 +7,7 @@ test("Mark applied is off while the form is loading", () => {
     const gate = markAppliedEnabled({ status });
     assert.equal(gate.enabled, false, status);
     assert.equal(gate.reason, "reading");
-    assert.match(gate.hint, /after the form finishes loading/);
+    assert.match(gate.hint, /sobald das Formular geladen ist/);
   }
 });
 

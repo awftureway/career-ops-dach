@@ -33,7 +33,7 @@ test("old explicit stops gain review context without rewriting their error statu
     const gate = evaluationGateForJob(original);
     assert.equal(gate?.legacy, true);
     assert.equal(gate.confirmationRequired, true);
-    assert.equal(jobStateLabel(original), "Needs review");
+    assert.equal(jobStateLabel(original), "Prüfung nötig");
     assert.equal(JSON.stringify(original), before);
     assert.equal(original.status, "error");
     assert.equal(original.steps.at(-1).label, missing);
@@ -43,11 +43,11 @@ test("old explicit stops gain review context without rewriting their error statu
 });
 
 test("legacy review never conceals transport, CLI or reload failures", () => {
-  for (const label of ["Connection error", "Interrupted (page reloaded)", "Codex: Selected model is at capacity.", "Worker exited with error", "No CLI configured"]) {
+  for (const label of ["Verbindungsfehler", "Unterbrochen (Seite neu geladen)", "Codex: Selected model is at capacity.", "Worker exited with error", "No CLI configured", "Keine CLI konfiguriert"]) {
     const original = job();
     original.steps.unshift({ kind: "status", label });
     assert.equal(evaluationGateForJob(original), null, label);
-    assert.equal(jobStateLabel(original), "Failed");
+    assert.equal(jobStateLabel(original), "Fehlgeschlagen");
     assert.equal(evaluationGateForJob({ ...job(), steps: [{ kind: "status", label }] }), null);
   }
 });
@@ -66,7 +66,7 @@ test("ordinary prose, quoted job instructions and unrelated kinds remain genuine
 test("server-confirmed gated jobs stay unscored and have no legacy uncertainty", () => {
   const current = { ...job(), status: "gated", gate: { reason: "agency_confirmation", message: "Confirm the intermediary.", confirmationRequired: true } };
   assert.deepEqual(evaluationGateForJob(current), current.gate);
-  assert.equal(jobStateLabel(current), "Needs review");
+  assert.equal(jobStateLabel(current), "Prüfung nötig");
   assert.equal(evaluationGateForJob({ ...current, gate: { ...current.gate, reason: "unknown" } }), null);
 });
 

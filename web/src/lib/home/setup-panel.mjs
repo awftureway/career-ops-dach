@@ -29,6 +29,6 @@ export function setupPanelMode({ missing, sections, compact = false }) {
 /** The collapsed control. It never prints a done/total fraction. */
 export function setupPanelLabel(panel) {
   if (!panel || panel.mode !== "link") return "";
-  const left = panel.remaining === 1 ? "1 left" : `${panel.remaining} left`;
-  return `Optional profile details (${left})`;
+  const left = panel.remaining === 1 ? "1 offen" : `${panel.remaining} offen`;
+  return `Optionale Profilangaben (${left})`;
 }

@@ -29,7 +29,7 @@ function codes(issues) {
 test("a later drive drops an earlier read-back issue", () => {
   assert.deepEqual(withoutReadbackIssues([
     { code: "fill-mismatch", message: "A field did not match" },
-    { code: "fill-unverified", message: "Couldn't read the form back, so it is not counted as pre-filled." },
+    { code: "fill-unverified", message: "Das Formular ließ sich nicht zurücklesen und zählt daher nicht als vorausgefüllt." },
     { code: "ai-filled", message: "AI filled the form" },
   ]), [{ code: "ai-filled", message: "AI filled the form" }]);
 });
@@ -157,7 +157,7 @@ test("a failed read-back with no fields is still unverified", async () => {
   const frame = { evaluate() { return Promise.reject(new Error("read-back failed")); } };
   const issues = await verifyFill(frame, [], {});
   assert.deepEqual(codes(issues), ["fill-unverified"]);
-  assert.match(issues[0].message, /not counted as pre-filled/);
+  assert.match(issues[0].message, /nicht als vorausgefüllt/);
   assert.equal(showPrefilledBanner("done", issues), false);
 });
 

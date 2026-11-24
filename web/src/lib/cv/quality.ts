@@ -5,10 +5,10 @@ export type CvSeed = { title?: string; roles?: string[]; location?: string };
 export type CvIngestResult = { markdown: string; seed: CvSeed | null; error: string | null; trace: string };
 
 export function cvStreamErrorMessage(reason: string): string {
-  if (reason === "unreadable") return "I couldn't read text from that file (it may be a scanned image). Upload the TeX source or paste the text instead.";
-  if (reason === "timeout") return "CV conversion timed out. Try again or check your AI CLI in Config.";
-  if (["cli-failed", "launch-failed", "no-output"].includes(reason)) return "Your AI CLI couldn't finish converting the CV. Check its sign-in and connection in Config, then try again.";
-  return "Couldn't finish converting the CV. Try again or paste the text instead.";
+  if (reason === "unreadable") return "Aus dieser Datei konnte kein Text gelesen werden (möglicherweise ein gescanntes Bild). Laden Sie den TeX-Quelltext hoch oder fügen Sie den Text ein.";
+  if (reason === "timeout") return "Die Umwandlung des Lebenslaufs hat zu lange gedauert. Versuchen Sie es erneut oder prüfen Sie Ihre KI-CLI in den Einstellungen.";
+  if (["cli-failed", "launch-failed", "no-output"].includes(reason)) return "Ihre KI-CLI konnte den Lebenslauf nicht fertig umwandeln. Prüfen Sie Anmeldung und Verbindung in den Einstellungen und versuchen Sie es erneut.";
+  return "Der Lebenslauf konnte nicht fertig umgewandelt werden. Versuchen Sie es erneut oder fügen Sie den Text ein.";
 }
 
 /** Parse the full accumulated ingest stream text into its parts. Tolerant: a

@@ -62,7 +62,7 @@ export function DecisionCard({ app, reason, age, onDecided }: { app: Application
       onDecided?.(status);
       router.refresh();
     } catch {
-      setError("Could not confirm the change. Check your connection and pipeline, then retry.");
+      setError("Änderung konnte nicht bestätigt werden. Prüfen Sie Verbindung und Pipeline und versuchen Sie es erneut.");
       setFailedStatus(status);
     } finally {
       submitting.current = false;
@@ -114,7 +114,7 @@ export function DecisionCard({ app, reason, age, onDecided }: { app: Application
           href={`/pipeline/${app.n}`}
           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-md bg-brand-soft px-2.5 py-1.5 text-xs font-medium text-brand-text transition hover:bg-brand/15 max-sm:min-h-[44px]"
         >
-          <FileText className="size-3.5" /> Review
+          <FileText className="size-3.5" /> Prüfen
         </Link>
         <button
           type="button"
@@ -122,7 +122,7 @@ export function DecisionCard({ app, reason, age, onDecided }: { app: Application
           onClick={() => setStatus("Discarded")}
           className="inline-flex items-center justify-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted transition hover:text-foreground disabled:opacity-60 max-sm:min-h-[44px] max-sm:px-4"
         >
-          {busy === "Discarded" ? <Loader2 className="size-3.5 animate-spin" /> : <X className="size-3.5" />} Skip
+          {busy === "Discarded" ? <Loader2 className="size-3.5 animate-spin" /> : <X className="size-3.5" />} Überspringen
         </button>
         {!askApplied && (
           <button
@@ -135,7 +135,7 @@ export function DecisionCard({ app, reason, age, onDecided }: { app: Application
             className="inline-flex shrink-0 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs font-medium text-faint transition hover:text-foreground disabled:opacity-60 max-sm:min-h-[44px]"
           >
             <Check className="size-3.5" />
-            Applied
+            Beworben
           </button>
         )}
       </div>
@@ -162,7 +162,7 @@ export function DecisionCard({ app, reason, age, onDecided }: { app: Application
               onClick={() => setAskApplied(false)}
               className="text-xs text-muted hover:text-foreground disabled:opacity-60 max-sm:min-h-[44px]"
             >
-              Not yet
+              Noch nicht
             </button>
           </div>
         </div>
@@ -170,7 +170,7 @@ export function DecisionCard({ app, reason, age, onDecided }: { app: Application
       {error && (
         <div role="alert" className="flex items-start gap-2 text-xs text-red-700 dark:text-red-400">
           <p className="min-w-0 flex-1">{error}</p>
-          {failedStatus && <button type="button" disabled={!!busy} onClick={() => setStatus(failedStatus)} className="shrink-0 underline disabled:opacity-60 max-sm:min-h-[44px]">Retry</button>}
+          {failedStatus && <button type="button" disabled={!!busy} onClick={() => setStatus(failedStatus)} className="shrink-0 underline disabled:opacity-60 max-sm:min-h-[44px]">Erneut versuchen</button>}
         </div>
       )}
     </div>

@@ -2,9 +2,9 @@ import { ChevronDown } from "lucide-react";
 import { prepQuestions, readMachineSummary } from "@/lib/machine-summary.mjs";
 
 const MATCH_LABEL: Record<string, { text: string; className: string }> = {
-  strong: { text: "prove it", className: "text-emerald-800 dark:text-emerald-400" },
-  partial: { text: "show depth", className: "text-amber-800 dark:text-amber-400" },
-  missing: { text: "gap plan", className: "text-red-700 dark:text-red-400" },
+  strong: { text: "belegen", className: "text-emerald-800 dark:text-emerald-400" },
+  partial: { text: "Tiefe zeigen", className: "text-amber-800 dark:text-amber-400" },
+  missing: { text: "Lückenplan", className: "text-red-700 dark:text-red-400" },
 };
 
 export function PrepPack({ report, company }: { report: string; company: string }) {
@@ -14,9 +14,9 @@ export function PrepPack({ report, company }: { report: string; company: string 
   return (
     <details data-testid="prep-pack" className="group mt-3 overflow-hidden rounded-xl border border-border bg-surface/30">
       <summary className="flex min-h-[44px] cursor-pointer list-none items-center gap-2 px-4 py-3 transition-colors hover:bg-surface-hover">
-        <span className="text-sm font-medium">Interview prep</span>
+        <span className="text-sm font-medium">Interviewvorbereitung</span>
         <span className="hidden truncate text-xs text-faint sm:inline print:hidden">
-          {questions.length} likely question{questions.length === 1 ? "" : "s"} from the requirements this role weighs most
+          {questions.length} wahrscheinliche Frage{questions.length === 1 ? "" : "n"} zu den Anforderungen, die diese Rolle am stärksten gewichtet
         </span>
         <ChevronDown className="ml-auto size-4 shrink-0 text-faint transition-transform group-open:rotate-180 print:hidden" />
       </summary>
@@ -33,8 +33,8 @@ export function PrepPack({ report, company }: { report: string; company: string 
           ))}
         </ol>
         <p className="mt-4 text-xs text-muted">
-          Pair each question with a STAR story from your Interview Plan. For drafted answers and a company brief, run{" "}
-          <code className="text-foreground">/career-ops interview-prep</code> for {company || "this role"} in your AI CLI.
+          Ordnen Sie jeder Frage eine STAR-Story aus Ihrem Interviewplan zu. Für ausformulierte Antworten und ein Firmenprofil führen Sie{" "}
+          <code className="text-foreground">/career-ops interview-prep</code> für {company || "diese Rolle"} in Ihrer KI-CLI aus.
         </p>
       </div>
     </details>

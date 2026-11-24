@@ -63,7 +63,7 @@ export async function POST(req: Request) {
   // markdown row, and refusing them before spawning keeps the failure cheap and
   // the message specific.
   if (/[|\r\n*]/.test(status)) {
-    return Response.json({ error: "invalid status (table-breaking characters)" }, { status: 400 });
+    return Response.json({ error: "Ungültiger Status (enthält Zeichen, die die Tabelle zerstören)" }, { status: 400 });
   }
   // Resolving aliases here lets the response echo the canonical label without
   // waiting on the CLI, and costs no process spawn for an unknown state.
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
   // not the authority.
   const canon = canonicalizeStatus(status);
   if (!canon) {
-    return Response.json({ error: `not a canonical status: ${status}` }, { status: 400 });
+    return Response.json({ error: `Kein gültiger Status: ${status}` }, { status: 400 });
   }
   return writeStatus(n, canon);
 }
@@ -95,7 +95,7 @@ async function writeStatus(n: unknown, canon: string | null) {
   if (!fs.existsSync(script)) {
     return Response.json(
       {
-        error: "status updates need the career-ops scripts; this root has data only",
+        error: "Statusänderungen benötigen die career-ops-Skripte; dieses Verzeichnis enthält nur Daten.",
         code: "core-script-missing",
       },
       { status: 503 },
@@ -123,7 +123,7 @@ async function writeStatus(n: unknown, canon: string | null) {
     // Child stderr is a Node stack trace carrying absolute server paths. It
     // belongs in the server log, never in the response body.
     console.error(`/api/status: set-status.mjs failed to run: ${stderr.trim()}`);
-    return Response.json({ error: "status update failed to run" }, { status: 500 });
+    return Response.json({ error: "Die Statusänderung konnte nicht ausgeführt werden" }, { status: 500 });
   }
 
   // Killed by our own timeout. The child gets a shorter lock wait than this, so
@@ -132,7 +132,7 @@ async function writeStatus(n: unknown, canon: string | null) {
   // implying the change was rejected.
   if (timedOut) {
     return Response.json(
-      { error: "status update timed out; the change may or may not have been applied" },
+      { error: "Zeitüberschreitung bei der Statusänderung; die Änderung wurde möglicherweise angewendet" },
       { status: 504, headers: { "Retry-After": "5" } },
     );
   }
@@ -160,7 +160,7 @@ async function writeStatus(n: unknown, canon: string | null) {
   }
 
   if (!parsed) {
-    return Response.json({ error: "status update returned no result" }, { status: 500 });
+    return Response.json({ error: "Die Statusänderung lieferte kein Ergebnis" }, { status: 500 });
   }
 
   // Response shape is unchanged for existing callers; `changed` and

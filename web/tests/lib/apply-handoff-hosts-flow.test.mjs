@@ -123,7 +123,7 @@ describe("apply.handoff_hosts through the real Apply entry points", { concurrenc
     assert.equal(result.unsupported.label, "gupy.io");
     assert.equal(result.unsupported.postingUrl, LISTED);
     assert.match(result.message, /apply\.handoff_hosts/);
-    assert.match(result.message, /no browser was opened/);
+    assert.match(result.message, /kein Browser geöffnet/);
   });
 
   test("a host configured with a trailing dot is refused too", async () => {
@@ -180,7 +180,7 @@ describe("apply.handoff_hosts through the real Apply entry points", { concurrenc
     const issue = await classifyEmpty(quietPage(LISTED), "https://careers.acme.test/role");
     assert.equal(issue.level, "block");
     assert.equal(issue.code, "handoff");
-    assert.match(issue.message, /The window was closed\./);
+    assert.match(issue.message, /Das Fenster wurde geschlossen\./);
   });
 
   test("tryApplyTrigger does not click an Apply link that leads to a listed host", async () => {

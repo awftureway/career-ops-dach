@@ -44,23 +44,23 @@
 const RESPONSIVENESS = {
   "responded-before": {
     kind: "finding",
-    headline: "They have replied to you before",
-    detail: "At least one application here moved past Applied.",
+    headline: "Die Firma hat Ihnen schon geantwortet",
+    detail: "Mindestens eine Bewerbung hier ist über „Beworben“ hinausgekommen.",
   },
   "silent-on-you": {
     kind: "finding",
-    headline: "No reply so far",
-    detail: "Applications here have passed the courtesy window without an answer.",
+    headline: "Bisher keine Antwort",
+    detail: "Bewerbungen hier sind ohne Antwort über die Wartefrist hinaus.",
   },
   mixed: {
     kind: "finding",
-    headline: "Mixed — replied to some, not others",
+    headline: "Gemischt: Auf manche geantwortet, auf andere nicht",
     detail: null,
   },
   "no-history": {
     kind: "absence",
-    headline: "No history with this company yet",
-    detail: "Nothing here has reached a stage that would show a reply either way.",
+    headline: "Noch keine Vorgeschichte mit dieser Firma",
+    detail: "Nichts hier hat eine Phase erreicht, die so oder so eine Antwort zeigen würde.",
   },
 };
 
@@ -71,23 +71,23 @@ const CHURN = {
   // the only moment it had news.
   "reposts-detected": {
     kind: "finding",
-    headline: "This company has re-listed roles",
-    detail: "Repeat postings were found in this company’s scan history; they may concern a different role.",
+    headline: "Diese Firma hat Stellen erneut ausgeschrieben",
+    detail: "Im Scan-Verlauf dieser Firma gibt es wiederholte Anzeigen; sie können eine andere Stelle betreffen.",
   },
   "none-detected": {
     kind: "absence",
-    headline: "No repeat postings found",
-    detail: "Scan history was checked and no repeat postings were found for this company.",
+    headline: "Keine wiederholten Anzeigen gefunden",
+    detail: "Der Scan-Verlauf wurde geprüft und enthält keine wiederholten Anzeigen dieser Firma.",
   },
   "no-scan-data": {
     kind: "not-checked",
     headline: "Repeat postings not checked",
-    detail: "No scan history is loaded, so this says nothing either way.",
+    detail: "Es ist kein Scan-Verlauf geladen, daher sagt das nichts aus.",
   },
   "aggregator-not-evaluated": {
     kind: "not-checked",
     headline: "Repeat postings not checked",
-    detail: "This is a job aggregator, where re-listing is normal and not a signal.",
+    detail: "Dies ist ein Jobportal-Aggregator, bei dem erneutes Ausschreiben normal und kein Signal ist.",
   },
 };
 
@@ -115,7 +115,7 @@ export function companyCardModel(payload) {
     reason: null,
     company: typeof card.company === "string" ? card.company : null,
     responsiveness: card.metadata?.sources?.tracker === false
-      ? { kind: "not-checked", headline: "Company history not checked", detail: "The tracker was not loaded, so this says nothing either way." }
+      ? { kind: "not-checked", headline: "Firmenverlauf nicht geprüft", detail: "Der Tracker wurde nicht geladen, daher sagt das nichts aus." }
       : verdictFor(RESPONSIVENESS, card.responsiveness?.label),
     churn: verdictFor(CHURN, card.postingChurn?.label),
     facts: Array.isArray(card.responsiveness?.facts) ? card.responsiveness.facts : [],
@@ -140,8 +140,8 @@ export function verdictFor(table, label) {
   if (hit) return hit;
   return {
     kind: "not-checked",
-    headline: "Not evaluated",
-    detail: `The core reported “${label}”, which this view does not recognise yet.`,
+    headline: "Nicht bewertet",
+    detail: `Der Kern meldete „${label}“, das diese Ansicht noch nicht kennt.`,
   };
 }
 
@@ -173,12 +173,12 @@ export function factLine(f) {
   // and whether the user chased it.
   if (Number.isFinite(f.silentDays)) {
     const evaluationDate = f.dateBasis === "evaluation-date";
-    bits.push(evaluationDate ? "no reply recorded" : `no reply in ${Math.trunc(f.silentDays)} days`);
+    bits.push(evaluationDate ? "keine Antwort erfasst" : `keine Antwort seit ${Math.trunc(f.silentDays)} Tagen`);
     if (typeof f.appliedDate === "string" && f.appliedDate.trim() !== "") {
-      bits.push(evaluationDate ? `evaluated ${f.appliedDate.trim()} (${Math.trunc(f.silentDays)} days ago)` : `applied ${f.appliedDate.trim()}`);
+      bits.push(evaluationDate ? `bewertet am ${f.appliedDate.trim()} (vor ${Math.trunc(f.silentDays)} Tagen)` : `beworben am ${f.appliedDate.trim()}`);
     }
     if (Number.isFinite(f.followupsSent) && f.followupsSent > 0) {
-      bits.push(`${Math.trunc(f.followupsSent)} follow-up${f.followupsSent === 1 ? "" : "s"} sent`);
+      bits.push(`${Math.trunc(f.followupsSent)} Nachfassen gesendet`);
     }
   } else {
     if (typeof f.outcome === "string" && f.outcome.trim() !== "") bits.push(f.outcome.trim());
@@ -186,7 +186,7 @@ export function factLine(f) {
     if (date) bits.push(date);
   }
 
-  if (f.stale === true) bits.push("stale");
+  if (f.stale === true) bits.push("veraltet");
   // A row that is only its own number tells the reader nothing they can use.
   return bits.length > 1 ? bits.join(" · ") : null;
 }

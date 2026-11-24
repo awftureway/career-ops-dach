@@ -39,7 +39,7 @@ type SavedView = NonNullable<ReturnType<typeof normalizeView>>;
 
 const SORT_KEYS = ["tracker", "company", "role", "score", "status", "date"] as const;
 const VIEWS_KEY = "career-ops:pipeline-views";
-const REMOVAL_WARNING = "This removal is not saved yet. Reloading brings the view back.";
+const REMOVAL_WARNING = "Dieses Entfernen ist noch nicht gespeichert. Beim Neuladen kommt die Ansicht zurück.";
 type SortKey = (typeof SORT_KEYS)[number];
 
 export function PipelineView({
@@ -193,7 +193,7 @@ export function PipelineView({
     } catch {
       storageRejected.current = true;
       if (action === "remove") setRemovalWarning(REMOVAL_WARNING);
-      else setViewError("This view stays on this page only.");
+      else setViewError("Diese Ansicht bleibt nur auf dieser Seite.");
       return false;
     }
   }
@@ -213,7 +213,7 @@ export function PipelineView({
   function saveCurrentView(name: string) {
     const view = normalizeView({ name, tab, q, min: minFilter, sort: sort.key, dir: sort.dir });
     if (!view) {
-      setViewError("Name the view first.");
+      setViewError("Vergeben Sie zuerst einen Namen für die Ansicht.");
       return;
     }
     const { stored, base } = mutationBase();
@@ -222,7 +222,7 @@ export function PipelineView({
     const allow = [...omittedWhileRejected.current];
     const pending = [...pendingWhileRejected.current];
     if (!added || !keepsStoredNames(next, stored, allow) || !keepsPendingNames(next, pending, allow)) {
-      setViewError("Remove a view first.");
+      setViewError("Entfernen Sie zuerst eine Ansicht.");
       return;
     }
     omittedWhileRejected.current = new Set(omissionAfterAttempt(allow, view.name, true));
@@ -298,7 +298,7 @@ export function PipelineView({
       if (tab !== "ALL" && !rowOnPipelineTab(status, tab) && (restoreFocus || focusedRow?.dataset.applicationKey === key)) {
         activeTab.current?.focus();
       }
-      setAnnouncement(`Application #${r.n} status saved as ${status}.`);
+      setAnnouncement(`Status von Bewerbung #${r.n} als ${status} gespeichert.`);
       startTransition(() => {
         showSavedStatus({ key, status });
         router.refresh();
@@ -423,7 +423,7 @@ export function PipelineView({
       clearSearch,
       clearMin: () => setParams({ min: null }),
     });
-  const filterStatus = isPending || !filtering ? "" : empty ? empty.heading : `${filtered.length} of ${tabRows.length} shown`;
+  const filterStatus = isPending || !filtering ? "" : empty ? empty.heading : `${filtered.length} von ${tabRows.length} angezeigt`;
 
   const filterKey = `${visibleTab}|${deferredQ}|${sort.key}|${sort.dir}|${minFilter ?? ""}|${filtered.length}`;
   const [windowState, setWindowState] = useState<{ key: string; span: { start: number; end: number } } | null>(null);
@@ -547,16 +547,16 @@ export function PipelineView({
       const { saved, failed } = await saveStatuses(write, status);
       const notSaved = [
         ...failed,
-        ...inFlight.map((row) => ({ n: row.n, error: "a status save is already in progress" })),
+        ...inFlight.map((row) => ({ n: row.n, error: "ein Statuswechsel läuft bereits" })),
       ];
       const failedNums = new Set(notSaved.map((f) => f.n));
       const savedNums = new Set(saved);
       setSelected((current) => new Set(selectionAfterFailedSave([...current], rows, failedNums, applicationKey)));
       if (notSaved.length > 0) {
-        setBulkError(`${notSaved.length} not saved: ${notSaved.map((f) => `#${f.n} (${f.error})`).join(", ")}`);
+        setBulkError(`${notSaved.length} nicht gespeichert: ${notSaved.map((f) => `#${f.n} (${f.error})`).join(", ")}`);
       }
       if (saved.length > 0 || failed.length > 0) {
-        setAnnouncement(`${saved.length} application${saved.length === 1 ? "" : "s"} set to ${status}.`);
+        setAnnouncement(`${saved.length} Bewerbung${saved.length === 1 ? "" : "en"} auf ${status} gesetzt.`);
       }
       // A row saved here no longer has an older failure to show.
       const savedKeys = write.filter((row) => savedNums.has(row.n)).map((row) => applicationKey(row));
@@ -698,8 +698,8 @@ export function PipelineView({
         <div>
           <h1 className="font-display text-2xl tracking-tight text-landing">Pipeline</h1>
           <p className="mt-1 text-sm text-muted">
-            <span className="tabular-nums">{inboxCount}</span> in inbox ·{" "}
-            <span className="tabular-nums">{visibleApplications.length}</span> tracked
+            <span className="tabular-nums">{inboxCount}</span> im Posteingang ·{" "}
+            <span className="tabular-nums">{visibleApplications.length}</span> erfasst
           </p>
         </div>
         {/* the tracker has its own search; the inbox brings its own facet filters */}
@@ -710,7 +710,7 @@ export function PipelineView({
               <input
                 ref={searchInput}
                 type="search"
-                aria-label="Search applications"
+                aria-label="Bewerbungen durchsuchen"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => {
@@ -719,13 +719,13 @@ export function PipelineView({
                     setQ("");
                   }
                 }}
-                placeholder="Search company or role…"
+                placeholder="Firma oder Rolle suchen …"
                 className="w-full rounded-md border border-border bg-surface/60 py-2 pl-9 pr-9 text-sm outline-none transition-colors placeholder:text-faint focus:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40 [&::-webkit-search-cancel-button]:appearance-none"
               />
               {q && (
                 <button
                   type="button"
-                  aria-label="Clear search"
+                  aria-label="Suche leeren"
                   onClick={clearSearch}
                   className="absolute right-1.5 top-1/2 inline-flex size-6 -translate-y-1/2 items-center justify-center rounded text-faint transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
@@ -737,11 +737,11 @@ export function PipelineView({
               type="button"
               onClick={downloadCsv}
               disabled={isPending || filtered.length === 0}
-              title={`Download the ${filtered.length} row${filtered.length === 1 ? "" : "s"} shown as a CSV file`}
+              title={`Die ${filtered.length} angezeigte${filtered.length === 1 ? " Zeile" : "n Zeilen"} als CSV-Datei herunterladen`}
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-border bg-surface/60 px-3 py-2 text-sm text-muted transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-50 max-sm:min-h-[44px] max-sm:min-w-[44px] max-sm:justify-center max-sm:px-0"
             >
               <Download aria-hidden="true" className="size-4" />
-              <span className="max-sm:sr-only">Download CSV</span>
+              <span className="max-sm:sr-only">CSV herunterladen</span>
             </button>
           </div>
         )}
@@ -751,12 +751,12 @@ export function PipelineView({
         {visibleTab !== "INBOX" && <label className="inline-flex items-center gap-2 text-xs text-muted">
           Score
           <select
-            aria-label="Minimum score"
+            aria-label="Mindest-Score"
             value={minFilter ?? ""}
             onChange={(event) => setParams({ min: event.target.value === "" ? null : event.target.value })}
             className="rounded-md border border-border bg-surface px-2 py-1 text-sm text-foreground"
           >
-            <option value="">Any</option>
+            <option value="">Alle</option>
             {minFilter != null && !SCORE_FLOORS.includes(minFilter) && (
               <option value={String(minFilter)}>{minFilter}+</option>
             )}
@@ -772,7 +772,7 @@ export function PipelineView({
               <button type="button" onClick={() => applySaved(view)} className="px-2.5 py-1 text-xs font-medium text-foreground">
                 {view.name}
               </button>
-              <button type="button" aria-label={`Remove view ${view.name}`} onClick={() => removeSavedView(view.name)} className="px-1.5 text-xs text-faint hover:text-foreground">
+              <button type="button" aria-label={`Ansicht entfernen: ${view.name}`} onClick={() => removeSavedView(view.name)} className="px-1.5 text-xs text-faint hover:text-foreground">
                 ×
               </button>
             </span>
@@ -787,18 +787,18 @@ export function PipelineView({
             className="inline-flex items-center gap-2"
           >
             <input
-              aria-label="View name"
+              aria-label="Name der Ansicht"
               value={draftName}
               autoFocus
               onChange={(event) => setDraftName(event.target.value)}
               className="w-36 rounded-md border border-border bg-surface px-2 py-1 text-sm outline-none focus:border-brand/50"
             />
-            <button type="submit" className="text-xs font-medium text-brand-text">Save</button>
-            <button type="button" onClick={() => { setNaming(false); setDraftName(""); setViewError(""); }} className="text-xs text-muted">Cancel</button>
+            <button type="submit" className="text-xs font-medium text-brand-text">Speichern</button>
+            <button type="button" onClick={() => { setNaming(false); setDraftName(""); setViewError(""); }} className="text-xs text-muted">Abbrechen</button>
           </form>
         ) : (
           <button type="button" onClick={() => { setViewError(""); setNaming(true); }} className="rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted hover:text-foreground">
-            Save view
+            Ansicht speichern
           </button>
         )}
         {viewError && <span role="alert" className="text-xs text-red-500">{viewError}</span>}
@@ -841,12 +841,12 @@ export function PipelineView({
 
       {visibleTab !== "INBOX" && minFilter != null && (
         <div className="mt-3 flex items-center gap-2">
-          <span className="text-xs text-faint">Filtered:</span>
+          <span className="text-xs text-faint">Gefiltert:</span>
           <button
             type="button"
             onClick={() => setParams({ min: null })}
             className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand-soft px-2.5 py-1 text-xs font-medium text-brand-text transition-colors hover:bg-brand/15"
-            title="Clear score filter"
+            title="Score-Filter zurücksetzen"
           >
             score ≥ {minFilter.toFixed(1)}
             <X className="size-3" />
@@ -862,15 +862,15 @@ export function PipelineView({
 
       {visibleTab !== "INBOX" && selectedRows.length > 0 && (
         <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-surface/60 px-3 py-2 text-sm">
-          <span className="tabular-nums">{selectedRows.length} selected</span>
+          <span className="tabular-nums">{selectedRows.length} ausgewählt</span>
           <select
-            aria-label="Status for selected applications"
+            aria-label="Status für ausgewählte Bewerbungen"
             value={bulkStatus}
             onChange={(e) => setBulkStatus(e.target.value)}
             disabled={bulkBusy}
             className="rounded-md border border-border bg-surface px-2 py-1 text-sm"
           >
-            <option value="">Set status…</option>
+            <option value="">Status setzen …</option>
             {CANONICAL_STATES.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
@@ -881,7 +881,7 @@ export function PipelineView({
             disabled={!bulkStatus || bulkBusy}
             className="rounded-md border border-brand/40 bg-brand-soft px-2.5 py-1 text-xs font-medium text-brand-text disabled:opacity-50"
           >
-            {bulkBusy ? "Saving…" : "Apply"}
+            {bulkBusy ? "Speichert …" : "Übernehmen"}
           </button>
           {selectedRows.length >= 2 && selectedRows.length <= COMPARE_MAX && (
             <Link
@@ -889,11 +889,11 @@ export function PipelineView({
               onClick={syncTypedSearch}
               className="rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground hover:border-brand/40 hover:text-brand-text"
             >
-              Compare
+              Vergleichen
             </Link>
           )}
           <button type="button" onClick={() => setSelected(new Set())} className="text-xs text-muted hover:text-foreground">
-            Clear
+            Leeren
           </button>
         </div>
       )}
@@ -912,7 +912,7 @@ export function PipelineView({
               {appliedWriteAllowed({ status: "Applied", confirmed: false }).yesLabel}
             </button>
             <button type="button" disabled={bulkBusy} onClick={() => setAppliedAsk(null)} className="text-xs text-muted hover:text-foreground disabled:opacity-60">
-              Not yet
+              Noch nicht
             </button>
           </div>
         </div>
@@ -926,14 +926,14 @@ export function PipelineView({
         <div className="mt-3 space-y-1">
           {offscreenFailures.map((failure) => (
             <p key={failure.key} role="alert" className="text-xs text-red-500">
-              Application #{failure.n} was not saved. {failure.error}
+              Bewerbung #{failure.n} wurde nicht gespeichert. {failure.error}
             </p>
           ))}
         </div>
       )}
 
       {visibleTab !== "INBOX" && (
-        <p className="mt-2 text-xs text-faint">j and k move. 1 Evaluated, 2 Applied, 3 Responded, 4 Interview, 5 Offer, 6 Rejected, 7 Discarded, 8 SKIP. Shift-click selects the rows in between.</p>
+        <p className="mt-2 text-xs text-faint">j und k bewegen. 1 Evaluated, 2 Applied, 3 Responded, 4 Interview, 5 Offer, 6 Rejected, 7 Discarded, 8 SKIP. Umschalt-Klick wählt die Zeilen dazwischen aus.</p>
       )}
 
       {visibleTab === "INBOX" ? (
@@ -941,7 +941,7 @@ export function PipelineView({
         <>
           {inbox === null ? (
             <div role="status" className="mt-4 overflow-x-auto rounded-2xl border border-border">
-              <span className="sr-only">Loading inbox…</span>
+              <span className="sr-only">Posteingang lädt …</span>
               <table aria-hidden="true" className="w-full min-w-[44rem] text-sm">
                 <tbody className="divide-y divide-border">
                   <PipelineTableRowsSkeleton />
@@ -966,7 +966,7 @@ export function PipelineView({
            than letting w-full crush them on a phone. */
         <div className="mt-4 overflow-x-auto rounded-2xl border border-border">
           <table
-            aria-label="Tracked applications"
+            aria-label="Erfasste Bewerbungen"
             aria-rowcount={filtered.length + 1}
             className="w-full min-w-[44rem] text-sm min-[1440px]:table-fixed min-[1440px]:[&_th:nth-child(1)]:w-11 min-[1440px]:[&_th:nth-child(2)]:w-[4.5rem] min-[1440px]:[&_th:nth-child(3)]:w-[26%] min-[1440px]:[&_th:nth-child(4)]:w-[32%] min-[1440px]:[&_th:nth-child(5)]:w-[5.5rem] min-[1440px]:[&_th:nth-child(6)]:w-[14rem] min-[1440px]:[&_th:nth-child(7)]:w-[6.75rem] min-[1440px]:[&_th:nth-child(8)]:w-[4.75rem]"
           >
@@ -975,7 +975,7 @@ export function PipelineView({
                 <th className="w-8 px-3 py-2.5">
                   <input
                     type="checkbox"
-                    aria-label="Select all shown applications"
+                    aria-label="Alle angezeigten Bewerbungen auswählen"
                     checked={allSelected}
                     onChange={() => setSelected(allSelected ? new Set() : new Set(filteredKeys))}
                   />
@@ -999,7 +999,7 @@ export function PipelineView({
                     </button>
                   </th>
                 ))}
-                <th className="whitespace-nowrap px-4 py-2.5 font-medium">resume</th>
+                <th className="whitespace-nowrap px-4 py-2.5 font-medium">Lebenslauf</th>
               </tr>
             </thead>
             {/* Keep editors mounted while query navigation is pending: sorting
@@ -1117,7 +1117,7 @@ const TrackerRow = memo(function TrackerRow({
       <td className="w-8 px-3 py-3">
         <input
           type="checkbox"
-          aria-label={`Select ${company.label}, ${r.role} (#${r.n})`}
+          aria-label={`${company.label}, ${r.role} (#${r.n}) auswählen`}
           checked={selected}
           onChange={(event) => {
             const native = event.nativeEvent;
@@ -1140,7 +1140,7 @@ const TrackerRow = memo(function TrackerRow({
         <div className="flex min-w-0 items-center gap-2">
           <Link href={detailHref} tabIndex={-1} onPointerDown={arm} onClick={open} className="block max-w-72 truncate min-[1440px]:min-w-[8rem] min-[1440px]:flex-1 min-[1440px]:max-w-none" title={r.role}>{r.role}</Link>
           {r.closesAt ? (
-            <span className="whitespace-nowrap text-faint tabular-nums">Closes {r.closesAt}</span>
+            <span className="whitespace-nowrap text-faint tabular-nums">Endet {r.closesAt}</span>
           ) : null}
           {posting && (
             <a
@@ -1177,7 +1177,7 @@ const TrackerRow = memo(function TrackerRow({
             href={`/api/cv-pdf?application=${encodeURIComponent(r.n)}`}
             target="_blank"
             rel="noreferrer"
-            title="Open the tailored CV PDF"
+            title="Angepasstes Lebenslauf-PDF öffnen"
             className="inline-flex items-center gap-1.5 text-brand-text hover:underline"
           >
             <FileText aria-hidden="true" className="size-3.5" /> PDF
@@ -1245,30 +1245,30 @@ function InboxEmpty({ tracked }: { tracked: number }) {
         <span className="size-2.5 rounded-full bg-foreground/15" aria-hidden="true" />
         <span className="size-2.5 rounded-full bg-foreground/15" aria-hidden="true" />
         <span className="size-2.5 rounded-full bg-foreground/15" aria-hidden="true" />
-        <span className="ml-3 font-mono text-xs tracking-wide text-muted">career-ops · inbox</span>
+        <span className="ml-3 font-mono text-xs tracking-wide text-muted">career-ops · Posteingang</span>
       </div>
       <div className="px-6 py-10 text-center">
         <p className="font-display text-lg">
-          Your <span className="text-brand-text">inbox</span> is empty.
+          Ihr <span className="text-brand-text">Posteingang</span> ist leer.
         </p>
         {tracked > 0 && (
           <p className="mx-auto mt-2 max-w-sm text-sm text-muted">
-            New postings land here. Your{" "}
+            Neue Stellenanzeigen landen hier. Ihre{" "}
             <Link href="/pipeline?tab=ALL" className="font-medium text-brand-text underline-offset-2 hover:underline">
-              {tracked} tracked role{tracked === 1 ? "" : "s"}
+              {tracked} erfasste{tracked === 1 ? "" : "n"} Rolle{tracked === 1 ? "" : "n"}
             </Link>{" "}
-            {tracked === 1 ? "is" : "are"} under All.
+            {tracked === 1 ? "steht" : "stehen"} unter ALL.
           </p>
         )}
-        <p className="mx-auto mt-2 max-w-sm text-sm text-muted">Find roles that match your CV — free, no tokens spent.</p>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-muted">Finden Sie Rollen, die zu Ihrem Lebenslauf passen — kostenlos, ohne Token-Verbrauch.</p>
         <Link
           href={pipelineFindRolesHref()}
           className="mt-5 inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-brand-foreground shadow-sm transition-all duration-200 hover:bg-brand-200 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <Compass className="size-4" /> Find roles <ArrowRight className="size-4" />
+          <Compass className="size-4" /> Rollen finden <ArrowRight className="size-4" />
         </Link>
         <p className="mx-auto mt-4 max-w-sm text-xs text-muted">
-          Prefer the terminal? Run <code className="rounded bg-surface-hover px-1 py-0.5 font-mono">career-ops scan</code>, or add job URLs to{" "}
+          Lieber im Terminal? Führen Sie <code className="rounded bg-surface-hover px-1 py-0.5 font-mono">career-ops scan</code> aus oder tragen Sie Stellen-URLs ein in{" "}
           <code className="rounded bg-surface-hover px-1 py-0.5 font-mono">data/pipeline.md</code>.
         </p>
       </div>

@@ -40,14 +40,14 @@ test("open state: checked open, closed by verdict, closed by close date, never c
 
 test("labels read plainly", () => {
   const l = ageLabels(awaitingAge({ firstSeen: "2026-11-22", postedAt: "2026-11-10", check: { result: "active", day: "2026-11-23" } }, TODAY));
-  assert.deepEqual(l, { found: "Found 1 day ago", posted: "Posted 13 days ago", open: "Open, checked today" });
+  assert.deepEqual(l, { found: "Gefunden vor 1 Tag", posted: "Veröffentlicht vor 13 Tagen", open: "Offen, geprüft heute" });
   const u = ageLabels(awaitingAge({}, TODAY));
-  assert.deepEqual(u, { found: "Found: unknown", posted: "Posted: unknown", open: "Not checked" });
-  assert.equal(ageLabels(awaitingAge({ postedAt: TODAY, check: { result: "expired", day: TODAY } }, TODAY)).open, "Closed, checked today");
-  assert.equal(ageLabels(awaitingAge({ check: { result: "expired", day: "2026-11-21" } }, TODAY)).open, "Closed, checked 2 days ago");
-  assert.equal(ageLabels(awaitingAge({ check: { result: "active", day: "2026-11-21" } }, TODAY, "2026-11-22")).open, "Closed", "a close date has no check day");
-  assert.equal(ageLabels(awaitingAge({}, TODAY, "2026-11-22")).open, "Closed");
-  assert.equal(ageLabels(awaitingAge({ postedAt: TODAY }, TODAY)).posted, "Posted today");
+  assert.deepEqual(u, { found: "Gefunden: unbekannt", posted: "Veröffentlicht: unbekannt", open: "Nicht geprüft" });
+  assert.equal(ageLabels(awaitingAge({ postedAt: TODAY, check: { result: "expired", day: TODAY } }, TODAY)).open, "Geschlossen, geprüft heute");
+  assert.equal(ageLabels(awaitingAge({ check: { result: "expired", day: "2026-11-21" } }, TODAY)).open, "Geschlossen, geprüft vor 2 Tagen");
+  assert.equal(ageLabels(awaitingAge({ check: { result: "active", day: "2026-11-21" } }, TODAY, "2026-11-22")).open, "Geschlossen", "a close date has no check day");
+  assert.equal(ageLabels(awaitingAge({}, TODAY, "2026-11-22")).open, "Geschlossen");
+  assert.equal(ageLabels(awaitingAge({ postedAt: TODAY }, TODAY)).posted, "Veröffentlicht heute");
 });
 
 test("a closed posting stays listed but sorts after every open one", () => {

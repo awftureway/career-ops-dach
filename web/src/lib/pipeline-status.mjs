@@ -32,11 +32,11 @@ export async function saveStatus(n, current, next, request = fetch) {
   });
   const result = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(typeof result?.error === "string" ? result.error : "Could not save status. Please try again.");
+    throw new Error(typeof result?.error === "string" ? result.error : "Status konnte nicht gespeichert werden. Bitte erneut versuchen.");
   }
   // Inputs come from the canonical dropdown; the endpoint echoes that label.
   if (result?.ok !== true || result.status !== next) {
-    throw new Error("Could not confirm the saved status. Refresh before trying again.");
+    throw new Error("Der gespeicherte Status konnte nicht bestätigt werden. Laden Sie die Seite neu und versuchen Sie es erneut.");
   }
   return result.status;
 }
@@ -54,10 +54,10 @@ export async function undoStatus(n, request = fetch) {
   });
   const result = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(typeof result?.error === "string" ? result.error : "Could not undo. Please try again.");
+    throw new Error(typeof result?.error === "string" ? result.error : "Rückgängig machen fehlgeschlagen. Bitte erneut versuchen.");
   }
   if (result?.ok !== true || typeof result.status !== "string") {
-    throw new Error("Could not confirm the undo. Refresh before trying again.");
+    throw new Error("Das Rückgängigmachen konnte nicht bestätigt werden. Laden Sie die Seite neu und versuchen Sie es erneut.");
   }
   return result.status;
 }

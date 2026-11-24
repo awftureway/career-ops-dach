@@ -11,7 +11,7 @@ test("the inbox list sits above LinkedIn and the filters", () => {
   const list = triage.indexOf("<ul");
   const paste = triage.indexOf("<LinkedInPaste");
   const filters = triage.indexOf("<FacetChips");
-  const keys = triage.indexOf("j and k move");
+  const keys = triage.indexOf("j und k navigieren");
   assert.ok(list > 0, "the inbox renders a list");
   assert.ok(paste > list, "LinkedIn sits under the list");
   assert.ok(filters > list, "the filters sit under the list");
@@ -27,7 +27,7 @@ test("a filter keeps the batch cap and a way to see more", () => {
   assert.match(triage, /const capped = !showAll;/);
   assert.doesNotMatch(triage, /const capped = !showAll && !anyFacet;/);
   assert.match(triage, /ordered\.slice\(0, BATCH\)/);
-  assert.match(triage, /See all \{ordered\.length\}\{anyFacet \? " matches" : " in inbox"\}/);
+  assert.match(triage, /Alle \{ordered\.length\} anzeigen\{anyFacet \? " \(Treffer\)" : " \(im Posteingang\)"\}/);
   assert.match(triage, /onClick=\{\(\) => setShowAll\(true\)\}/);
   assert.match(triage, /listTopRef\.current\?\.scrollIntoView/);
   assert.match(triage, /setShowAll\(false\)/);

@@ -60,7 +60,7 @@ function KeywordField({
         <span key={v} className={cn("co-fb__chip", tone === "inc" ? "inc" : "border-border bg-surface-hover text-muted")}>
           {tone === "exc" && <Ban className="size-3 opacity-70" />}
           {v}
-          <button type="button" aria-label={`Remove ${v}`} onClick={() => onChange(values.filter((x) => x !== v))}>
+          <button type="button" aria-label={`${v} entfernen`} onClick={() => onChange(values.filter((x) => x !== v))}>
             <X className="size-3" />
           </button>
         </span>
@@ -106,7 +106,7 @@ const QUOTE_HINT_CITY = "explore-quote-hint-city";
 const QUOTE_HINT_MORE = "explore-quote-hint-more";
 
 function QuoteHint({ id }: { id: string }) {
-  return <p id={id} className="mt-1 text-[11px] text-faint">An entry with a comma goes in double quotes: &quot;Portland, OR&quot;.</p>;
+  return <p id={id} className="mt-1 text-[11px] text-faint">Ein Eintrag mit Komma steht in doppelten Anführungszeichen: &quot;Portland, OR&quot;.</p>;
 }
 
 function Label({ children, hint }: { children: React.ReactNode; hint?: string }) {
@@ -144,46 +144,46 @@ export function FilterBuilder({
     <fieldset disabled={disabled} className="space-y-4">
       <style>{STYLE}</style>
       <fieldset>
-        <legend className="mb-1.5 text-[13px] font-medium">Discovery sources</legend>
+        <legend className="mb-1.5 text-[13px] font-medium">Quellen für die Entdeckung</legend>
         <div className="flex flex-wrap gap-4 text-sm">
           <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={dach} onChange={() => set({ preset: DACH_PRESET, employers: [...DACH_SOURCES] as EmployerSource[] })} />DACH-Jobbörsen</label>
           <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={!employer} onChange={() => set({ preset: undefined })} />join.com (ATS)</label>
-          <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={filters.preset === CHINA_PRESET} onChange={() => set({ preset: CHINA_PRESET, employers: [...CHINA_SOURCES] as EmployerSource[] })} />China employer preset</label>
+          <label className="inline-flex items-center gap-2"><input type="radio" name="explore-preset" checked={filters.preset === CHINA_PRESET} onChange={() => set({ preset: CHINA_PRESET, employers: [...CHINA_SOURCES] as EmployerSource[] })} />China-Arbeitgeber-Vorlage</label>
         </div>
       </fieldset>
       {employer && <fieldset aria-describedby="employer-scope employer-selection">
-        <legend className="mb-2 text-[13px] font-medium">{dach ? "Jobbörsen" : "Employers"}</legend>
+        <legend className="mb-2 text-[13px] font-medium">{dach ? "Jobbörsen" : "Arbeitgeber"}</legend>
         <div className="flex flex-wrap gap-4">{presetSources.map(id => <label key={id} className="inline-flex items-center gap-2 text-sm">
           <input type="checkbox" checked={filters.employers?.includes(id as EmployerSource) ?? false} onChange={e => set({ employers: e.target.checked ? [...(filters.employers ?? []), id as EmployerSource] : (filters.employers ?? []).filter(x => x !== id) })} />{EMPLOYER_LABEL[id as keyof typeof EMPLOYER_LABEL]}
         </label>)}</div>
-        <p id="employer-selection" className="mt-2 text-xs text-muted">{filters.employers?.length ? "Only selected employers will be scanned." : "Select at least one employer to start a scan."}</p>
-        {dach ? <p id="employer-scope" className="mt-2 text-xs text-muted">Rollen- und Ortsbegriffe sind optional (leer = alle Titel; Rollenbegriffe steuern auch die Suche bei Bundesagentur und stellenanzeigen.de, sonst gelten KI/Digitalisierung/Industrie 4.0). Kein Datumsfilter. Treffer bei Arbeitnow, GermanTechJobs und stellenanzeigen.de sind Aggregator-Listings: vor der Bewerbung beim Arbeitgeber bestätigen.</p> : <p id="employer-scope" className="mt-2 text-xs text-muted">Employer selection does not guarantee mainland-China, technical or experienced-hire eligibility. Check the original JD. Role and location terms are optional; unknown locations may remain, and remote titles may match. Locations are term filters, not eligibility checks. No posting-date cutoff applies. Other ATS filters are inactive for this preset. Coverage is limited to 10 pages per employer; limits or source problems are reported as incomplete.</p>}
+        <p id="employer-selection" className="mt-2 text-xs text-muted">{filters.employers?.length ? "Nur ausgewählte Arbeitgeber werden gescannt." : "Wählen Sie mindestens einen Arbeitgeber, um einen Scan zu starten."}</p>
+        {dach ? <p id="employer-scope" className="mt-2 text-xs text-muted">Rollen- und Ortsbegriffe sind optional (leer = alle Titel; Rollenbegriffe steuern auch die Suche bei Bundesagentur und stellenanzeigen.de, sonst gelten KI/Digitalisierung/Industrie 4.0). Kein Datumsfilter. Treffer bei Arbeitnow, GermanTechJobs und stellenanzeigen.de sind Aggregator-Listings: vor der Bewerbung beim Arbeitgeber bestätigen.</p> : <p id="employer-scope" className="mt-2 text-xs text-muted">Die Arbeitgeberauswahl garantiert keine Eignung für Festland-China, technische Rollen oder Berufserfahrene. Prüfen Sie die Original-Stellenanzeige. Rollen- und Ortsbegriffe sind optional; unbekannte Orte können erhalten bleiben, und Remote-Titel können treffen. Orte sind Begriffsfilter, keine Eignungsprüfung. Es gilt kein Stichtag für das Veröffentlichungsdatum. Andere ATS-Filter sind für diese Vorlage inaktiv. Die Abdeckung ist auf 10 Seiten pro Arbeitgeber begrenzt; Limits oder Quellenprobleme werden als unvollständig gemeldet.</p>}
       </fieldset>}
 
       <div>
-        <Label hint={filters.positive.length === 0 ? (employer ? "empty = all titles" : "empty = every fresh posting") : undefined}>Roles to find</Label>
-        <KeywordField ariaLabel="Roles to find" values={filters.positive} tone="inc" placeholder="AI platform, ML infrastructure, staff engineer…" onChange={(v) => set({ positive: v })} />
+        <Label hint={filters.positive.length === 0 ? (employer ? "leer = alle Titel" : "leer = jede neue Stellenanzeige") : undefined}>Gesuchte Rollen</Label>
+        <KeywordField ariaLabel="Gesuchte Rollen" values={filters.positive} tone="inc" placeholder="KI-Plattform, ML-Infrastruktur, Staff Engineer …" onChange={(v) => set({ positive: v })} />
         {!employer && seededFrom.length > 0 && filters.positive.length > 0 && (
-          <p className="mt-1 text-[11px] text-faint">Seeded from your {seededFrom.join(" + ")} — edit freely.</p>
+          <p className="mt-1 text-[11px] text-faint">Vorbelegt aus {seededFrom.join(" + ")} – frei änderbar.</p>
         )}
       </div>
 
       {!employer && <div>
-        <Label>Exclude</Label>
-        <KeywordField ariaLabel="Exclude" values={filters.negative} tone="exc" placeholder="manager, sales, contract…" onChange={(v) => set({ negative: v })} />
+        <Label>Ausschließen</Label>
+        <KeywordField ariaLabel="Ausschließen" values={filters.negative} tone="exc" placeholder="Manager, Vertrieb, Vertrag …" onChange={(v) => set({ negative: v })} />
       </div>}
 
       <div>
-        <Label hint="matches any city, region, country, or Remote">
+        <Label hint="passt auf Stadt, Region, Land oder Remote">
           <span className="inline-flex items-center gap-1.5">
-            <MapPin className="size-3.5 text-muted" /> City or location
+            <MapPin className="size-3.5 text-muted" /> Stadt oder Ort
           </span>
         </Label>
         <KeywordField
           values={filters.allow}
           tone="inc"
-          placeholder='Toronto, "Portland, OR", Remote…'
-          ariaLabel="City or location"
+          placeholder='Berlin, "Portland, OR", Remote …'
+          ariaLabel="Stadt oder Ort"
           describedBy={QUOTE_HINT_CITY}
           onChange={(v) => set({ allow: v })}
         />
@@ -192,9 +192,9 @@ export function FilterBuilder({
 
       {!employer && <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
         <div className="min-w-[18rem]">
-          <Label hint="postings published in this window">
+          <Label hint="in diesem Zeitraum veröffentlichte Stellenanzeigen">
             <span className="inline-flex items-center gap-1.5">
-              <Clock className="size-3.5 text-muted" /> Posted within
+              <Clock className="size-3.5 text-muted" /> Veröffentlicht innerhalb
             </span>
           </Label>
           <div className="inline-flex rounded-lg border border-border bg-surface/40 p-0.5">
@@ -215,7 +215,7 @@ export function FilterBuilder({
         </div>
 
         <div>
-          <Label hint={filters.ats.length === 0 ? "pick at least one" : undefined}>Sources</Label>
+          <Label hint={filters.ats.length === 0 ? "mindestens eine wählen" : undefined}>Quellen</Label>
           <div className="flex flex-wrap gap-1.5">
             {ATS_SOURCES.map((a) => {
               const on = filters.ats.includes(a);
@@ -243,7 +243,7 @@ export function FilterBuilder({
         className="inline-flex items-center gap-1.5 text-[12px] text-muted hover:text-foreground transition-colors max-sm:min-h-[44px]"
       >
         <SlidersHorizontal className="size-3.5" />
-        More location controls &amp; scan depth
+        Weitere Ortsoptionen &amp; Scan-Tiefe
         <ChevronDown className={cn("size-3.5 transition-transform", advanced && "rotate-180")} />
       </button>}
 
@@ -251,28 +251,28 @@ export function FilterBuilder({
         <div className="space-y-3 rounded-xl border border-border bg-surface/30 p-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <Label hint="rescues a multi-location posting">Always include</Label>
-              <KeywordField ariaLabel="Always include" describedBy={QUOTE_HINT_MORE} values={filters.alwaysAllow} tone="inc" placeholder="Toronto…" onChange={(v) => set({ alwaysAllow: v })} />
+              <Label hint="rettet Anzeigen mit mehreren Orten">Immer einschließen</Label>
+              <KeywordField ariaLabel="Immer einschließen" describedBy={QUOTE_HINT_MORE} values={filters.alwaysAllow} tone="inc" placeholder="Berlin …" onChange={(v) => set({ alwaysAllow: v })} />
             </div>
             <div>
-              <Label hint="unless Always include also matches">Exclude locations</Label>
-              <KeywordField ariaLabel="Exclude locations" describedBy={QUOTE_HINT_MORE} values={filters.block} tone="exc" placeholder="India…" onChange={(v) => set({ block: v })} />
+              <Label hint="außer „Immer einschließen“ trifft ebenfalls">Orte ausschließen</Label>
+              <KeywordField ariaLabel="Orte ausschließen" describedBy={QUOTE_HINT_MORE} values={filters.block} tone="exc" placeholder="Indien …" onChange={(v) => set({ block: v })} />
             </div>
           </div>
           <div>
-            <Label hint="hard reject — overrides Always include">Never include</Label>
-            <KeywordField ariaLabel="Never include" describedBy={QUOTE_HINT_MORE} values={filters.blockHard} tone="exc" placeholder="USA, Brazil…" onChange={(v) => set({ blockHard: v })} />
+            <Label hint="harter Ausschluss – hat Vorrang vor „Immer einschließen“">Nie einschließen</Label>
+            <KeywordField ariaLabel="Nie einschließen" describedBy={QUOTE_HINT_MORE} values={filters.blockHard} tone="exc" placeholder="USA, Brasilien …" onChange={(v) => set({ blockHard: v })} />
             <QuoteHint id={QUOTE_HINT_MORE} />
           </div>
           <div>
-            <Label hint={`${filters.limitPerAts} companies / source`}>Scan depth</Label>
+            <Label hint={`${filters.limitPerAts} Firmen / Quelle`}>Scan-Tiefe</Label>
             <input
               type="range"
               min={50}
               max={500}
               step={50}
               value={filters.limitPerAts}
-              aria-label="Scan depth"
+              aria-label="Scan-Tiefe"
               onChange={(e) => set({ limitPerAts: Number(e.target.value) })}
               className="w-full accent-brand"
             />

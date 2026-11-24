@@ -58,8 +58,8 @@ export function skillGapModel(payload, limit = 8) {
     caveats.push({
       kind: "no-known-skills",
       text:
-        "No skills were recognised in your CV, so nothing could be subtracted as already-held — " +
-        "some of these are probably skills you already have.",
+        "In Ihrem Lebenslauf wurden keine Skills erkannt, daher konnte nichts als bereits vorhanden abgezogen werden. " +
+        "Einige davon sind vermutlich Skills, die Sie bereits haben.",
     });
   }
 
@@ -80,8 +80,8 @@ export function skillGapModel(payload, limit = 8) {
       kind: "thin-coverage",
       text:
         withMs === 0
-          ? `None of the ${read} reports carry a Machine Summary — these come from Gap tables alone.`
-          : `Based on ${withMs} of ${read} reports — the rest carry no Machine Summary to read gaps from.`,
+          ? `Keiner der ${read} Berichte enthält eine Machine Summary. Die Lücken stammen allein aus den Lückentabellen.`
+          : `Basiert auf ${withMs} von ${read} Berichten. Den übrigen fehlt eine Machine Summary, aus der sich Lücken lesen ließen.`,
     });
   }
 
@@ -119,8 +119,8 @@ export function barPct(gap, all) {
 }
 
 const NUDGE = {
-  learn: "Your CV does not show this. Learn it, or aim at roles that do not ask for it.",
-  evidence: "Your CV shows some of this. If you have done more, add a bullet with the scope and the result.",
+  learn: "Ihr Lebenslauf zeigt das nicht. Lernen Sie es oder zielen Sie auf Stellen, die es nicht verlangen.",
+  evidence: "Ihr Lebenslauf zeigt davon einen Teil. Haben Sie mehr gemacht, ergänzen Sie einen Punkt mit Umfang und Ergebnis.",
 };
 
 /**
@@ -131,10 +131,10 @@ const NUDGE = {
  */
 export function blockerText(b) {
   const parts = [];
-  if (b.missing === b.skips) parts.push(`missing in all ${b.skips}`);
-  else if (b.partial === b.skips) parts.push(`partial in all ${b.skips}`);
-  else parts.push(`missing in ${b.missing}, partial in ${b.partial}`);
-  if (b.closeCalls > 0) parts.push(`${b.closeCalls} scored 3.5 or higher`);
+  if (b.missing === b.skips) parts.push(`fehlt in allen ${b.skips}`);
+  else if (b.partial === b.skips) parts.push(`teilweise in allen ${b.skips}`);
+  else parts.push(`fehlt in ${b.missing}, teilweise in ${b.partial}`);
+  if (b.closeCalls > 0) parts.push(`${b.closeCalls} mit 3,5 oder höher`);
   return { verdict: parts.join(" · "), nudge: NUDGE[b.nudge] ?? NUDGE.learn };
 }
 

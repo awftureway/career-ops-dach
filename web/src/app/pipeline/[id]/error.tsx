@@ -28,18 +28,18 @@ export default function ReportError({
       <div className="mt-8 flex gap-3 rounded-2xl border border-border bg-surface/30 p-5">
         <FileWarning className="mt-1 size-5 shrink-0 text-faint" />
         <div>
-          <h1 className="font-display text-2xl tracking-tight text-landing">Report #{id} could not be read</h1>
+          <h1 className="font-display text-2xl tracking-tight text-landing">Bericht #{id} konnte nicht gelesen werden</h1>
           <p className="mt-2 text-sm text-muted">
-            The file is there, but the server could not open it. Common causes are its permissions, a sync app
-            holding it, or a folder with a .md name under <code className="text-foreground">reports/</code>.
+            Die Datei ist vorhanden, aber der Server konnte sie nicht öffnen. Häufige Ursachen sind fehlende Berechtigungen, eine
+            Sync-App, die sie sperrt, oder ein Ordner mit einem .md-Namen unter <code className="text-foreground">reports/</code>.
           </p>
-          {error.digest && <p className="mt-3 font-mono text-xs text-faint">Error digest {error.digest}</p>}
+          {error.digest && <p className="mt-3 font-mono text-xs text-faint">Fehler-Digest {error.digest}</p>}
           <button
             type="button"
             onClick={() => retry()}
             className="mt-4 inline-flex items-center justify-center rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]"
           >
-            Try again
+            Erneut versuchen
           </button>
         </div>
       </div>

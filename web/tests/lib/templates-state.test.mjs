@@ -86,7 +86,7 @@ test("a refused save without a message falls back to a generic one", async () =>
   const { calls, done } = choiceRun(async () => ({ ok: false }));
   await done;
 
-  assert.deepEqual(calls, ["failed:Could not save."]);
+  assert.deepEqual(calls, ["failed:Speichern fehlgeschlagen."]);
 });
 
 test("a save that throws is a failure too, with no apply and no reload", async () => {
@@ -95,7 +95,7 @@ test("a save that throws is a failure too, with no apply and no reload", async (
   });
   await done;
 
-  assert.deepEqual(calls, ["failed:Could not save."]);
+  assert.deepEqual(calls, ["failed:Speichern fehlgeschlagen."]);
 });
 
 // A failed reload hides the gallery only when the list on screen is not known to

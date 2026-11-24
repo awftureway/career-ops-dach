@@ -33,12 +33,12 @@ test("a saved profile and scan targets settle failure to null", async () => {
 test("either setProfile write failing is reported on its confirmation", async () => {
   const { ctx } = context({ portals: "Your scan targets were NOT saved: write failed." });
   const info = dispatch("setProfile", { roles: ["Engineer"] }, ctx).run();
-  assert.equal(await info.failure, "Your profile was saved. Your scan targets were NOT saved: write failed.");
+  assert.equal(await info.failure, "Ihr Profil wurde gespeichert. Your scan targets were NOT saved: write failed.");
 
   const profileOnly = context({ profile: "Your profile was NOT saved: HTTP 500." });
   assert.equal(
     await dispatch("setProfile", { roles: ["Engineer"] }, profileOnly.ctx).run().failure,
-    "Your profile was NOT saved: HTTP 500. Your scan targets were saved.",
+    "Your profile was NOT saved: HTTP 500. Ihre Scan-Ziele wurden gespeichert.",
   );
   // No roles, so no scan-target write: nothing to report as saved alongside.
   assert.equal(

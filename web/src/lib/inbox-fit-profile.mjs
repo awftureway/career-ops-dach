@@ -31,7 +31,7 @@ export function applyInboxFit(jobs, load, rank) {
     const detail = err && typeof err === "object" && typeof err.message === "string" ? err.message.trim() : "";
     return {
       jobs,
-      error: detail ? `config/profile.yml: ${detail}` : "config/profile.yml could not be read.",
+      error: detail ? `config/profile.yml: ${detail}` : "config/profile.yml konnte nicht gelesen werden.",
     };
   }
 }

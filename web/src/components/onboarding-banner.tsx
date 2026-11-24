@@ -9,10 +9,10 @@ import { readSavedCliId, resolveCliId } from "@/lib/saved-cli";
 type Doctor = { available: boolean; onboardingNeeded: boolean; missing: string[]; unpersonalized?: { path: string; reason: string }[]; warnings: string[] };
 
 const LABELS: Record<string, string> = {
-  "cv.md": "your CV",
-  "config/profile.yml": "your profile — target roles, comp, location",
-  "modes/_profile.md": "your personalization",
-  "portals.yml": "the companies to scan",
+  "cv.md": "Ihren Lebenslauf",
+  "config/profile.yml": "Ihr Profil — Zielrollen, Gehalt, Ort",
+  "modes/_profile.md": "Ihre Personalisierung",
+  "portals.yml": "die zu scannenden Firmen",
 };
 
 // Detect (via the core's doctor.mjs) whether setup is incomplete, and offer to
@@ -63,7 +63,7 @@ export function OnboardingBanner() {
   const paths = setupPaths(d);
   const items = paths.map(path => LABELS[path] ? LABELS[path] + " (" + path + ")" : path);
   const kickoff =
-    `Help me finish setting up career-ops. I still need to add ${items.join(", ")} — walk me through just those, conversationally, and write the files for me. Don't ask me for anything that's already set up (for example, don't ask for my CV if it's already saved).`;
+    `Hilf mir, die Einrichtung von career-ops abzuschließen. Es fehlen noch ${items.join(", ")} — führe mich im Gespräch nur durch diese Punkte und schreibe die Dateien für mich. Frag mich nichts, was bereits eingerichtet ist (zum Beispiel nicht nach meinem Lebenslauf, wenn er schon gespeichert ist).`;
 
   return (
     <div className="dot-bg relative mb-6 overflow-hidden rounded-2xl border border-brand/30 bg-gradient-to-br from-brand/10 via-surface/40 to-transparent p-5">
@@ -77,15 +77,14 @@ export function OnboardingBanner() {
           setDismissed(true);
         }}
         className="absolute right-3 top-3 text-faint transition-colors hover:text-foreground"
-        aria-label="Dismiss"
+        aria-label="Schließen"
       >
         <X className="size-4" />
       </button>
-      <h2 className="font-display text-xl text-landing">Let&apos;s finish setting you up</h2>
+      <h2 className="font-display text-xl text-landing">Schließen wir die Einrichtung ab</h2>
       <p className="mt-1.5 max-w-xl text-sm text-muted">
-        career-ops works best when it knows you. We still need {items.join(", ")}.{" "}
-        <span className="text-foreground">No YAML to edit</span> — answer in plain language and the assistant writes it
-        for you.
+        career-ops funktioniert am besten, wenn es Sie kennt. Es fehlen noch {items.join(", ")}.{" "}
+        <span className="text-foreground">Kein YAML bearbeiten</span> — antworten Sie in einfachen Worten, der Assistent schreibt es für Sie.
       </p>
       {cli !== false ? (
         <button
@@ -93,7 +92,7 @@ export function OnboardingBanner() {
           onClick={() => window.dispatchEvent(new CustomEvent("co-assistant", { detail: { message: kickoff } }))}
           className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200 disabled:cursor-wait disabled:opacity-60"
         >
-          <Sparkles className="size-4" /> Set me up with the assistant
+          <Sparkles className="size-4" /> Mit dem Assistenten einrichten
         </button>
       ) : (
         // The assistant needs a CLI to run — without one the kickoff would silently
@@ -102,7 +101,7 @@ export function OnboardingBanner() {
           href="/config"
           className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200"
         >
-          <Settings className="size-4" /> Connect your AI CLI to get started
+          <Settings className="size-4" /> KI-CLI verbinden und loslegen
         </Link>
       )}
     </div>

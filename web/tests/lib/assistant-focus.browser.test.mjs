@@ -59,9 +59,9 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
     }
     assert.fail("control is not keyboard reachable");
   }
-  const opener = (page) => page.getByRole("button", { name: "Ask the assistant", exact: true });
-  const composer = (page) => page.getByRole("textbox", { name: "Message to assistant", exact: true });
-  const panel = (page) => page.getByRole("region", { name: "Assistant", exact: true });
+  const opener = (page) => page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true });
+  const composer = (page) => page.getByRole("textbox", { name: "Nachricht an den Assistenten", exact: true });
+  const panel = (page) => page.getByRole("region", { name: "Assistent", exact: true });
   async function openWithKeyboard(page, target = opener(page)) {
     await target.waitFor();
     await tabTo(page, target);
@@ -76,8 +76,8 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   const cdp = await page.context().newCDPSession(page);
   await cdp.send("Accessibility.enable");
   const { nodes } = await cdp.send("Accessibility.getFullAXTree");
-  assert.ok(nodes.some((node) => !node.ignored && node.role?.value === "region" && node.name?.value === "Assistant"));
-  assert.ok(nodes.some((node) => !node.ignored && node.role?.value === "textbox" && node.name?.value === "Message to assistant" && node.description?.value === "Enter sends your message. Shift+Enter adds a new line."));
+  assert.ok(nodes.some((node) => !node.ignored && node.role?.value === "region" && node.name?.value === "Assistent"));
+  assert.ok(nodes.some((node) => !node.ignored && node.role?.value === "textbox" && node.name?.value === "Nachricht an den Assistenten" && node.description?.value === "Enter sendet Ihre Nachricht. Umschalt+Enter fügt eine neue Zeile ein."));
   assert.equal(await panel(page).getAttribute("aria-modal"), null);
 
   // IME Enter/Escape must neither send nor close; Shift+Enter inserts a line.
@@ -96,7 +96,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   assert.equal(await focused(composer(page)), true);
   assert.equal(requests[0].message, "First line\nSecond line");
   await page.keyboard.type("Unsent draft");
-  await tabTo(page, page.getByRole("button", { name: "Close assistant", exact: true }));
+  await tabTo(page, page.getByRole("button", { name: "Assistent schließen", exact: true }));
   await page.keyboard.press("Enter");
   await until(() => focused(opener(page)));
   responses[0].end("Fictional reply while closed.");
@@ -125,7 +125,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   responses[1].end("Second fictional reply.");
   await page.getByText("Second fictional reply.", { exact: true }).waitFor();
   assert.equal(await focused(search), true);
-  await tabTo(page, page.getByRole("combobox", { name: "Conversation history", exact: true }));
+  await tabTo(page, page.getByRole("combobox", { name: "Unterhaltungsverlauf", exact: true }));
   await page.keyboard.press("Escape");
   assert.equal(await panel(page).count(), 1, "native select gets Escape first");
   await tabTo(page, composer(page));
@@ -135,7 +135,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   const noCli = await pageFor(false);
   await noCli.goto(`${origin.origin}/pipeline?tab=ALL`);
   await openWithKeyboard(noCli);
-  const config = noCli.getByRole("link", { name: /Pick a CLI in Config/ });
+  const config = noCli.getByRole("link", { name: /Wählen Sie in den Einstellungen eine CLI/ });
   assert.equal(await composer(noCli).isDisabled(), true);
   assert.equal(await focused(config), true);
   await noCli.keyboard.press("Escape");
@@ -162,7 +162,7 @@ test("Assistant keyboard continuation, semantic context and modeless behavior", 
   // If the opening control disappears, return to the persistent Ask affordance.
   await home.evaluate(() => window.dispatchEvent(new CustomEvent("co-assistant")));
   await until(() => focused(composer(home)));
-  await until(() => home.getByRole("button", { name: "New chat", exact: true }).isEnabled());
+  await until(() => home.getByRole("button", { name: "Neuer Chat", exact: true }).isEnabled());
   const pipelineLink = home.getByRole("complementary").getByRole("link", { name: "Pipeline", exact: true });
   await tabTo(home, pipelineLink);
   await home.keyboard.press("Enter");

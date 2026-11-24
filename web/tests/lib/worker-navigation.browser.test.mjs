@@ -65,7 +65,7 @@ async function setup(t) {
     await page.getByRole("button", { name: "Score 1 now", exact: true }).click();
     await until(() => workers.has(input), `the ${company} worker never reached /api/run`);
     send(input, { type: "status", label: "Fictional worker started" });
-    const pill = page.getByRole("complementary").getByRole("link", { name: /^Open worker: .*Running$/ });
+    const pill = page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Running$/ });
     await pill.waitFor();
     return pill;
   }
@@ -86,22 +86,22 @@ test("opening a running worker from its pill keeps the evaluation streaming to c
   await pill.click();
   await page.waitForURL((u) => u.pathname === href);
   assert.equal(await sameDocument(), true, "the pill must navigate client-side, not reload the document");
-  await page.getByText("working", { exact: true }).waitFor();
+  await page.getByText("arbeitet", { exact: true }).waitFor();
   assert.equal(workers.get(input).dropped, false, "the pill click closed the worker's stream");
 
   send(input, { type: "tool", name: "WebFetch" });
-  await page.getByText("Using WebFetch", { exact: true }).waitFor();
+  await page.getByText("Verwende WebFetch", { exact: true }).waitFor();
 
   await page.getByRole("complementary").getByRole("link", { name: "Pipeline", exact: true }).click();
   await page.waitForURL((u) => u.pathname === "/pipeline");
-  await page.getByRole("complementary").getByRole("link", { name: /^Open worker: .*Running$/ }).click();
+  await page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Running$/ }).click();
   await page.waitForURL((u) => u.pathname === href);
   assert.equal(await sameDocument(), true);
   assert.equal(workers.get(input).dropped, false);
 
   send(input, { type: "text", text: "VERDICT: 4/5 — Fictional match\n" });
   send(input, { type: "done", tokens: 100 }, true);
-  await page.getByText("done", { exact: true }).waitFor();
+  await page.getByText("fertig", { exact: true }).waitFor();
   await page.getByText("4/5", { exact: true }).waitFor();
   await until(async () => (await stored())[0]?.status === "done", "the finished job was never stored as done");
   const [job] = await stored();
@@ -127,8 +127,8 @@ test("a real reload still ends the run and the restored job reads as interrupted
   await until(() => workers.get(input).dropped, "a reload must close the stream, which stops the worker");
   await until(async () => (await stored())[0]?.status === "error", "the restored job was not marked as failed");
   const [job] = await stored();
-  assert.equal(job.steps.at(-1).label, "Interrupted (page reloaded)");
+  assert.equal(job.steps.at(-1).label, "Unterbrochen (Seite neu geladen)");
   assert.equal(job.result, undefined);
   assert.equal(saves.length, 0, "an interrupted run must not be saved as finished");
-  await page.getByRole("complementary").getByRole("link", { name: /^Open worker: .*Failed$/ }).waitFor();
+  await page.getByRole("complementary").getByRole("link", { name: /^Worker öffnen: .*Failed$/ }).waitFor();
 });

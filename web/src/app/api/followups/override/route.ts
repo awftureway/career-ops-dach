@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       return Response.json({ ok: true, appNum, date });
     });
   } catch (e) {
-    return followupsWriteError(e, "write failed");
+    return followupsWriteError(e, "Schreiben fehlgeschlagen");
   }
 }
 
@@ -79,7 +79,7 @@ export async function DELETE(req: Request) {
   }
 
   const file = followupsLogPath();
-  if (!fs.existsSync(file)) return Response.json({ error: "no follow-up log" }, { status: 404 });
+  if (!fs.existsSync(file)) return Response.json({ error: "Kein Nachfass-Protokoll vorhanden" }, { status: 404 });
   try {
     return await withLogLock(async () => {
       const { clearNextPin } = await pinApi();
@@ -90,11 +90,11 @@ export async function DELETE(req: Request) {
         rethrowBusy(error);
       }
       if (!cleared) {
-        return Response.json({ error: `no pinned next-date for application #${appNum}` }, { status: 404 });
+        return Response.json({ error: `Kein festes nächstes Datum für Bewerbung #${appNum}` }, { status: 404 });
       }
       return Response.json({ ok: true, appNum });
     });
   } catch (e) {
-    return followupsWriteError(e, "delete failed");
+    return followupsWriteError(e, "Löschen fehlgeschlagen");
   }
 }

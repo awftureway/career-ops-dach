@@ -119,7 +119,7 @@ test("the quoting the Explore form shows under its location boxes is the rule th
 test("every location box names a hint that is on the page as its description", () => {
   const source = readFileSync(FILTER_BUILDER, "utf8");
   const fields = source.split("<KeywordField").slice(1).map((s) => s.slice(0, s.indexOf("/>")));
-  for (const label of ["City or location", "Always include", "Exclude locations", "Never include"]) {
+  for (const label of ["Stadt oder Ort", "Immer einschließen", "Orte ausschließen", "Nie einschließen"]) {
     const field = fields.find((f) => f.includes(`ariaLabel="${label}"`));
     assert.ok(field, `a box labelled ${label}`);
     const ref = field.match(/describedBy=\{(\w+)\}/);

@@ -41,8 +41,8 @@ export function SearchInsights() {
   if (!model || model.state === "unavailable") {
     return (
       <Empty
-        title="Pattern analysis isn't available"
-        body="This needs analyze-patterns.mjs in the career-ops checkout. Everything else on this page still works."
+        title="Musteranalyse ist nicht verfügbar"
+        body="Dafür wird analyze-patterns.mjs im career-ops-Checkout benötigt. Alles andere auf dieser Seite funktioniert weiterhin."
       />
     );
   }
@@ -54,7 +54,7 @@ export function SearchInsights() {
       // The core's own words, plus the distance to the bar. Showing "4 of 5" is
       // the difference between "come back later" and knowing exactly when.
       <div className="mt-6 rounded-2xl border border-dashed border-border bg-surface/30 px-6 py-8 text-center">
-        <p className="font-display text-lg text-landing">Not enough applications yet</p>
+        <p className="font-display text-lg text-landing">Noch nicht genug Bewerbungen</p>
         <p className="mx-auto mt-1.5 max-w-md text-sm text-muted">{message}</p>
         {threshold ? (
           <div className="mx-auto mt-5 max-w-xs">
@@ -62,7 +62,7 @@ export function SearchInsights() {
               <div className="h-full rounded-full bg-brand/70" style={{ width: `${pct}%` }} />
             </div>
             <p className="mt-2 text-xs tabular-nums text-faint">
-              {current} of {threshold} applications
+              {current} von {threshold} Bewerbungen
             </p>
           </div>
         ) : null}
@@ -71,7 +71,7 @@ export function SearchInsights() {
   }
 
   if (model.sections.length === 0) {
-    return <Empty title="No patterns to show yet" body="Outcomes are what this reads — record a few and they'll appear here." />;
+    return <Empty title="Noch keine Muster vorhanden" body="Ausgewertet werden Ergebnisse — erfassen Sie einige, dann erscheinen sie hier." />;
   }
 
   return (
@@ -108,14 +108,14 @@ function Empty({ title, body }: { title: string; body: string }) {
 
 function Threshold({ section }: { section: ThresholdSection }) {
   return (
-    <Panel title={section.label} hint={section.sampleSize ? `${section.sampleSize} decided outcomes` : undefined}>
+    <Panel title={section.label} hint={section.sampleSize ? `${section.sampleSize} entschiedene Ergebnisse` : undefined}>
       <p className="mt-2 text-3xl tabular-nums text-foreground">
         {/* Withheld when the core says the sample does not support it: a
             "recommended 4.7" off three outcomes reads as a rule. */}
         {section.value === null ? <span className="text-faint">—</span> : section.value.toFixed(1)}
       </p>
       {section.provisional && (
-        <p className="mt-1 text-xs text-muted">Too few decided outcomes to recommend a cutoff yet.</p>
+        <p className="mt-1 text-xs text-muted">Noch zu wenige entschiedene Ergebnisse, um eine Schwelle zu empfehlen.</p>
       )}
       {section.note && <p className="mt-2 text-sm text-muted">{section.note}</p>}
     </Panel>
@@ -125,7 +125,7 @@ function Threshold({ section }: { section: ThresholdSection }) {
 function Breakdown({ section }: { section: BreakdownSection }) {
   const top = Math.max(1, ...section.rows.map((r) => Number(r.total) || 0));
   return (
-    <Panel title={section.label} hint={section.partial ? "some rows have no recorded value" : undefined}>
+    <Panel title={section.label} hint={section.partial ? "bei einigen Zeilen fehlt ein erfasster Wert" : undefined}>
       <div className="mt-3 grid gap-2">
         {section.rows.map((row, i) => {
           const label = String(row[section.dimension] ?? "—");
@@ -161,15 +161,15 @@ function Vendor({ section }: { section: VendorSection }) {
         {/* No chart at all, and the reason stated. An advance rate over 0
             identified applications is not a small number, it is no number. */}
         <p className="mt-2 text-sm text-muted">
-          {section.identified} of the applications could be matched to an ATS vendor
-          {section.minSampleForClaim ? `, and ${section.minSampleForClaim} are needed before a per-vendor rate means anything` : ""}.
+          {section.identified} der Bewerbungen ließen sich einem ATS-Anbieter zuordnen
+          {section.minSampleForClaim ? `, und es braucht ${section.minSampleForClaim}, bevor eine Rate pro Anbieter aussagekräftig ist` : ""}.
         </p>
       </Panel>
     );
   }
   const top = Math.max(1, ...section.rows.map((r) => Number(r.submitted ?? r.total) || 0));
   return (
-    <Panel title={section.label} hint={`${section.coveragePct}% of applications identified`}>
+    <Panel title={section.label} hint={`${section.coveragePct}% der Bewerbungen zugeordnet`}>
       <div className="mt-3 grid gap-2">
         {section.rows.map((row, i) => {
           const label = String(row.vendor ?? "—");
@@ -188,7 +188,7 @@ function Vendor({ section }: { section: VendorSection }) {
               <span
                 className="w-12 shrink-0 text-right text-xs tabular-nums text-faint"
                 title={provisional && section.minSampleForClaim
-                  ? `Fewer than ${section.minSampleForClaim} applications through this vendor, so no rate is claimed yet`
+                  ? `Weniger als ${section.minSampleForClaim} Bewerbungen über diesen Anbieter, daher wird noch keine Rate angegeben`
                   : undefined}
               >
                 {rate !== null && Number.isFinite(rate) ? `${rate}%` : "—"}

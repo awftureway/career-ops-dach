@@ -44,14 +44,14 @@ const { unsupportedInAppAts, checklistHrefFor } = await import("../../src/lib/ap
 const { sessionFollowUp } = await import("../../src/lib/apply/session-result.mjs");
 
 const MESSAGE = {
-  Workday: "This posting is on Workday. Career-ops cannot fill Workday, iCIMS, or UKG forms in the app, so no browser was opened.",
-  iCIMS: "This posting is on iCIMS. Career-ops cannot fill Workday, iCIMS, or UKG forms in the app, so no browser was opened.",
-  UKG: "This posting is on UKG. Career-ops cannot fill Workday, iCIMS, or UKG forms in the app, so no browser was opened.",
+  Workday: "Diese Stellenanzeige liegt auf Workday. career-ops kann Workday-, iCIMS- oder UKG-Formulare in der App nicht ausfüllen, daher wurde kein Browser geöffnet.",
+  iCIMS: "Diese Stellenanzeige liegt auf iCIMS. career-ops kann Workday-, iCIMS- oder UKG-Formulare in der App nicht ausfüllen, daher wurde kein Browser geöffnet.",
+  UKG: "Diese Stellenanzeige liegt auf UKG. career-ops kann Workday-, iCIMS- oder UKG-Formulare in der App nicht ausfüllen, daher wurde kein Browser geöffnet.",
 };
 const CLOSED = {
-  Workday: "This posting is on Workday. Career-ops cannot fill Workday, iCIMS, or UKG forms in the app. The window was closed.",
-  iCIMS: "This posting is on iCIMS. Career-ops cannot fill Workday, iCIMS, or UKG forms in the app. The window was closed.",
-  UKG: "This posting is on UKG. Career-ops cannot fill Workday, iCIMS, or UKG forms in the app. The window was closed.",
+  Workday: "Diese Stellenanzeige liegt auf Workday. career-ops kann Workday-, iCIMS- oder UKG-Formulare in der App nicht ausfüllen. Das Fenster wurde geschlossen.",
+  iCIMS: "Diese Stellenanzeige liegt auf iCIMS. career-ops kann Workday-, iCIMS- oder UKG-Formulare in der App nicht ausfüllen. Das Fenster wurde geschlossen.",
+  UKG: "Diese Stellenanzeige liegt auf UKG. career-ops kann Workday-, iCIMS- oder UKG-Formulare in der App nicht ausfüllen. Das Fenster wurde geschlossen.",
 };
 
 const BLOCKED = [
@@ -241,8 +241,8 @@ test("portal tips include UKG next to Workday and iCIMS", () => {
   const names = PORTAL_TIPS.map((tip) => tip.portal);
   assert.deepEqual(names.slice(0, 3), ["Workday", "iCIMS", "UKG"]);
   const ukg = PORTAL_TIPS.find((tip) => tip.portal === "UKG");
-  assert.match(ukg.tip, /account/i);
-  assert.match(ukg.tip, /session expires/i);
+  assert.match(ukg.tip, /Konto/i);
+  assert.match(ukg.tip, /Sitzung läuft ab/i);
 });
 
 test("greenhouse, Lever, Ashby, and a lookalike host are not blocked", async () => {
@@ -467,7 +467,7 @@ describe("openSession closes a career page whose Apply link is a blocked ATS", {
       applyClick: true,
       extraPages: [{ url: () => "https://acme.wd1.myworkdayjobs.com/en-US/External/job/Role" }],
     });
-    await assert.rejects(() => openSession(career), /Couldn't find a fillable form/);
+    await assert.rejects(() => openSession(career), /kein ausfüllbares Formular/);
     assert.deepEqual(closed, [true]);
   });
 

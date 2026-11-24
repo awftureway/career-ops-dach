@@ -82,13 +82,13 @@ export function BetaBanner() {
 
   return (
     <>
-      <aside aria-label="Pre-release build" className="fixed bottom-3 left-3 z-[70] flex items-center gap-2 rounded-full border border-brand/30 bg-surface/90 px-3 py-1.5 text-xs shadow-lg backdrop-blur-md md:w-[13.5rem] md:min-w-0 md:max-w-[13.5rem] md:flex-wrap">
+      <aside aria-label="Vorabversion" className="fixed bottom-3 left-3 z-[70] flex items-center gap-2 rounded-full border border-brand/30 bg-surface/90 px-3 py-1.5 text-xs shadow-lg backdrop-blur-md md:w-[13.5rem] md:min-w-0 md:max-w-[13.5rem] md:flex-wrap">
         <span className="flex items-center gap-1.5 font-medium text-brand-text">
           <span className="size-1.5 animate-pulse rounded-full bg-brand" /> {meta.version} · {meta.channel}
         </span>
         {meta.sha && <span className="hidden font-mono text-faint sm:inline">{meta.sha}</span>}
         <button onClick={openReport} className="ml-1 inline-flex items-center justify-center gap-1 rounded-full bg-brand-soft px-2 py-0.5 font-medium text-brand-text transition-colors hover:bg-brand/15 max-sm:min-h-[44px]">
-          <Bug className="size-3" /> Report a bug
+          <Bug className="size-3" /> Fehler melden
         </button>
       </aside>
 
@@ -103,8 +103,8 @@ export function BetaBanner() {
         >
             <div className="mb-3 flex items-center gap-2">
               <Bug className="size-4 text-brand-text" />
-              <h2 id="bug-report-title" className="text-sm font-semibold text-foreground">Report a bug · {diag.channel}</h2>
-              <button onClick={() => setOpen(false)} aria-label="Close" className="ml-auto text-faint transition-colors hover:text-foreground">
+              <h2 id="bug-report-title" className="text-sm font-semibold text-foreground">Fehler melden · {diag.channel}</h2>
+              <button onClick={() => setOpen(false)} aria-label="Schließen" className="ml-auto text-faint transition-colors hover:text-foreground">
                 <X className="size-4" />
               </button>
             </div>
@@ -113,7 +113,7 @@ export function BetaBanner() {
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
               rows={4}
-              placeholder="What were you doing, and what went wrong?"
+              placeholder="Was haben Sie getan, und was ist schiefgelaufen?"
               className="w-full resize-none rounded-lg border border-border bg-surface/60 px-3 py-2 text-sm outline-none transition focus:border-brand/50 focus:ring-2 focus:ring-brand/20"
             />
             {desc.trim().split(/\s+/).length >= 3 && (
@@ -122,7 +122,7 @@ export function BetaBanner() {
                 disabled={searching}
                 className="mt-2 inline-flex items-center gap-1.5 text-xs text-muted transition-colors hover:text-brand-text disabled:opacity-60"
               >
-                {searching ? <Loader2 className="size-3 animate-spin" /> : <Search className="size-3" />} Check for existing reports first
+                {searching ? <Loader2 className="size-3 animate-spin" /> : <Search className="size-3" />} Zuerst nach vorhandenen Meldungen suchen
               </button>
             )}
             {searchFailed && (
@@ -130,16 +130,16 @@ export function BetaBanner() {
               // check is to spare a duplicate, and if we cannot run it the
               // right move is to file anyway rather than to stall.
               <p className="mt-2 text-xs text-muted">
-                Couldn&apos;t reach GitHub to check — file it anyway, a duplicate is cheaper than a lost report.
+                GitHub war für die Prüfung nicht erreichbar — melden Sie es trotzdem, ein Duplikat ist besser als eine verlorene Meldung.
               </p>
             )}
             <details className="mt-3 rounded-lg border border-border bg-surface/40">
-              <summary className="cursor-pointer select-none px-3 py-2 text-xs font-medium text-muted">Exactly what gets attached — review before sending ↓</summary>
+              <summary className="cursor-pointer select-none px-3 py-2 text-xs font-medium text-muted">Genau das wird angehängt — vor dem Senden prüfen ↓</summary>
               <pre className="max-h-52 overflow-auto whitespace-pre-wrap border-t border-border px-3 py-2 font-mono text-[11px] leading-relaxed text-muted">{issueBody(diag, desc)}</pre>
             </details>
             {similar.length > 0 && (
               <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2">
-                <p className="text-xs font-medium text-amber-800 dark:text-amber-400">Already reported? A 👍 on an existing issue beats a duplicate:</p>
+                <p className="text-xs font-medium text-amber-800 dark:text-amber-400">Schon gemeldet? Ein 👍 bei einem bestehenden Issue ist besser als ein Duplikat:</p>
                 <ul className="mt-1.5 space-y-1">
                   {similar.map((s) => (
                     <li key={s.number}>
@@ -153,11 +153,11 @@ export function BetaBanner() {
               </div>
             )}
             <p className="mt-2 flex items-start gap-1.5 text-[11px] text-faint">
-              <ShieldCheck className="mt-px size-3.5 shrink-0 text-emerald-500" /> Opens a GitHub issue you confirm — nothing is sent until you click. NEVER includes your CV, profile, application answers, or job URLs.
+              <ShieldCheck className="mt-px size-3.5 shrink-0 text-emerald-500" /> Öffnet ein GitHub-Issue, das Sie bestätigen — vor Ihrem Klick wird nichts gesendet. Enthält NIE Ihren Lebenslauf, Ihr Profil, Bewerbungsantworten oder Stellen-URLs.
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <button onClick={() => setOpen(false)} className="rounded-full px-4 py-2 text-sm text-muted transition-colors hover:text-foreground">
-                Cancel
+                Abbrechen
               </button>
               <a
                 href={issueUrl(diag, desc)}
@@ -166,7 +166,7 @@ export function BetaBanner() {
                 onClick={() => setOpen(false)}
                 className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200"
               >
-                <Bug className="size-4" /> Open GitHub issue
+                <Bug className="size-4" /> GitHub-Issue öffnen
               </a>
             </div>
         </Modal>

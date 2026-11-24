@@ -28,12 +28,12 @@ test("the report, the studio, and the checklist keep the view link and add downl
   const checklist = readFileSync(new URL("./components/apply-checklist.tsx", root), "utf8");
   const actions = readFileSync(new URL("./components/cv-pdf-file-actions.tsx", root), "utf8");
   for (const src of [pdf, studio, checklist]) assert.match(src, /CvPdfFileActions/);
-  assert.match(actions, /Download PDF/);
-  assert.match(actions, /Show in Finder/);
-  assert.match(actions, /title="Reveal the file"/);
+  assert.match(actions, /PDF herunterladen/);
+  assert.match(actions, /Im Finder zeigen/);
+  assert.match(actions, /title="Datei anzeigen"/);
   assert.match(actions, /pdfDownloadHref\(viewHref\)/);
-  assert.match(pdf, /View tailored CV/);
-  assert.match(studio, /Open \{save\.pdf\}/);
+  assert.match(pdf, /Angepassten Lebenslauf ansehen/);
+  assert.match(studio, /\{save\.pdf\} öffnen/);
   assert.match(checklist, /href=\{file\.downloadHref\}/);
-  assert.match(checklist, />\s*View\s*</);
+  assert.match(checklist, />\s*Ansehen\s*</);
 });

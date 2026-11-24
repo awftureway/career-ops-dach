@@ -84,7 +84,7 @@ export async function POST(req: Request) {
       cliId = body.cliId || "";
       const text = (body.text || "").trim();
       if (!text) return Response.json({ error: "empty cv text" }, { status: 400 });
-      if (text.length > MAX_CV_SOURCE_CHARS) return Response.json({ error: "That CV contains too much text. Upload a shorter CV." }, { status: 413 });
+      if (text.length > MAX_CV_SOURCE_CHARS) return Response.json({ error: "Dieser Lebenslauf enthält zu viel Text. Laden Sie einen kürzeren hoch." }, { status: 413 });
       promptSource = TEXT_SRC(text);
     } else if (ctype.includes("multipart/form-data")) {
       const form = await req.formData();
@@ -102,15 +102,15 @@ export async function POST(req: Request) {
         try {
           const bytes = await file.arrayBuffer();
           const text = /\.pdf$/i.test(file.name) ? await pdfText(bytes) : new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-          if (!text.trim() || text.includes("\0")) return Response.json({ error: "That file contains no readable CV text." }, { status: 400 });
-          if (text.length > MAX_CV_SOURCE_CHARS) return Response.json({ error: "That CV contains too much text. Upload a shorter CV." }, { status: 413 });
+          if (!text.trim() || text.includes("\0")) return Response.json({ error: "Diese Datei enthält keinen lesbaren Lebenslauftext." }, { status: 400 });
+          if (text.length > MAX_CV_SOURCE_CHARS) return Response.json({ error: "Dieser Lebenslauf enthält zu viel Text. Laden Sie einen kürzeren hoch." }, { status: 413 });
           promptSource = TEXT_SRC(text);
         } catch (error) {
-          return Response.json({ error: error instanceof Error ? error.message : "Couldn't read that CV file." }, { status: 400 });
+          return Response.json({ error: error instanceof Error ? error.message : "Diese Lebenslaufdatei konnte nicht gelesen werden." }, { status: 400 });
         }
       } else {
         if (resolved.spec.id !== "claude") {
-          return Response.json({ error: "Word upload needs Claude Code — upload a PDF or TeX file instead." }, { status: 400 });
+          return Response.json({ error: "Für den Word-Upload wird Claude Code benötigt. Laden Sie stattdessen eine PDF- oder TeX-Datei hoch." }, { status: 400 });
         }
         const dir = fs.mkdtempSync(path.join(os.tmpdir(), "career-ops-cv-"));
         tempFile = path.join(dir, "cv.docx"); // outside the repo, basename-only

@@ -24,12 +24,12 @@ const BAND_CLASS: Record<string, string> = {
 };
 
 const REASON_COPY: Record<string, string> = {
-  "no-keywords": "This report has no “Keywords extracted” block, so there is nothing to compare the CV against.",
-  "no-script": "keyword-match.mjs isn’t in this career-ops checkout.",
-  "no-report": "The report file couldn’t be found.",
-  failed: "The keyword check didn’t complete.",
-  unparseable: "The keyword check returned something unreadable.",
-  unavailable: "The keyword check isn’t available.",
+  "no-keywords": "Dieser Bericht enthält keinen Block „Keywords extracted“, daher gibt es nichts, womit der Lebenslauf verglichen werden könnte.",
+  "no-script": "keyword-match.mjs ist in diesem career-ops-Checkout nicht vorhanden.",
+  "no-report": "Die Berichtsdatei wurde nicht gefunden.",
+  failed: "Die Keyword-Prüfung wurde nicht abgeschlossen.",
+  unparseable: "Die Keyword-Prüfung lieferte ein unlesbares Ergebnis.",
+  unavailable: "Die Keyword-Prüfung ist nicht verfügbar.",
 };
 
 export function KeywordCoverage({ reportId }: { reportId: string }) {
@@ -78,7 +78,7 @@ export function KeywordCoverage({ reportId }: { reportId: string }) {
           {model.coveragePct === null ? "—" : `${model.coveragePct}%`}
         </span>
         <span className="text-sm text-muted">
-          {model.presentCount} of {model.total} JD keyword{model.total === 1 ? "" : "s"} found in your CV
+          {model.presentCount} von {model.total} Keyword{model.total === 1 ? "" : "s"} der Stellenanzeige in Ihrem Lebenslauf gefunden
         </span>
       </div>
 
@@ -109,8 +109,7 @@ export function KeywordCoverage({ reportId }: { reportId: string }) {
       </div>
 
       <p className="mt-4 text-xs text-faint">
-        Diagnostic only — nothing here edits your CV. Reformulate what you genuinely have; never add a keyword you cannot
-        back up.
+        Nur zur Diagnose — hier wird Ihr Lebenslauf nicht verändert. Formulieren Sie um, was Sie tatsächlich haben; fügen Sie nie ein Keyword hinzu, das Sie nicht belegen können.
       </p>
     </section>
   );
@@ -120,8 +119,8 @@ function Header() {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <ScanSearch className="size-4 text-brand-text" />
-      <h2 className="font-display text-base text-landing">ATS keyword coverage</h2>
-      <span className="text-xs text-faint">this JD vs your CV</span>
+      <h2 className="font-display text-base text-landing">ATS-Keyword-Abdeckung</h2>
+      <span className="text-xs text-faint">diese Stellenanzeige vs. Ihr Lebenslauf</span>
     </div>
   );
 }

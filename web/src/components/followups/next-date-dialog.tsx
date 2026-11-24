@@ -46,14 +46,14 @@ export function NextDateDialog({
       });
       const j = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
-        setError(typeof j.error === "string" ? j.error : "Could not update the pin.");
+        setError(typeof j.error === "string" ? j.error : "Termin konnte nicht aktualisiert werden.");
         setBusy(null);
         return;
       }
       onChanged();
       onClose();
     } catch {
-      setError("Could not update the pin.");
+      setError("Termin konnte nicht aktualisiert werden.");
       setBusy(null);
     }
   };
@@ -72,12 +72,12 @@ export function NextDateDialog({
     >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 id={`${id}-title`} className="font-display text-lg">Pin next follow-up</h2>
+            <h2 id={`${id}-title`} className="font-display text-lg">Nächstes Nachfassen festlegen</h2>
             <p id={`${id}-subtitle`} className="mt-0.5 text-sm text-muted">
               {entry.company} · {entry.role} <span className="text-faint">(#{entry.num})</span>
             </p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded p-1 text-faint transition hover:text-foreground">
+          <button type="button" onClick={onClose} aria-label="Schließen" className="rounded p-1 text-faint transition hover:text-foreground">
             <X className="size-4" />
           </button>
         </div>
@@ -90,7 +90,7 @@ export function NextDateDialog({
           className="mt-4 space-y-3"
         >
           <label className="block text-xs font-medium text-muted">
-            Next follow-up date
+            Datum des nächsten Nachfassens
             <input ref={dateRef} type="date" required value={date} min={today} onChange={(e) => setDate(e.target.value)} className={cn(inputCls, "mt-1")} />
           </label>
           <div className="flex gap-2">
@@ -104,12 +104,12 @@ export function NextDateDialog({
                   date === plusDays(n) && "border-brand/50 bg-brand-soft text-brand-text",
                 )}
               >
-                +{n} days
+                +{n} Tage
               </button>
             ))}
           </div>
           <p className="text-xs leading-relaxed text-faint">
-            Overrides the computed schedule until you log a follow-up, which resumes the normal cadence.
+            Überschreibt den berechneten Zeitplan, bis Sie ein Nachfassen protokollieren; danach gilt wieder der normale Takt.
           </p>
           {error && <p className="text-xs text-red-500">{error}</p>}
           <div className="flex items-center justify-end gap-2 pt-1">
@@ -119,20 +119,20 @@ export function NextDateDialog({
                 disabled={busy !== null}
                 onClick={() => void call("DELETE", { appNum: entry.num }, "clear")}
                 className="mr-auto inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-medium text-muted transition-colors hover:text-red-500 disabled:pointer-events-none disabled:opacity-60"
-                title={`Currently pinned to ${entry.nextOverride}`}
+                title={`Aktuell festgelegt auf ${entry.nextOverride}`}
               >
-                {busy === "clear" ? <Loader2 className="size-3.5 animate-spin" /> : <PinOff className="size-3.5" />} Clear pin
+                {busy === "clear" ? <Loader2 className="size-3.5 animate-spin" /> : <PinOff className="size-3.5" />} Festlegung aufheben
               </button>
             )}
             <button type="button" onClick={onClose} className="rounded-md px-3 py-2 text-sm text-muted transition hover:text-foreground">
-              Cancel
+              Abbrechen
             </button>
             <button
               type="submit"
               disabled={busy !== null}
               className="inline-flex items-center gap-1.5 rounded-md bg-brand px-3 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200 disabled:pointer-events-none disabled:opacity-60"
             >
-              {busy === "set" ? <Loader2 className="size-3.5 animate-spin" /> : <Pin className="size-3.5" />} Pin date
+              {busy === "set" ? <Loader2 className="size-3.5 animate-spin" /> : <Pin className="size-3.5" />} Datum festlegen
             </button>
           </div>
         </form>

@@ -139,8 +139,8 @@ export function showsQueue(state) {
  * @returns {string|null}
  */
 export function missingSourceLabel(input) {
-  if (input.followupsError && input.freshError) return 'Follow-ups and new matches';
-  if (input.followupsError) return 'Follow-ups';
-  if (input.freshError) return 'New matches';
+  if (input.followupsError && input.freshError) return 'Nachfassen und neue Treffer';
+  if (input.followupsError) return 'Nachfassen';
+  if (input.freshError) return 'Neue Treffer';
   return null;
 }

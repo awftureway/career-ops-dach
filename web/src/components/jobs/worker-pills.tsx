@@ -23,14 +23,14 @@ export function WorkerPills() {
   return (
     <div className="mt-4 border-t border-border pt-3">
       <div className="mb-2 flex items-center gap-2 px-1">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-faint">Workers</span>
-        {running > 0 && <span className="text-[10px] tabular-nums text-brand-text">{running} running</span>}
-        <Link href="/jobs" className="ml-auto text-faint transition-colors hover:text-foreground" title="History" aria-label="Worker history">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-faint">Worker</span>
+        {running > 0 && <span className="text-[10px] tabular-nums text-brand-text">{running} aktiv</span>}
+        <Link href="/jobs" className="ml-auto text-faint transition-colors hover:text-foreground" title="Verlauf" aria-label="Worker-Verlauf">
           <History className="size-3.5" />
         </Link>
         {finished > 0 && (
-          <button onClick={clearFinished} className="text-[10px] text-faint transition-colors hover:text-foreground" title="Clear finished">
-            clear
+          <button onClick={clearFinished} className="text-[10px] text-faint transition-colors hover:text-foreground" title="Beendete entfernen">
+            leeren
           </button>
         )}
       </div>
@@ -52,7 +52,7 @@ export function WorkerPills() {
               <button
                 onClick={() => removeJob(j.id)}
                 className="absolute right-2 top-2 rounded text-faint opacity-100 [@media(hover:hover)]:opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100"
-                aria-label={`Dismiss worker: ${workerIdentity(j)}`}
+                aria-label={`Worker ausblenden: ${workerIdentity(j)}`}
               >
                 <X className="size-3" />
               </button>

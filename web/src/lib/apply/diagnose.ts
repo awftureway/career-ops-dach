@@ -23,12 +23,12 @@ export type { ApplyIssue };
 export function statusBlock(status: number | null | undefined, headers: Record<string, string>): ApplyIssue | null {
   if (!status) return null;
   const cf = headers["cf-ray"] || headers["cf-mitigated"] || headers["cf-request-id"];
-  if (status === 401 || status === 407) return { level: "block", code: "auth-required", message: "This page needs you to sign in first. Open it directly, log in, then paste the application-form URL here." };
-  if (status === 451) return { level: "block", code: "geo-block", message: "This page is blocked for legal/region reasons. We can't open the form here." };
+  if (status === 401 || status === 407) return { level: "block", code: "auth-required", message: "Diese Seite erfordert zuerst eine Anmeldung. Öffnen Sie sie direkt, melden Sie sich an und fügen Sie dann die URL des Bewerbungsformulars hier ein." };
+  if (status === 451) return { level: "block", code: "geo-block", message: "Diese Seite ist aus rechtlichen oder regionalen Gründen gesperrt. Das Formular kann hier nicht geöffnet werden." };
   if (status === 403) return { level: "block", code: cf ? "bot-block" : "forbidden", message: cf ? "This page is behind a bot check. Open it directly in your browser, then paste the URL back here." : "This page returned “403 access denied”. Open it directly in your browser to check." };
-  if (status === 429) return { level: "block", code: "rate-limited", message: "The site is rate-limiting requests right now. Wait a minute, then try again or open it directly." };
-  if (status >= 500) return { level: "block", code: "server-error", message: `The site returned an error (status ${status}). Try again shortly, or open it directly.` };
-  if (status === 404 || status === 410) return { level: "block", code: "not-found", message: "This posting is gone (404). It's likely closed, or the link is wrong." };
+  if (status === 429) return { level: "block", code: "rate-limited", message: "Die Seite begrenzt derzeit die Anfragen. Warten Sie eine Minute und versuchen Sie es erneut oder öffnen Sie sie direkt." };
+  if (status >= 500) return { level: "block", code: "server-error", message: `Die Seite hat einen Fehler gemeldet (Status ${status}). Versuchen Sie es gleich erneut oder öffnen Sie sie direkt.` };
+  if (status === 404 || status === 410) return { level: "block", code: "not-found", message: "Diese Stellenanzeige existiert nicht mehr (404). Sie ist vermutlich geschlossen oder der Link ist falsch." };
   return null;
 }
 
@@ -54,13 +54,13 @@ export async function dismissConsent(page: Page): Promise<ApplyIssue[]> {
       const b = page.locator(sel).first();
       if ((await b.count().catch(() => 0)) && (await b.isVisible().catch(() => false))) {
         await b.click({ timeout: 2000 }).catch(() => {});
-        return [{ level: "info", code: "consent-dismissed", message: "Dismissed a cookie banner to reach the form." }];
+        return [{ level: "info", code: "consent-dismissed", message: "Ein Cookie-Banner wurde geschlossen, um das Formular zu erreichen." }];
       }
     }
     const g = page.getByRole("button", { name: /^(accept|allow|agree|got it|i agree|accept all)/i }).first();
     if (await g.count().catch(() => 0)) {
       await g.click({ timeout: 2000 }).catch(() => {});
-      return [{ level: "info", code: "consent-dismissed", message: "Dismissed a cookie banner to reach the form." }];
+      return [{ level: "info", code: "consent-dismissed", message: "Ein Cookie-Banner wurde geschlossen, um das Formular zu erreichen." }];
     }
   } catch {
     /* never let consent handling break the open */
@@ -269,7 +269,7 @@ export async function classifyEmpty(page: Page, url: string, handoffHosts?: stri
   const challUrl = /__cf_chl|challenges\.cloudflare\.com|\/cdn-cgi\/|datadome|px-captcha/.test(u);
   const challText = /(verify (you|that you)|are you human|not a robot|human verification|checking your browser|enable javascript and cookies)/.test(sig.body);
   if ([challTitle, challUrl, sig.challengeDom, challText].filter(Boolean).length >= 2) {
-    return { level: "block", code: "bot-challenge", message: "This page is asking you to verify you're human before showing the form. Open it directly in your browser, complete the check, then paste the URL back here." };
+    return { level: "block", code: "bot-challenge", message: "Diese Seite verlangt eine Prüfung, dass Sie ein Mensch sind, bevor sie das Formular zeigt. Öffnen Sie sie direkt im Browser, schließen Sie die Prüfung ab und fügen Sie die URL dann hier wieder ein." };
   }
   if (sig.hasPassword || /\/(login|sign-?in|register|sign-?up|auth|account|mfa|2fa)(\/|$|\?)/.test(u)) {
     return { level: "block", code: "login-wall", message: LOGIN_WALL_MESSAGE };
@@ -277,7 +277,7 @@ export async function classifyEmpty(page: Page, url: string, handoffHosts?: stri
   // "job not found" is how Ashby renders a closed posting: the page title stays the
   // company name, so only the body says the job is gone.
   if (/no longer accepting|position has been filled|posting is closed|no longer available|job (listing )?not found|this (job|position|posting) (is |has )?(closed|expired|been filled)/.test(sig.body) || /not found|no longer|removed|closed/.test(sig.t)) {
-    return { level: "block", code: "expired", message: "This job posting is closed or expired — it's no longer accepting applications." };
+    return { level: "block", code: "expired", message: "Diese Stellenanzeige ist geschlossen oder abgelaufen und nimmt keine Bewerbungen mehr an." };
   }
   let landedUrl = "";
   try {
@@ -290,9 +290,9 @@ export async function classifyEmpty(page: Page, url: string, handoffHosts?: stri
     return { level: "block", code: blockedAts.vendor, message: unsupportedAtsMessage(blockedAts, true) };
   }
   if (/^(jobs|careers|empleos|empregos|all jobs|open (positions|roles)|search jobs|current openings)/i.test(sig.t) || /\/(jobs|careers|search|positions)\/?(\?|$)/.test(u)) {
-    return { level: "block", code: "listing-page", message: "This looks like the careers listing, not a single application — the posting may have moved or closed. Open the specific job and paste its “Apply” URL." };
+    return { level: "block", code: "listing-page", message: "Das sieht nach der Karriereseite aus, nicht nach einer einzelnen Bewerbung. Die Stellenanzeige wurde womöglich verschoben oder geschlossen. Öffnen Sie die konkrete Stelle und fügen Sie deren „Bewerben“-URL ein." };
   }
-  return { level: "block", code: "no-form", message: "Couldn't find a fillable form on this page. If it's a job description, open its “Apply” form and paste that URL." };
+  return { level: "block", code: "no-form", message: "Auf dieser Seite wurde kein ausfüllbares Formular gefunden. Handelt es sich um eine Stellenbeschreibung, öffnen Sie deren „Bewerben“-Formular und fügen Sie diese URL ein." };
 }
 
 /** An INTERACTIVE captcha (a checkbox/widget the user must click) present on the
@@ -318,7 +318,7 @@ export async function captchaWarning(page: Page): Promise<ApplyIssue | null> {
       );
     })
     .catch(() => false);
-  return interactive ? { level: "warn", code: "captcha-present", message: "This form has a captcha you'll need to tick — do it yourself on the real form at the end." } : null;
+  return interactive ? { level: "warn", code: "captcha-present", message: "Dieses Formular enthält ein Captcha. Lösen Sie es am Ende selbst im echten Formular." } : null;
 }
 
 /** Conservatively detect a multi-STEP form (we only read/fill page 1) so we can
@@ -337,7 +337,7 @@ export async function multiStepInfo(page: Page): Promise<ApplyIssue | null> {
       return (stepText || hasNext) && !hasSubmit;
     })
     .catch(() => false);
-  return ms ? { level: "info", code: "multi-step", message: "This form has more than one step — after this page, you'll continue on the real form." } : null;
+  return ms ? { level: "info", code: "multi-step", message: "Dieses Formular hat mehrere Schritte. Nach dieser Seite machen Sie im echten Formular weiter." } : null;
 }
 
 /** True when the displayed combobox text is the option fill would click. */
@@ -483,10 +483,10 @@ export async function verifyFill(frame: Frame, fields: ApplyField[], answers: Re
   }
 
   const out: ApplyIssue[] = [];
-  if (res.mismatches.length) out.push({ level: "warn", code: "fill-mismatch", message: `These answers didn't seem to land on the real form — check them: ${res.mismatches.slice(0, 4).join(", ")}${res.mismatches.length > 4 ? "…" : ""}.` });
-  if (res.requiredEmpty.length) out.push({ level: "warn", code: "required-empty", labels: res.requiredEmpty, message: `Required and still empty — you'll need to fill ${res.requiredEmpty.length > 1 ? "these" : "this"}: ${res.requiredEmpty.slice(0, 4).join(", ")}${res.requiredEmpty.length > 4 ? "…" : ""}.` });
-  if (res.unverified.length) out.push({ level: "warn", code: "fill-unverified", message: `Couldn't read these back, so they are not counted as pre-filled: ${res.unverified.slice(0, 4).join(", ")}${res.unverified.length > 4 ? "…" : ""}.` });
-  else if (readFailed) out.push({ level: "warn", code: "fill-unverified", message: "Couldn't read the form back, so it is not counted as pre-filled." });
-  for (const v of res.valErrors) out.push({ level: "warn", code: "validation", message: `The form flagged: “${v}”.` });
+  if (res.mismatches.length) out.push({ level: "warn", code: "fill-mismatch", message: `Diese Antworten sind im echten Formular offenbar nicht angekommen. Bitte prüfen: ${res.mismatches.slice(0, 4).join(", ")}${res.mismatches.length > 4 ? "…" : ""}.` });
+  if (res.requiredEmpty.length) out.push({ level: "warn", code: "required-empty", labels: res.requiredEmpty, message: `Pflichtfeld noch leer. Bitte ${res.requiredEmpty.length > 1 ? "diese" : "dieses"} ausfüllen: ${res.requiredEmpty.slice(0, 4).join(", ")}${res.requiredEmpty.length > 4 ? "…" : ""}.` });
+  if (res.unverified.length) out.push({ level: "warn", code: "fill-unverified", message: `Diese Felder ließen sich nicht zurücklesen und zählen daher nicht als vorausgefüllt: ${res.unverified.slice(0, 4).join(", ")}${res.unverified.length > 4 ? "…" : ""}.` });
+  else if (readFailed) out.push({ level: "warn", code: "fill-unverified", message: "Das Formular ließ sich nicht zurücklesen und zählt daher nicht als vorausgefüllt." });
+  for (const v of res.valErrors) out.push({ level: "warn", code: "validation", message: `Das Formular meldet: „${v}“.` });
   return out;
 }

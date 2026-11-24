@@ -102,7 +102,7 @@ export async function GET() {
     // look like defaults, or the form saves those defaults with no revision
     // once the file can be read again.
     if (code !== "ENOENT") {
-      return Response.json({ error: "config/profile.yml could not be read." }, { status: 500 });
+      return Response.json({ error: "config/profile.yml konnte nicht gelesen werden." }, { status: 500 });
     }
   }
   if (raw !== undefined) {
@@ -113,13 +113,13 @@ export async function GET() {
       // A list or a single value is not a profile. Defaults here would look
       // like the saved cadence, and a later save is refused anyway.
       if (!isMapping(parsed)) {
-        return Response.json({ error: "config/profile.yml must contain named settings, not a list or single value." }, { status: 409 });
+        return Response.json({ error: "config/profile.yml muss benannte Einstellungen enthalten, keine Liste und keinen Einzelwert." }, { status: 409 });
       }
       profile = parsed as Record<string, unknown>;
     } catch {
       // A syntax error is not an empty profile. Defaults here would look
       // like the saved cadence, and a later save is refused anyway.
-      return Response.json({ error: "config/profile.yml could not be read as YAML." }, { status: 500 });
+      return Response.json({ error: "config/profile.yml konnte nicht als YAML gelesen werden." }, { status: 500 });
     }
     enabled = followupsEnabledFromProfile(profile);
     const source = isObj(profile.followup_cadence) ? profile.followup_cadence : {};
@@ -181,12 +181,12 @@ export async function POST(req: Request) {
       currentRevision = textRevision(source);
       parsed = yaml.load(source);
     } catch {
-      return Response.json({ error: "config/profile.yml exists but could not be read as YAML — refusing to overwrite it." }, { status: 409 });
+      return Response.json({ error: "config/profile.yml existiert, konnte aber nicht als YAML gelesen werden. Die Datei wird nicht überschrieben." }, { status: 409 });
     }
     // A parseable list/scalar is still an invalid profile. Never replace its
     // contents with a document containing only the cadence patch.
     if (!isMapping(parsed)) {
-      return Response.json({ error: "config/profile.yml must contain named settings, not a list or single value. Refusing to overwrite it." }, { status: 409 });
+      return Response.json({ error: "config/profile.yml muss benannte Einstellungen enthalten, keine Liste und keinen Einzelwert. Die Datei wird nicht überschrieben." }, { status: 409 });
     }
     base = parsed as Record<string, unknown>;
   }
@@ -195,7 +195,7 @@ export async function POST(req: Request) {
   // revision from GET are refused when another save changed the file first.
   if (typeof body.revision === "string" && body.revision !== currentRevision) {
     return Response.json({
-      error: "These cadence settings changed in another tab. The saved values were kept.",
+      error: "Diese Nachfass-Einstellungen wurden in einem anderen Tab geändert. Die gespeicherten Werte wurden beibehalten.",
       revision: currentRevision,
     }, { status: 409 });
   }
@@ -218,7 +218,7 @@ export async function POST(req: Request) {
     text = patchProfileText(source, patch, merged) ?? yaml.dump(merged, { lineWidth: 100, noRefs: true });
     atomicWriteWithBackup(resolveUserFileWriteTarget(file), text);
   } catch (e) {
-    return Response.json({ error: e instanceof Error ? e.message : "write failed" }, { status: 500 });
+    return Response.json({ error: e instanceof Error ? e.message : "Schreiben fehlgeschlagen" }, { status: 500 });
   }
   return Response.json({
     ok: true,

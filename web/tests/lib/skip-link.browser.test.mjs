@@ -25,7 +25,7 @@ test("The first Tab offers a skip link that moves focus past the navigation", { 
       await page.goto(`${origin.origin}${pathname}`);
       const main = page.getByRole("main");
       await main.waitFor();
-      const skip = page.getByRole("link", { name: "Skip to content", exact: true });
+      const skip = page.getByRole("link", { name: "Zum Inhalt springen", exact: true });
       const isFocused = (locator) => locator.evaluate((el) => el === document.activeElement);
 
       const hidden = await skip.boundingBox();
@@ -37,7 +37,7 @@ test("The first Tab offers a skip link that moves focus past the navigation", { 
       assert.ok(box && box.width > 1 && box.height > 1, `${where}: focused skip link has a visible box, got ${JSON.stringify(box)}`);
       assert.ok(box.x >= 0 && box.y >= 0 && box.x + box.width <= viewport.width && box.y + box.height <= viewport.height, `${where}: focused skip link is inside the viewport, got ${JSON.stringify(box)}`);
       const onTop = await page.evaluate(({ x, y }) => document.elementFromPoint(x, y)?.closest("a")?.textContent, { x: box.x + box.width / 2, y: box.y + box.height / 2 });
-      assert.equal(onTop, "Skip to content", `${where}: no other chrome covers the focused skip link`);
+      assert.equal(onTop, "Zum Inhalt springen", `${where}: no other chrome covers the focused skip link`);
 
       await page.keyboard.press("Enter");
       assert.equal(await isFocused(main), true, `${where}: Enter moves focus to the main region`);

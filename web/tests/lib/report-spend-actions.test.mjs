@@ -10,8 +10,8 @@ test("a row with no report does not offer tailor or the checklist", () => {
   assert.equal(blocked.generateCv, false);
   assert.equal(blocked.checklist, false);
   assert.equal(blocked.explanation, NO_REPORT_EXPLANATION);
-  assert.match(blocked.explanation, /Generate tailored CV/);
-  assert.match(blocked.explanation, /Apply checklist/);
+  assert.match(blocked.explanation, /Lebenslauf erstellen/);
+  assert.match(blocked.explanation, /Bewerbungs-Checkliste/);
 });
 
 test("a row with a report offers tailor and the checklist", () => {
@@ -23,9 +23,9 @@ test("the report page shows the verdict before the action row, and delete stays 
     join(dirname(fileURLToPath(import.meta.url)), "../../src/components/report-view.tsx"),
     "utf8",
   );
-  const verdict = src.indexOf(">Verdict<");
+  const verdict = src.indexOf(">Fazit<");
   const generate = src.indexOf("<GeneratePdfButton");
-  const checklist = src.indexOf("Apply checklist");
+  const checklist = src.indexOf("Bewerbungs-Checkliste");
   const apply = src.indexOf("<ApplyButton");
   const remove = src.indexOf("<DeleteFromTracker");
   assert.ok(verdict !== -1 && generate !== -1 && remove !== -1);

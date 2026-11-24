@@ -72,20 +72,20 @@ export function OnboardingProgress({ compact = false }: { compact?: boolean }) {
   }
 
   const { showSections, done, total, asks } = panel;
-  const kickoff = `Let's finish setting me up. Still to do: ${asks.join("; ")}. Walk me through it like a recruiter building my brief — one or two things at a time, propose what you infer from my CV, and let me confirm each piece. Don't ask for anything already on file.`;
+  const kickoff = `Lass uns meine Einrichtung abschließen. Noch offen: ${asks.join("; ")}. Führe mich wie ein Recruiter, der mein Briefing erstellt, durch die Schritte — jeweils ein bis zwei Punkte, schlage vor, was du aus meinem Lebenslauf ableitest, und lass mich jeden Teil bestätigen. Frage nichts ab, was schon vorliegt.`;
   const visibleSections = panel.mode === "link" ? sections.filter((s) => s.state !== "filled") : sections;
 
   return (
-    <aside className={`rounded-2xl border border-border bg-surface/40 ${compact ? "p-4" : "p-5"}`} aria-label="Setup progress">
+    <aside className={`rounded-2xl border border-border bg-surface/40 ${compact ? "p-4" : "p-5"}`} aria-label="Einrichtungsfortschritt">
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="text-sm font-medium text-foreground">
-          {panel.mode === "link" ? "Optional profile details" : "Your profile, as it takes shape"}
+          {panel.mode === "link" ? "Optionale Profilangaben" : "Ihr Profil nimmt Gestalt an"}
         </h2>
         {panel.mode === "checklist" ? (
           <span className="font-mono text-xs text-muted">{done}/{total}</span>
         ) : (
           <button type="button" onClick={() => setOptionalOpen(false)} className="text-xs text-muted hover:text-foreground">
-            Hide
+            Ausblenden
           </button>
         )}
       </div>
@@ -100,7 +100,7 @@ export function OnboardingProgress({ compact = false }: { compact?: boolean }) {
           <Row key={p.key} state={missing.has(p.key) ? "missing" : "filled"} label={p.label} />
         ))}
         {showSections && panel.mode === "checklist" && (
-          <li className="pt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">personalization — what evaluations score against</li>
+          <li className="pt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-faint">Personalisierung — Grundlage der Bewertungen</li>
         )}
         {showSections && visibleSections.map((s) => (
           <Row key={s.id} state={s.state} label={s.heading.replace(/^## Your /, "")} />
@@ -113,11 +113,11 @@ export function OnboardingProgress({ compact = false }: { compact?: boolean }) {
           onClick={() => window.dispatchEvent(new CustomEvent("co-assistant", { detail: { message: kickoff } }))}
           className="mt-4 inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200 disabled:cursor-wait disabled:opacity-60"
         >
-          <Sparkles className="size-4" /> Continue with the assistant
+          <Sparkles className="size-4" /> Mit dem Assistenten fortfahren
         </button>
       ) : (
         <p className="mt-4 text-xs text-muted">
-          Connect your AI CLI in <a href="/config" className="text-foreground underline-offset-2 hover:underline">Config</a> and the assistant fills this in with you.
+          Verbinden Sie Ihre KI-CLI in den <a href="/config" className="text-foreground underline-offset-2 hover:underline">Einstellungen</a>, dann füllt der Assistent dies gemeinsam mit Ihnen aus.
         </p>
       )}
     </aside>
@@ -127,7 +127,7 @@ export function OnboardingProgress({ compact = false }: { compact?: boolean }) {
 function Row({ state, label }: { state: "filled" | "template" | "missing"; label: string }) {
   const Icon = state === "filled" ? Check : state === "template" ? CircleDashed : Circle;
   const tone = state === "filled" ? "text-foreground" : "text-muted";
-  const hint = state === "template" ? "still the example" : state === "missing" ? "not yet" : "";
+  const hint = state === "template" ? "noch Beispiel" : state === "missing" ? "noch nicht" : "";
   return (
     <li className={`flex items-center gap-2 ${tone}`}>
       <Icon className={`size-3.5 shrink-0 ${state === "filled" ? "text-brand-text" : "text-faint"}`} aria-hidden />

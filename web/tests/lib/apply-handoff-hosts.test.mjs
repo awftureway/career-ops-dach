@@ -98,9 +98,9 @@ test("Apply refuses a handoff host before any browser opens", async () => {
   assert.equal(body.unsupported, true);
   assert.equal(body.postingUrl, "https://acme.gupy.io/jobs/123");
   assert.match(body.message, /apply\.handoff_hosts/);
-  assert.match(body.message, /no browser was opened/);
+  assert.match(body.message, /kein Browser geöffnet/);
   assert.ok(body.checklistHref, "the CV path and answers stay one click away");
-  assert.match(unsupportedAtsMessage(hit, true), /The window was closed\./);
+  assert.match(unsupportedAtsMessage(hit, true), /Das Fenster wurde geschlossen\./);
 });
 
 test("unlisted hosts and the built-in refusals are unchanged", async () => {

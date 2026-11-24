@@ -63,7 +63,7 @@ export async function POST(req: Request) {
 
   let convo: string;
   try { convo = buildConversationContext(body.history ?? []); }
-  catch { return Response.json({ error: "Invalid conversation history" }, { status: 400 }); }
+  catch { return Response.json({ error: "Ungültiger Gesprächsverlauf" }, { status: 400 }); }
   const pageLine = pageContext
     ? `\n\nCURRENT PAGE (the user is looking at this right now): ${pageContext}\nWhen the user's message is ambiguous ("this", "it", "apply", "evaluate this", "draft it"), assume it refers to what's on the current page.`
     : "";

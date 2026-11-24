@@ -11,12 +11,12 @@ export const maxDuration = 150;
 type RouteContext = { params: Promise<{ n: string }> };
 
 const MESSAGES = {
-  "no-cli": "No AI CLI is set up. Choose one in Config, or edit the wording by hand.",
-  unfenced: "This AI CLI cannot be limited to read-only access, so the rewrite did not run. Choose Claude, Codex or Grok in Config, or edit the wording by hand.",
-  refused: "The AI CLI could not be started with read-only access, so nothing ran.",
-  failed: "The AI CLI did not finish. Check that it is signed in, then try again.",
-  "no-answer": "The AI CLI replied without a usable bullet. Try a different instruction.",
-  unsupported: "The rewrite was discarded because it adds wording this bullet does not support:",
+  "no-cli": "Es ist keine KI-CLI eingerichtet. Wählen Sie in den Einstellungen eine aus oder ändern Sie den Wortlaut von Hand.",
+  unfenced: "Diese KI-CLI lässt sich nicht auf Nur-Lese-Zugriff beschränken, daher lief die Umformulierung nicht. Wählen Sie in den Einstellungen Claude, Codex oder Grok oder ändern Sie den Wortlaut von Hand.",
+  refused: "Die KI-CLI konnte nicht mit Nur-Lese-Zugriff gestartet werden, daher lief nichts.",
+  failed: "Die KI-CLI wurde nicht fertig. Prüfen Sie, ob sie angemeldet ist, und versuchen Sie es erneut.",
+  "no-answer": "Die KI-CLI antwortete ohne brauchbaren Aufzählungspunkt. Versuchen Sie eine andere Anweisung.",
+  unsupported: "Die Umformulierung wurde verworfen, weil sie Formulierungen ergänzt, die dieser Punkt nicht belegt:",
 } as const;
 
 export async function POST(req: Request, { params }: RouteContext) {
@@ -26,7 +26,7 @@ export async function POST(req: Request, { params }: RouteContext) {
     return NextResponse.json({ error: "bulletId, instruction and cliId required" }, { status: 400 });
   }
   const instruction = body.instruction.trim().slice(0, MAX_INSTRUCTION);
-  if (!instruction) return NextResponse.json({ error: "Say how the bullet should change." }, { status: 400 });
+  if (!instruction) return NextResponse.json({ error: "Beschreiben Sie, wie sich der Punkt ändern soll." }, { status: 400 });
   const missing = missingDataFolderMessage();
   if (missing) return NextResponse.json({ error: missing }, { status: 400 });
 

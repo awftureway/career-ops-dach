@@ -51,7 +51,7 @@ export function AppShell({ children, followupsEnabled }: { children: React.React
         href="#main-content"
         className="sr-only rounded-md bg-brand text-sm font-medium text-brand-foreground focus:not-sr-only focus:fixed focus:px-3 focus:py-2 focus:left-3 focus:top-3 focus:z-[100] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
       >
-        Skip to content
+        Zum Inhalt springen
       </a>
       <MobileNav followupsEnabled={followupsEnabled} />
       <div className="flex min-h-screen">
@@ -63,10 +63,10 @@ export function AppShell({ children, followupsEnabled }: { children: React.React
             </span>
           </Link>
           <div className="mb-4 flex items-center gap-1 px-1">
-            <button type="button" onClick={toggleSidebar} aria-label="Hide sidebar" title="Hide sidebar" className="rounded-md p-2 text-muted hover:bg-surface-hover hover:text-foreground">
+            <button type="button" onClick={toggleSidebar} aria-label="Seitenleiste ausblenden" title="Seitenleiste ausblenden" className="rounded-md p-2 text-muted hover:bg-surface-hover hover:text-foreground">
               <PanelLeftClose className="size-4" />
             </button>
-            <button type="button" onClick={cycleWidth} aria-label="Change page width" title="Page width: small / medium / full" className="rounded-md p-2 text-muted hover:bg-surface-hover hover:text-foreground">
+            <button type="button" onClick={cycleWidth} aria-label="Seitenbreite ändern" title="Seitenbreite: schmal / mittel / voll" className="rounded-md p-2 text-muted hover:bg-surface-hover hover:text-foreground">
               <MoveHorizontal className="size-4" />
             </button>
           </div>
@@ -105,7 +105,7 @@ export function AppShell({ children, followupsEnabled }: { children: React.React
           </div>
         </aside>
         {collapsed && (
-          <button type="button" onClick={toggleSidebar} aria-label="Show sidebar" title="Show sidebar"
+          <button type="button" onClick={toggleSidebar} aria-label="Seitenleiste einblenden" title="Seitenleiste einblenden"
             className="fixed left-3 top-3 z-30 hidden rounded-md border border-border bg-surface p-2 text-muted hover:text-foreground md:block print:hidden">
             <PanelLeftOpen className="size-4" />
           </button>

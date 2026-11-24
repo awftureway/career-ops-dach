@@ -15,11 +15,11 @@ const KEY = "career-ops:appearance";
 export type FontChoice = { kind: "system"; family: string } | { kind: "upload"; family: string; data: string };
 
 export const ROLES = [
-  { id: "ui", label: "Menu & interface", hint: "Sidebar, buttons, forms and all general text", vars: ["--font-sans"] },
-  { id: "heading", label: "Page titles", hint: "Big titles such as “Config” and “Today”", vars: ["--font-display"] },
-  { id: "preview", label: "Preview text", hint: "Body text of previewed .md files and reports", vars: ["--font-preview"] },
-  { id: "previewHeading", label: "Preview titles", hint: "Headings inside previewed documents", vars: ["--font-preview-heading"] },
-  { id: "code", label: "Code", hint: "Code blocks, JSON and monospace text", vars: ["--font-mono"] },
+  { id: "ui", label: "Menü und Oberfläche", hint: "Seitenleiste, Buttons, Formulare und aller allgemeine Text", vars: ["--font-sans"] },
+  { id: "heading", label: "Seitentitel", hint: "Große Titel wie „Einstellungen“ und „Heute“", vars: ["--font-display"] },
+  { id: "preview", label: "Vorschautext", hint: "Fließtext von .md-Dateien und Berichten in der Vorschau", vars: ["--font-preview"] },
+  { id: "previewHeading", label: "Vorschau-Überschriften", hint: "Überschriften in Dokumenten der Vorschau", vars: ["--font-preview-heading"] },
+  { id: "code", label: "Code", hint: "Codeblöcke, JSON und Text mit fester Breite", vars: ["--font-mono"] },
 ] as const;
 export type RoleId = (typeof ROLES)[number]["id"];
 
@@ -120,7 +120,7 @@ export function initAppearance(): Promise<void> {
       const res = await fetch("/api/appearance");
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        set({ status: "error", message: body.error || "Your saved appearance settings could not be read." });
+        set({ status: "error", message: body.error || "Ihre gespeicherten Darstellungseinstellungen konnten nicht gelesen werden." });
         return;
       }
       const raw = await res.json();
@@ -136,7 +136,7 @@ export function initAppearance(): Promise<void> {
       applyAppearance(a);
       set({ settings: a, status: "ready", message: "" });
     } catch {
-      set({ status: "error", message: "Could not reach the app to load your appearance settings." });
+      set({ status: "error", message: "Die App war nicht erreichbar, um Ihre Darstellungseinstellungen zu laden." });
     }
   })();
   return started;
@@ -162,7 +162,7 @@ export function updateAppearance(change: (current: Appearance) => Appearance): b
         });
         if (!res.ok) throw new Error("rejected");
       } catch {
-        set({ message: "Could not save to your data folder. The setting applies now but will be lost on reload (font file too large?)." });
+        set({ message: "Speichern im Datenordner fehlgeschlagen. Die Einstellung gilt jetzt, geht aber beim Neuladen verloren (Schriftdatei zu groß?)." });
       }
     });
   }, 400);

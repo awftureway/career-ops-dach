@@ -127,12 +127,12 @@ test("a slow posting does not block an independent posting", async () => {
 });
 
 test("HTTP and network failures remain errors", async () => {
-  await assert.rejects(queueInboxSkip(new Map(), url, false, async () => new Response("unavailable", { status: 503 })), /Could not save/);
+  await assert.rejects(queueInboxSkip(new Map(), url, false, async () => new Response("unavailable", { status: 503 })), /nicht gespeichert werden/);
   await assert.rejects(queueInboxSkip(new Map(), url, false, async () => { throw new Error("offline"); }), /offline/);
 });
 
 for (const body of [null, {}, { ok: false }, { ok: true }, { ok: true, done: true }]) {
   test(`Undo requires confirmed success: ${JSON.stringify(body)}`, async () => {
-    await assert.rejects(queueInboxSkip(new Map(), url, false, async () => Response.json(body)), /Could not confirm/);
+    await assert.rejects(queueInboxSkip(new Map(), url, false, async () => Response.json(body)), /nicht bestätigt werden/);
   });
 }
