@@ -1,3 +1,5 @@
+> **career-ops-dach** is a personal adaptation of [career-ops](https://github.com/career-ops-hq/career-ops) by Santiago Fernández de Valderrama and contributors (MIT License, see `LICENSE`). It adds DACH job-board support (stellenanzeigen.de, Bundesagentur, Arbeitnow, GermanTechJobs), a DACH Explorer preset and German-market defaults. All credit for the underlying system goes to the original project; this repository only carries the changes listed in its commit history.
+
 <p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/wordmark-dark.svg"><img src="docs/wordmark-light.svg" alt="career-ops" width="250" height="56"></picture></p>
 
 <p align="center">The open-source AI job search agent.</p>
