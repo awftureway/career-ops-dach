@@ -24,27 +24,27 @@ export function trackerEmptyState({ tabLabel, query, minScore, matchesInAll }) {
  * @returns {TrackerEmptyPresentation}
  */
 export function trackerEmptyPresentation(state, { tabLabel, query, minScore }) {
-  const clearSearch = { id: "clear-search", label: "Clear search" };
-  const clearMin = { id: "clear-min", label: "Clear score filter" };
+  const clearSearch = { id: "clear-search", label: "Suche zurücksetzen" };
+  const clearMin = { id: "clear-min", label: "Score-Filter zurücksetzen" };
   switch (state.kind) {
     case "empty-tab":
-      return { heading: tabLabel ? `No ${tabLabel} applications yet` : "No applications yet", actions: [] };
+      return { heading: tabLabel ? `Noch keine Bewerbungen in „${tabLabel}“` : "Noch keine Bewerbungen", actions: [] };
     case "elsewhere":
       return {
-        heading: `No matches for “${query}” in ${tabLabel}`,
-        actions: [{ id: "show-all", label: `Show ${state.count} in All` }, clearSearch],
+        heading: `Keine Treffer für „${query}“ in „${tabLabel}“`,
+        actions: [{ id: "show-all", label: `${state.count} in „Alle“ anzeigen` }, clearSearch],
       };
     case "no-match":
       if (minScore != null) {
         return {
-          heading: `No matches for “${query}” at score ${minScore.toFixed(1)} or higher`,
+          heading: `Keine Treffer für „${query}“ ab Score ${minScore.toFixed(1)}`,
           actions: [clearSearch, clearMin],
         };
       }
-      return { heading: `No matches for “${query}”`, actions: [clearSearch] };
+      return { heading: `Keine Treffer für „${query}“`, actions: [clearSearch] };
     case "below-min":
       return {
-        heading: `No ${tabLabel ? `${tabLabel} ` : ""}applications score ${minScore?.toFixed(1)} or higher`,
+        heading: `${tabLabel ? `Keine Bewerbungen in „${tabLabel}“` : "Keine Bewerbungen"} mit Score ${minScore?.toFixed(1)} oder höher`,
         actions: [clearMin],
       };
     default: {

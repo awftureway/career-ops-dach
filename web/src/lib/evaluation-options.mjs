@@ -1,12 +1,12 @@
 /** Optional report work. The fit score, evidence and posting checks are mandatory. */
 export const EVALUATION_OPTIONS = Object.freeze([
-  { id: "summary", label: "Job summary", description: "Responsibilities, location and working arrangements.", words: 120 },
-  { id: "strategy", label: "Level and application strategy", description: "Seniority, positioning and negotiation considerations.", words: 220 },
-  { id: "research", label: "Salary and company research", description: "External salary benchmarks, company signals and deeper posting checks.", words: 400 },
-  { id: "customization", label: "CV and LinkedIn suggestions", description: "Changes to emphasize for this role.", words: 250 },
-  { id: "interview", label: "Interview preparation", description: "Relevant stories and questions to prepare.", words: 700 },
-  { id: "application", label: "Application drafts", description: "Cover letter and application answers when the role qualifies.", words: 500 },
-  { id: "keywords", label: "Keywords and ATS coverage", description: "Posting keywords and coverage in your existing experience.", words: 180 },
+  { id: "summary", label: "Zusammenfassung der Stelle", description: "Aufgaben, Ort und Arbeitsmodell.", words: 120 },
+  { id: "strategy", label: "Level und Bewerbungsstrategie", description: "Seniorität, Positionierung und Überlegungen zur Verhandlung.", words: 220 },
+  { id: "research", label: "Gehalts- und Firmenrecherche", description: "Externe Gehaltsvergleiche, Signale zur Firma und tiefere Prüfung der Stellenanzeige.", words: 400 },
+  { id: "customization", label: "Vorschläge für Lebenslauf und LinkedIn", description: "Änderungen, die Sie für diese Stelle hervorheben sollten.", words: 250 },
+  { id: "interview", label: "Interviewvorbereitung", description: "Passende Geschichten und Fragen zur Vorbereitung.", words: 700 },
+  { id: "application", label: "Bewerbungsentwürfe", description: "Anschreiben und Antworten auf Bewerbungsfragen, wenn die Stelle infrage kommt.", words: 500 },
+  { id: "keywords", label: "Keywords und ATS-Abdeckung", description: "Keywords der Anzeige und ihre Abdeckung in Ihrer bisherigen Erfahrung.", words: 180 },
 ]);
 export const FULL_EVALUATION = Object.freeze(EVALUATION_OPTIONS.map((option) => option.id));
 export const ESSENTIAL_EVALUATION = Object.freeze(["summary"]);
@@ -17,7 +17,7 @@ export function parseEvaluationOptions(value) {
   if (value === undefined) return { ok: true, sections: [...FULL_EVALUATION], full: true };
   if (!Array.isArray(value) || value.length > FULL_EVALUATION.length
     || value.some((id) => typeof id !== "string" || !FULL_EVALUATION.includes(id))) {
-    return { ok: false, error: "Choose valid evaluation sections before scoring." };
+    return { ok: false, error: "Wählen Sie gültige Bewertungsabschnitte, bevor Sie bewerten." };
   }
   const sections = FULL_EVALUATION.filter((id) => value.includes(id));
   return { ok: true, sections, full: sections.length === FULL_EVALUATION.length };

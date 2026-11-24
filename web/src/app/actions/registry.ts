@@ -132,7 +132,7 @@ const ACTIONS: Record<string, ActionDef> = {
     sideEffect: "none",
     run: (raw, ctx) => {
       const path = raw.path;
-      if (!isStr(path) || !isAllowedPath(path)) return { status: "ignored", note: "blocked navigation" };
+      if (!isStr(path) || !isAllowedPath(path)) return { status: "ignored", note: "Navigation blockiert" };
       ctx.push(path);
       return { status: "done" };
     },
@@ -161,11 +161,11 @@ const ACTIONS: Record<string, ActionDef> = {
     sideEffect: "spend",
     run: (raw, ctx) => {
       const url = raw.url;
-      if (!isStr(url) || !/^https?:\/\//i.test(url)) return { status: "ignored", note: "invalid url" };
+      if (!isStr(url) || !/^https?:\/\//i.test(url)) return { status: "ignored", note: "Ungültige URL" };
       const ex = ctx.jobForUrl(url);
-      if (ex && ex.status !== "error" && !raw.rerun) return { status: "ignored", note: "already evaluated" };
+      if (ex && ex.status !== "error" && !raw.rerun) return { status: "ignored", note: "Bereits bewertet" };
       const id = ctx.startJob({
-        title: isStr(raw.title) ? String(raw.title) : "Evaluate",
+        title: isStr(raw.title) ? String(raw.title) : "Bewerten",
         subtitle: isStr(raw.subtitle) ? String(raw.subtitle) : undefined,
         kind: "evaluate",
         input: url,
@@ -201,7 +201,7 @@ const ACTIONS: Record<string, ActionDef> = {
       if (pending.length === 0) {
         return {
           status: "ignored",
-          note: matches.length > 0 ? `Already evaluated every ${company} posting.` : `No pending ${company} postings in your inbox.`,
+          note: matches.length > 0 ? `Alle Stellen von ${company} sind bereits bewertet.` : `Keine offenen Stellen von ${company} im Posteingang.`,
         };
       }
 
@@ -226,7 +226,7 @@ const ACTIONS: Record<string, ActionDef> = {
       const estimate = ctx.estimateCost?.("evaluate", pending.length) ?? {};
       return {
         status: "confirm",
-        summary: formatBatchSpendConfirmation(`Evaluate ${pending.length} ${company} postings`, pending.length, estimate),
+        summary: formatBatchSpendConfirmation(`${pending.length} ${pending.length === 1 ? "Stelle" : "Stellen"} von ${company} bewerten`, pending.length, estimate),
         run: fire,
       };
     },
@@ -237,12 +237,12 @@ const ACTIONS: Record<string, ActionDef> = {
     // never spends, so it bypasses the confirm gate. The provider clamps/validates.
     sideEffect: "none",
     run: (raw, ctx) => {
-      if (!ctx.applyExplore) return { status: "ignored", note: "explore unavailable here" };
+      if (!ctx.applyExplore) return { status: "ignored", note: "Explorer hier nicht verfügbar" };
       const run = raw.run === true;
       const merge = raw.merge === true;
       ctx.push("/explore");
       ctx.applyExplore(raw, { merge, run });
-      return { status: "done", note: run ? "Scanning the ATS network for fresh roles (free)…" : "Opened Explore with your filters." };
+      return { status: "done", note: run ? "Das ATS-Netzwerk wird nach neuen Stellen durchsucht (kostenlos) …" : "Explorer mit Ihren Filtern geöffnet." };
     },
   },
 
@@ -250,9 +250,9 @@ const ACTIONS: Record<string, ActionDef> = {
     sideEffect: "spend",
     run: (raw, ctx) => {
       const target = raw.target;
-      if (!isStr(target)) return { status: "ignored", note: "missing target" };
+      if (!isStr(target)) return { status: "ignored", note: "Ziel fehlt" };
       const id = ctx.startJob({
-        title: isStr(raw.title) ? String(raw.title) : "Research",
+        title: isStr(raw.title) ? String(raw.title) : "Recherche",
         kind: "research",
         input: target,
         page: "/pipeline",
@@ -265,7 +265,7 @@ const ACTIONS: Record<string, ActionDef> = {
     sideEffect: "spend",
     run: (raw, ctx) => {
       const n = String(raw.n ?? "").trim();
-      if (!n) return { status: "ignored", note: "need an application #" };
+      if (!n) return { status: "ignored", note: "Bewerbungsnummer erforderlich" };
       const app = applicationByNumber(ctx.applications, n);
       const id = ctx.startJob({ title: `CV PDF · ${app?.company ?? `#${n}`}`, subtitle: "tailored CV", kind: "pdf", input: n, page: `/pipeline/${n}` });
       return { status: "done", jobIds: id ? [id] : [] };
@@ -278,16 +278,16 @@ const ACTIONS: Record<string, ActionDef> = {
       const n = String(raw.n ?? "").trim();
       const status = String(raw.status ?? "").trim();
       const canon = CANON_STATUS.find((s) => s.toLowerCase() === status.toLowerCase());
-      if (!n || !canon) return { status: "ignored", note: "need an application # and a canonical status" };
+      if (!n || !canon) return { status: "ignored", note: "Bewerbungsnummer und gültiger Status erforderlich" };
       const app = applicationByNumber(ctx.applications, n);
       const label = app ? `${app.company} · ${app.role}` : `#${n}`;
       return {
         status: "confirm",
-        summary: `Mark ${label} → ${canon}?`,
+        summary: `${label} als ${canon} markieren?`,
         statusChange: { n, status: canon },
         run: async () => {
           await ctx.writeStatus(n, canon);
-          return { note: `Marked #${n} as ${canon}.` };
+          return { note: `#${n} als ${canon} markiert.` };
         },
       };
     },
@@ -297,9 +297,9 @@ const ACTIONS: Record<string, ActionDef> = {
     sideEffect: "none",
     run: (raw, ctx) => {
       const url = raw.url;
-      if (!isStr(url) || !/^https?:\/\//i.test(url)) return { status: "ignored", note: "need an application form URL" };
+      if (!isStr(url) || !/^https?:\/\//i.test(url)) return { status: "ignored", note: "URL des Bewerbungsformulars erforderlich" };
       ctx.startApply(url);
-      return { status: "done", note: "Opening the application form…" };
+      return { status: "done", note: "Bewerbungsformular wird geöffnet …" };
     },
   },
 
@@ -308,9 +308,9 @@ const ACTIONS: Record<string, ActionDef> = {
     run: (raw, ctx) => {
       const field = (raw.field ?? raw.label) as unknown;
       const value = raw.value;
-      if (!isStr(field) || typeof value !== "string") return { status: "ignored", note: "need a field and a value" };
+      if (!isStr(field) || typeof value !== "string") return { status: "ignored", note: "Feld und Wert erforderlich" };
       ctx.setApplyField(String(field), value);
-      return { status: "done", note: `Updated "${field}".` };
+      return { status: "done", note: `„${field}“ aktualisiert.` };
     },
   },
 
@@ -321,7 +321,7 @@ const ACTIONS: Record<string, ActionDef> = {
       if (!fact) return { status: "ignored" };
       return {
         status: "confirm",
-        summary: `Save to your profile (modes/_profile.md): "${fact}"?`,
+        summary: `In Ihrem Profil speichern (modes/_profile.md): "${fact}"?`,
         run: () => {
           ctx.rememberFact(fact);
           return {};
@@ -336,14 +336,14 @@ const ACTIONS: Record<string, ActionDef> = {
   setProfile: {
     sideEffect: "write",
     run: (raw, ctx) => {
-      if (!ctx.writeProfile) return { status: "ignored", note: "profile write unavailable here" };
+      if (!ctx.writeProfile) return { status: "ignored", note: "Profil kann hier nicht geschrieben werden" };
       const p = coerceProfile(raw);
       const has = Object.values(p).some((v) => (Array.isArray(v) ? v.length : v !== undefined));
-      if (!has) return { status: "ignored", note: "nothing to save" };
-      const bits = [p.roles?.length ? `roles: ${p.roles.join(", ")}` : "", p.location ? `in ${p.location}` : "", p.compMin && p.compMax ? `comp ${p.compMin}–${p.compMax}` : ""].filter(Boolean).join(" · ");
+      if (!has) return { status: "ignored", note: "Nichts zu speichern" };
+      const bits = [p.roles?.length ? `Rollen: ${p.roles.join(", ")}` : "", p.location ? `in ${p.location}` : "", p.compMin && p.compMax ? `Gehalt ${p.compMin}–${p.compMax}` : ""].filter(Boolean).join(" · ");
       return {
         status: "confirm",
-        summary: `Save your profile?${bits ? ` (${bits})` : ""}`,
+        summary: `Profil speichern?${bits ? ` (${bits})` : ""}`,
         run: () => {
           const profile = ctx.writeProfile!(p as Record<string, unknown>);
           const portals = p.roles?.length && ctx.writePortals ? ctx.writePortals(p.roles, p.location ? [p.location] : undefined) : null;
@@ -351,10 +351,10 @@ const ACTIONS: Record<string, ActionDef> = {
           // says the other one was saved.
           const failure = Promise.all([profile, portals]).then(([profileFailure, portalsFailure]) => {
             if (profileFailure && portalsFailure) return `${profileFailure} ${portalsFailure}`;
-            if (profileFailure) return portals ? `${profileFailure} Your scan targets were saved.` : profileFailure;
-            return portalsFailure ? `Your profile was saved. ${portalsFailure}` : null;
+            if (profileFailure) return portals ? `${profileFailure} Ihre Scan-Ziele wurden gespeichert.` : profileFailure;
+            return portalsFailure ? `Ihr Profil wurde gespeichert. ${portalsFailure}` : null;
           });
-          return { note: "Profile saved — your matches will sharpen.", failure };
+          return { note: "Profil gespeichert — Ihre Treffer werden genauer.", failure };
         },
       };
     },
@@ -367,17 +367,17 @@ const ACTIONS: Record<string, ActionDef> = {
   setPersonalization: {
     sideEffect: "write",
     run: (raw, ctx) => {
-      if (!ctx.writePersonalization) return { status: "ignored", note: "personalization write unavailable here" };
+      if (!ctx.writePersonalization) return { status: "ignored", note: "Personalisierung kann hier nicht geschrieben werden" };
       const p = coercePersonalization(raw) as Record<string, unknown>;
       const ids = Object.keys(p);
-      if (ids.length === 0) return { status: "ignored", note: "nothing to save" };
+      if (ids.length === 0) return { status: "ignored", note: "Nichts zu speichern" };
       const labels = SECTIONS.filter((s) => ids.includes(s.id)).map((s) => s.heading.replace(/^## Your /, "").toLowerCase());
       return {
         status: "confirm",
-        summary: `Save your personalization? (${labels.join(", ")})`,
+        summary: `Personalisierung speichern? (${labels.join(", ")})`,
         run: () => {
           ctx.writePersonalization!(p);
-          return { note: "Personalization saved — evaluations now score against YOUR targeting." };
+          return { note: "Personalisierung gespeichert — Bewertungen richten sich jetzt nach IHRER Zielsetzung." };
         },
       };
     },
@@ -386,15 +386,15 @@ const ACTIONS: Record<string, ActionDef> = {
   setPortals: {
     sideEffect: "write",
     run: (raw, ctx) => {
-      if (!ctx.writePortals) return { status: "ignored", note: "portals write unavailable here" };
+      if (!ctx.writePortals) return { status: "ignored", note: "Portale können hier nicht geschrieben werden" };
       const roles = Array.isArray(raw.roles) ? raw.roles.filter((r): r is string => typeof r === "string" && r.trim().length > 0).map((r) => r.trim()) : [];
-      if (roles.length === 0) return { status: "ignored", note: "no roles" };
+      if (roles.length === 0) return { status: "ignored", note: "Keine Rollen" };
       const location = Array.isArray(raw.location) ? raw.location.filter((l): l is string => typeof l === "string") : undefined;
       return {
         status: "confirm",
-        summary: `Set your scan targets to: ${roles.join(", ")}?`,
+        summary: `Scan-Ziele setzen auf: ${roles.join(", ")}?`,
         run: () => {
-          return { note: "Scan targets updated.", failure: ctx.writePortals!(roles, location) };
+          return { note: "Scan-Ziele aktualisiert.", failure: ctx.writePortals!(roles, location) };
         },
       };
     },
@@ -407,10 +407,10 @@ export function actionExists(id: string): boolean {
 
 export function dispatch(id: string, rawArgs: Record<string, unknown>, ctx: ActionCtx): DispatchResult {
   const def = ACTIONS[id];
-  if (!def) return { status: "ignored", note: `unknown action: ${id}` };
+  if (!def) return { status: "ignored", note: `Unbekannte Aktion: ${id}` };
   try {
     return def.run(rawArgs ?? {}, ctx);
   } catch {
-    return { status: "ignored", note: `could not run ${id}` };
+    return { status: "ignored", note: `${id} konnte nicht ausgeführt werden` };
   }
 }

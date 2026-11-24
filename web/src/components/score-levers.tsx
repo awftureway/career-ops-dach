@@ -37,7 +37,7 @@ export function ScoreLevers({ report }: { report: string }) {
         <ItemList
           title={copy.holdingTitle}
           hint={copy.holdingHint}
-          items={holding.map((l) => ({ text: l.text, tag: "blocker" }))}
+          items={holding.map((l) => ({ text: l.text, tag: "Blocker" }))}
           dot="bg-red-500"
         />
         <ItemList

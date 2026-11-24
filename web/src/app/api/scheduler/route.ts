@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST() {
   const script = runnerScript();
   if (!fs.existsSync(script)) {
-    return NextResponse.json({ error: "Scheduled job runner is not installed." }, { status: 404 });
+    return NextResponse.json({ error: "Der Runner für geplante Scans ist nicht installiert." }, { status: 404 });
   }
 
   try {
@@ -44,6 +44,6 @@ export async function POST() {
     child.unref();
     return NextResponse.json({ accepted: true }, { status: 202 });
   } catch {
-    return NextResponse.json({ error: "Could not start the local scheduled-job runner." }, { status: 500 });
+    return NextResponse.json({ error: "Der lokale Runner für geplante Scans konnte nicht gestartet werden." }, { status: 500 });
   }
 }

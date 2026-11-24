@@ -128,15 +128,15 @@ test("compact first-run checklist counts the four setup files", () => {
   assert.equal(full.showSections, true);
   assert.equal(full.done, 5);
   assert.equal(full.total, 6);
-  assert.deepEqual(full.asks, ["my personalization (deal breakers)"]);
+  assert.deepEqual(full.asks, ["meine Personalisierung (deal breakers)"]);
 });
 
 test("compact mode still asks for a missing personalization file", () => {
   const compact = onboardingChecklist({ missing: ["cv.md", "modes/_profile.md"], sections: SECTIONS, compact: true });
-  assert.deepEqual(compact.asks, ["my CV", "my personalization file (modes/_profile.md)"]);
+  assert.deepEqual(compact.asks, ["meinen Lebenslauf", "meine Personalisierungsdatei (modes/_profile.md)"]);
   // The full list asks through its sections line instead, not twice.
   const full = onboardingChecklist({ missing: ["modes/_profile.md"], sections: SECTIONS });
-  assert.deepEqual(full.asks, ["my personalization (deal breakers)"]);
+  assert.deepEqual(full.asks, ["meine Personalisierung (deal breakers)"]);
 });
 
 test("checklist prereq keys match the doctor list", () => {

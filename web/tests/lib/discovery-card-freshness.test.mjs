@@ -9,9 +9,9 @@ import { postedAgo } from "../../src/lib/inbox.ts";
 
 test("postedAgo labels by local day, not by rounded hours since UTC midnight", () => {
   const afternoon = new Date(2026, 10, 16, 13).getTime();
-  assert.equal(postedAgo("2026-11-16", afternoon), "today");
-  assert.equal(postedAgo("2026-11-15", afternoon), "1d ago");
-  assert.equal(postedAgo("2026-11-13", afternoon), "3d ago");
-  assert.equal(postedAgo("2026-11-16", new Date(2026, 10, 16, 1).getTime()), "today");
+  assert.equal(postedAgo("2026-11-16", afternoon), "heute");
+  assert.equal(postedAgo("2026-11-15", afternoon), "vor 1 Tag");
+  assert.equal(postedAgo("2026-11-13", afternoon), "vor 3 Tagen");
+  assert.equal(postedAgo("2026-11-16", new Date(2026, 10, 16, 1).getTime()), "heute");
   assert.equal(postedAgo("recently", afternoon), "");
 });

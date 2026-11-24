@@ -78,13 +78,13 @@ test("status confirmations recover from busy writes without replaying ambiguous 
     for (let i = 0; i < 240; i++) { if (await check()) return; await new Promise(r => setTimeout(r, 25)); }
     assert.fail(message);
   }
-  const input = page.getByRole("textbox", { name: "Message to assistant", exact: true });
-  const open = page.getByRole("button", { name: "Ask the assistant", exact: true });
+  const input = page.getByRole("textbox", { name: "Nachricht an den Assistenten", exact: true });
+  const open = page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true });
   const summary = n => `Mark #${n} → Rejected?`;
   const card = n => page.getByRole("group", { name: summary(n), exact: true });
   const button = (verb, n) => page.getByRole("button", { name: `${verb}: ${summary(n)}`, exact: true });
   const result = n => card(n).locator('[tabindex="-1"]');
-  const feedback = n => page.getByRole("status", { name: `Status change feedback: ${summary(n)}`, exact: true });
+  const feedback = n => page.getByRole("status", { name: `Rückmeldung zur Statusänderung: ${summary(n)}`, exact: true });
   const focused = locator => locator.evaluate(el => el === document.activeElement);
   async function tabTo(target) {
     for (let i = 0; i < 120; i++) { if (await focused(target)) return; await page.keyboard.press("Tab"); }
@@ -94,8 +94,8 @@ test("status confirmations recover from busy writes without replaying ambiguous 
     await tabTo(input); await page.keyboard.type(`Reject fictional application ${n}`); await page.keyboard.press("Enter");
     await until(() => replies.has(`Reject fictional application ${n}`));
     replies.get(`Reject fictional application ${n}`).end(`Review this proposed change.\n<<act:setStatus {"n":"${n}","status":"Rejected"}>>`);
-    await button("Confirm", n).waitFor();
-    await until(() => page.getByRole("button", { name: "New chat", exact: true }).isEnabled());
+    await button("Bestätigen", n).waitFor();
+    await until(() => page.getByRole("button", { name: "Neuer Chat", exact: true }).isEnabled());
   }
   async function snapshot(name) {
     if (!process.env.ASSISTANT_STATUS_ARTIFACT_DIR) return;
@@ -107,12 +107,12 @@ test("status confirmations recover from busy writes without replaying ambiguous 
   await page.goto(`${origin.origin}/pipeline?tab=ALL`);
   await open.waitFor(); await tabTo(open); await page.keyboard.press("Enter"); await input.waitFor();
   await propose("11"); assert.equal(calls.length, 0);
-  await tabTo(button("Confirm", "11")); await page.keyboard.press("Enter");
+  await tabTo(button("Bestätigen", "11")); await page.keyboard.press("Enter");
   await until(() => releases.has(1));
-  assert.equal(await button("Confirm", "11").getAttribute("aria-disabled"), "true");
-  await card("11").getByText("Saving status change…", { exact: true }).waitFor();
-  await button("Confirm", "11").evaluate(el => { el.click(); el.click(); });
-  await button("Cancel", "11").evaluate(el => el.click());
+  assert.equal(await button("Bestätigen", "11").getAttribute("aria-disabled"), "true");
+  await card("11").getByText("Status wird gespeichert …", { exact: true }).waitFor();
+  await button("Bestätigen", "11").evaluate(el => { el.click(); el.click(); });
+  await button("Abbrechen", "11").evaluate(el => el.click());
   await page.keyboard.press("Enter");
   assert.equal(calls.length, 1); assert.equal((await ledger()).length, 0);
   releases.get(1)();
@@ -122,46 +122,46 @@ test("status confirmations recover from busy writes without replaying ambiguous 
   const tree = await cdp.send("Accessibility.getFullAXTree");
   assert.ok(tree.nodes.some(n => !n.ignored && n.name?.value?.includes("Fictional tracker busy") && n.properties?.some(p => p.name === "focused" && p.value.value === true)));
   await snapshot("01-busy-retryable");
-  await tabTo(button("Retry", "11")); await page.keyboard.press("Enter");
+  await tabTo(button("Erneut versuchen", "11")); await page.keyboard.press("Enter");
   await until(() => releases.has(2));
   assert.equal(replies.size, 1, "retry must not call the model again");
   assert.deepEqual(calls, [{ n: "11", status: "Rejected" }, { n: "11", status: "Rejected" }]);
   releases.get(2)();
-  await card("11").getByText("Status saved.", { exact: true }).waitFor();
+  await card("11").getByText("Status gespeichert.", { exact: true }).waitFor();
   await until(() => focused(result("11")));
   assert.equal((await ledger()).length, 1);
   assert.equal((await commit("11")).changed, false);
   assert.equal((await ledger()).length, 1, "repeating the canonical write does not duplicate the ledger");
   await snapshot("02-retry-saved");
 
-  await propose("12"); await tabTo(button("Confirm", "12")); await page.keyboard.press("Enter");
+  await propose("12"); await tabTo(button("Bestätigen", "12")); await page.keyboard.press("Enter");
   await card("12").getByText(/could not be confirmed/).waitFor();
   await until(() => focused(result("12")));
-  assert.equal(await button("Retry", "12").count(), 0);
+  assert.equal(await button("Erneut versuchen", "12").count(), 0);
   assert.equal((await ledger()).length, 2, "the disconnected request actually committed");
   assert.equal((await commit("12")).changed, false);
   assert.equal((await ledger()).length, 2);
-  await card("12").getByRole("link", { name: `Check tracker for: ${summary("12")}`, exact: true }).waitFor();
+  await card("12").getByRole("link", { name: `Tracker prüfen für: ${summary("12")}`, exact: true }).waitFor();
   await snapshot("03-acknowledgement-lost");
 
   await propose("13");
-  await button("Confirm", "13").evaluate(el => el.click()); // user remains in composer
+  await button("Bestätigen", "13").evaluate(el => el.click()); // user remains in composer
   await card("13").getByText(/could not be confirmed/).waitFor();
   assert.equal(await focused(input), true);
   await until(async () => (await feedback("13").innerText()).includes("could not be confirmed"));
-  assert.equal(await button("Retry", "13").count(), 0);
+  assert.equal(await button("Erneut versuchen", "13").count(), 0);
   await page.keyboard.press("Escape"); await open.waitFor(); await page.keyboard.press("Enter"); await input.waitFor();
   assert.deepEqual(await page.getByRole("status", { name: /^Status change feedback:/ }).allTextContents(), ["", "", ""], "reopening does not replay settled announcements");
 
-  await propose("14"); await tabTo(button("Confirm", "14")); await page.keyboard.press("Enter");
-  await button("Retry", "14").waitFor();
+  await propose("14"); await tabTo(button("Bestätigen", "14")); await page.keyboard.press("Enter");
+  await button("Erneut versuchen", "14").waitFor();
   await until(() => saved?.messages.some(m => m.parts.some(p => p.type === "note" && p.text.includes("#14") && p.text.includes("failed"))));
   const beforeReload = calls.length;
   await page.reload(); await open.waitFor(); await tabTo(open); await page.keyboard.press("Enter"); await input.waitFor();
   await page.getByText(/Mark #14 → Rejected\? \(failed/).waitFor();
   await page.getByText(/Mark #12 → Rejected\? \(unconfirmed/).waitFor();
   assert.equal(calls.length, beforeReload);
-  assert.equal(await page.getByRole("button", { name: /^(Retry|Confirm):/ }).count(), 0);
+  assert.equal(await page.getByRole("button", { name: /^(Erneut versuchen|Bestätigen):/ }).count(), 0);
   assert.equal((await ledger()).length, 2);
   await snapshot("04-history-inert");
   assert.deepEqual(unexpected, []);

@@ -26,10 +26,10 @@ test("a score filter that empties the tab without a search names the filter", ()
 test("a search that misses under a score floor offers both ways to undo it", () => {
   const state = trackerEmptyState({ tabLabel: null, query: "Beta", minScore: 4.9, matchesInAll: 0 });
   assert.deepEqual(trackerEmptyPresentation(state, { tabLabel: null, query: "Beta", minScore: 4.9 }), {
-    heading: "No matches for “Beta” at score 4.9 or higher",
+    heading: "Keine Treffer für „Beta“ ab Score 4.9",
     actions: [
-      { id: "clear-search", label: "Clear search" },
-      { id: "clear-min", label: "Clear score filter" },
+      { id: "clear-search", label: "Suche zurücksetzen" },
+      { id: "clear-min", label: "Score-Filter zurücksetzen" },
     ],
   });
 });
@@ -37,7 +37,7 @@ test("a search that misses under a score floor offers both ways to undo it", () 
 test("a search miss without a score floor only clears the search", () => {
   const state = trackerEmptyState({ tabLabel: null, query: "Beta", minScore: null, matchesInAll: 0 });
   assert.deepEqual(trackerEmptyPresentation(state, { tabLabel: null, query: "Beta", minScore: null }), {
-    heading: "No matches for “Beta”",
-    actions: [{ id: "clear-search", label: "Clear search" }],
+    heading: "Keine Treffer für „Beta“",
+    actions: [{ id: "clear-search", label: "Suche zurücksetzen" }],
   });
 });

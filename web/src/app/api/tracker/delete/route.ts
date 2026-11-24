@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
   if (!trackerCanDelete()) {
     return Response.json(
-      { error: "Removing a tracker row needs a newer career-ops — update to delete rows from here." },
+      { error: "Zum Entfernen einer Tracker-Zeile ist ein neueres career-ops nötig. Aktualisieren Sie, um Zeilen hier zu löschen." },
       { status: 400 },
     );
   }
@@ -38,12 +38,12 @@ export async function POST(req: Request) {
   // (tracker.mjs delete doesn't share a lock with merge-tracker yet).
   if (isTrackerWriting()) {
     return Response.json(
-      { error: "An evaluation is updating your tracker right now — try again in a moment." },
+      { error: "Eine Bewertung aktualisiert gerade Ihren Tracker. Versuchen Sie es gleich noch einmal." },
       { status: 409 },
     );
   }
   if (!dryRun && deleting) {
-    return Response.json({ error: "Another delete is already in progress — try again in a moment." }, { status: 409 });
+    return Response.json({ error: "Es läuft bereits ein anderer Löschvorgang. Versuchen Sie es gleich noch einmal." }, { status: 409 });
   }
   if (!dryRun) deleting = true;
 
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
     if (result.code !== 0) {
       const notFound = /No application numbered/i.test(result.err);
       return Response.json(
-        { error: result.err.trim().split("\n")[0] || "delete failed" },
+        { error: result.err.trim().split("\n")[0] || "Löschen fehlgeschlagen" },
         { status: notFound ? 404 : 400 },
       );
     }

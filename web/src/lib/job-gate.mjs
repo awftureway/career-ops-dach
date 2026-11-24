@@ -3,7 +3,7 @@ import { classifyEvaluationGate, EVALUATION_GATE_REASONS, stripEvaluationGate } 
 /** @typedef {{ reason: (typeof EVALUATION_GATE_REASONS)[number], message: string, confirmationRequired: boolean, legacy?: boolean }} JobGate */
 
 const MISSING_REPORT = /^This evaluation didn't produce a report to save, so it isn't in your tracker — re-run it to verify\.\s*\(The agent emitted no <<report-md>> envelope, so there is no report to save\.\)$/;
-const OTHER_FAILURE = /connection (?:error|ended)|interrupted|timed? out|timeout|selected model is at capacity|no cli configured|(?:cli|worker|process) (?:failed|exited)|^codex:\s|^error:/i;
+const OTHER_FAILURE = /connection (?:error|ended)|verbindungsfehler|interrupted|unterbrochen|keine cli konfiguriert|timed? out|timeout|selected model is at capacity|no cli configured|(?:cli|worker|process) (?:failed|exited)|^codex:\s|^error:/i;
 
 /** The old error is deliberately retained in storage; this only identifies its exact wording. */
 export function isLegacyMissingReportMessage(message) {
@@ -36,8 +36,8 @@ export function evaluationGateForJob(job) {
 
 /** The presentation label never asserts that an unscored gate saved a report. */
 export function jobStateLabel(job) {
-  if (job?.status === "gated" || evaluationGateForJob(job)) return "Needs review";
-  return job?.status === "done" ? "Completed" : job?.status === "error" ? "Failed" : "Running";
+  if (job?.status === "gated" || evaluationGateForJob(job)) return "Prüfung nötig";
+  return job?.status === "done" ? "Abgeschlossen" : job?.status === "error" ? "Fehlgeschlagen" : "Läuft";
 }
 
 /** Retain the exact stored output; hide only a validated machine status block in the primary view. */

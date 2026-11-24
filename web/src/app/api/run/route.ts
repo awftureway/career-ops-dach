@@ -80,7 +80,7 @@ export async function POST(req: Request) {
   const capabilities = capabilitiesFor(kind);
   if (!isCliAllowedForCapabilities(cliId, capabilities)) {
     return new Response(
-      JSON.stringify({ error: `CLI '${cliId}' cannot run write-capable worker '${kind}' without a verified permission adapter.` }),
+      JSON.stringify({ error: `Die CLI „${cliId}“ kann den schreibenden Worker „${kind}“ ohne geprüften Berechtigungsadapter nicht ausführen.` }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
   if (required && !fs.existsSync(/* turbopackIgnore: true */ requiredPath)) {
     return new Response(
       JSON.stringify({
-        error: `This needs a complete career-ops checkout (${required}). The career-ops code checkout is incomplete — point CAREER_OPS_CODE_ROOT at a full checkout.`,
+        error: `Dafür wird ein vollständiger career-ops-Checkout benötigt (${required}). Der career-ops-Code-Checkout ist unvollständig — setzen Sie CAREER_OPS_CODE_ROOT auf einen vollständigen Checkout.`,
       }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
@@ -126,7 +126,7 @@ export async function POST(req: Request) {
       });
     } catch (error) {
       console.error("[career-ops] Failed to load focused evaluation instructions:", error);
-      return Response.json({ error: "Could not load the selected evaluation instructions. No AI run was started." }, { status: 422 });
+      return Response.json({ error: "Die gewählten Bewertungsanweisungen konnten nicht geladen werden. Es wurde kein KI-Lauf gestartet." }, { status: 422 });
     }
   }
 
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
   // wrong portal.
   if (kind === "fix-portal" && !isShellSafeCompanyName(input)) {
     return new Response(
-      JSON.stringify({ error: "That company name has characters I can't safely pass to the portal checker — rename it in portals.yml first." }),
+      JSON.stringify({ error: "Der Firmenname enthält Zeichen, die nicht sicher an die Portalprüfung übergeben werden können — benennen Sie ihn zuerst in portals.yml um." }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
   // hallucinate a fit narrative and still emit a VERDICT. Require cv.md first.
   if ((kind === "evaluate" || kind === "pdf" || kind === "cover") && !fs.existsSync(path.join(careerOpsRoot(), "cv.md"))) {
     return new Response(
-      JSON.stringify({ error: "Add your CV first so I can score this against you — drop it on the home page." }),
+      JSON.stringify({ error: "Fügen Sie zuerst Ihren Lebenslauf hinzu, damit die Stelle gegen Ihr Profil bewertet werden kann — legen Sie ihn auf der Startseite ab." }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
@@ -234,7 +234,7 @@ export async function POST(req: Request) {
     // whole posting, so refuse here instead of trusting the prompt to stop it.
     if (isTruncatedJd(prefetch?.text)) {
       if (writeToken !== null) releaseTrackerWrite(writeToken);
-      return Response.json({ error: "This posting is longer than the platform can read in full, so it was not scored. Evaluate it from your agent CLI with the job text pasted in (for example /career-ops, then paste the posting). No AI run was started." }, { status: 422 });
+      return Response.json({ error: "Diese Stellenanzeige ist länger, als die Plattform vollständig lesen kann, und wurde daher nicht bewertet. Bewerten Sie sie über Ihre Agent-CLI mit eingefügtem Anzeigentext (zum Beispiel /career-ops, dann die Anzeige einfügen). Es wurde kein KI-Lauf gestartet." }, { status: 422 });
     }
     const prefetchedJd = prefetch?.text ?? null;
     const closedEvidence = prefetch?.closedEvidence ?? null;
@@ -540,7 +540,7 @@ export async function POST(req: Request) {
       // successful render, not optimistically — same honesty-gate discipline as
       // persistEval below.
       const persistEval = async (markdown: string) => {
-        send({ type: "status", label: "Saving report…" });
+        send({ type: "status", label: "Speichert Bericht …" });
         try {
           const result = await persistEvaluation({
             spawnFn: spawn,
@@ -565,13 +565,13 @@ export async function POST(req: Request) {
             send({ type: "done", tokens: lastTokens, costUsd: lastCostUsd });
           }
         } catch (e) {
-          send({ type: "error", msg: `Evaluation persist crashed unexpectedly: ${e instanceof Error ? e.message : String(e)}`.slice(0, 200) });
+          send({ type: "error", msg: `Speichern der Bewertung unerwartet fehlgeschlagen: ${e instanceof Error ? e.message : String(e)}`.slice(0, 200) });
         } finally {
           close();
         }
       };
       const renderPdf = async (paths: PdfPaths, format: "letter" | "a4", ats?: { html: string; finalPdf: string } | null) => {
-        send({ type: "status", label: "Rendering PDF…" });
+        send({ type: "status", label: "Erstellt PDF …" });
         try {
           const result = await renderAndMarkPdf({
             spawnFn: spawn,
@@ -592,7 +592,7 @@ export async function POST(req: Request) {
           sendWarnings(result.warnings);
           send({ type: "done", tokens: lastTokens, costUsd: lastCostUsd });
         } catch (e) {
-          send({ type: "error", msg: `PDF rendering crashed unexpectedly: ${e instanceof Error ? e.message : String(e)}`.slice(0, 200) });
+          send({ type: "error", msg: `PDF-Erstellung unerwartet fehlgeschlagen: ${e instanceof Error ? e.message : String(e)}`.slice(0, 200) });
         } finally {
           close();
         }
@@ -659,7 +659,7 @@ export async function POST(req: Request) {
             // Kept for narrowing, but it must REPORT rather than fall through to a
             // bare close() — a stream that ends with neither error nor done is the
             // one outcome this handler exists to prevent.
-            send({ type: "error", msg: "Internal error: the pdf run passed its gate with no CV to save — please report this." });
+            send({ type: "error", msg: "Interner Fehler: Der PDF-Lauf hat die Prüfung ohne Lebenslauf zum Speichern bestanden — bitte melden." });
           } else {
             sendWarnings(envelope.warnings);
             // Tracked so cancel() can defer releasing writeToken until this
@@ -700,7 +700,7 @@ export async function POST(req: Request) {
                   render: (built) => renderPdf(pdfPaths, sheet.format, built.ats),
                 });
               } catch (e) {
-                send({ type: "error", msg: `PDF rendering crashed unexpectedly: ${e instanceof Error ? e.message : String(e)}`.slice(0, 200) });
+                send({ type: "error", msg: `PDF-Erstellung unerwartet fehlgeschlagen: ${e instanceof Error ? e.message : String(e)}`.slice(0, 200) });
               } finally {
                 // force:true only skips a missing dir. EPERM and EBUSY still throw,
                 // and a throw here used to skip close(), which holds the stream
@@ -734,7 +734,7 @@ export async function POST(req: Request) {
             const event = evaluationOutcomeEvent(outcome, { tokens: lastTokens, costUsd: lastCostUsd });
             if (event) send(event);
           } else if (envelope?.ok !== true) {
-            send({ type: "error", msg: "Internal error: the evaluate run passed its gate with no report to save — please report this." });
+            send({ type: "error", msg: "Interner Fehler: Der Bewertungslauf hat die Prüfung ohne Bericht zum Speichern bestanden — bitte melden." });
           } else {
             evaluatePersistPromise = persistEval(envelope.markdown);
             return;
@@ -755,7 +755,7 @@ export async function POST(req: Request) {
           // message above; a bare non-clean exit gets the stderr snippet instead,
           // when the heuristic classifier found one.
           const detail = !sawError && stderrErrorSnippet ? ` (${stderrErrorSnippet})` : "";
-          send({ type: "error", msg: `This run hit an error before finishing, so it isn't recorded as a confident result — re-run it to verify.${detail}`.slice(0, 200) });
+          send({ type: "error", msg: `Dieser Lauf ist vor dem Abschluss auf einen Fehler gestoßen und wird daher nicht als sicheres Ergebnis erfasst — starten Sie ihn zur Prüfung erneut.${detail}`.slice(0, 200) });
         } else {
           send({ type: "done", tokens: lastTokens, costUsd: lastCostUsd });
         }

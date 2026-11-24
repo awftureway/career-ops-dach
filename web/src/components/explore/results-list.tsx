@@ -82,14 +82,14 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
       <div className="flex flex-wrap items-center gap-3">
         <div>
           <p className="text-sm text-foreground">
-            <span className="font-semibold">{offers.length}</span> {isAi ? `candidate${offers.length === 1 ? "" : "s"}` : employer ? `match${offers.length === 1 ? "" : "es"}` : `fresh role${offers.length === 1 ? "" : "s"}`}
-            {view.length !== offers.length && <span className="text-faint"> · {view.length} shown</span>}
+            <span className="font-semibold">{offers.length}</span> {isAi ? offers.length === 1 ? "Kandidat" : "Kandidaten" : employer ? (offers.length === 1 ? "Treffer" : "Treffer") : (offers.length === 1 ? "neue Stelle" : "neue Stellen")}
+            {view.length !== offers.length && <span className="text-faint"> · {view.length} angezeigt</span>}
             <CostBadge kind={isAi ? "spend" : "free-network"} size="xs" className="ml-2 align-middle" />
           </p>
           <p className="text-[12px] text-faint">
             {isAi
-              ? "found by AI on the open web · unverified until you evaluate"
-              : employer ? "From selected employer sites · check the original JD · 0 tokens spent" : `${companiesScanned > 0 ? `${companiesScanned.toLocaleString()} companies scanned · ` : ""}0 tokens spent${partial ? " · some boards were unreachable (normal for public directories)" : ""}`}
+              ? "von der KI im offenen Web gefunden · ungeprüft, bis Sie bewerten"
+              : employer ? "Von ausgewählten Arbeitgeber-Seiten · Original-Stellenanzeige prüfen · 0 Tokens verbraucht" : `${companiesScanned > 0 ? `${companiesScanned.toLocaleString("de-DE")} Firmen gescannt · ` : ""}0 Tokens verbraucht${partial ? " · einige Jobbörsen waren nicht erreichbar (bei öffentlichen Verzeichnissen normal)" : ""}`}
           </p>
           {!isAi && error && <p className="text-[12px] text-amber-800 dark:text-amber-300">{error}</p>}
         </div>
@@ -100,13 +100,13 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Filter results…"
+              placeholder="Ergebnisse filtern …"
               className="w-32 bg-transparent text-[13px] outline-none placeholder:text-faint"
             />
           </div>
 
           {hasFit && (
-            <div role="group" aria-label="Filter by fit" className={segmented}>
+            <div role="group" aria-label="Nach Fit filtern" className={segmented}>
               {FIT_BANDS.map((b) => {
                 const on = !hiddenBands.has(b);
                 return (
@@ -115,7 +115,7 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
                     type="button"
                     aria-pressed={on}
                     onClick={() => setHiddenBands((h) => toggleBand(h, b))}
-                    title={on ? `Hide ${b}-fit results` : `Show ${b}-fit results`}
+                    title={on ? `Ergebnisse mit Fit „${b}“ ausblenden` : `Ergebnisse mit Fit „${b}“ anzeigen`}
                     className={cn("rounded-md px-2.5 py-1 font-medium capitalize transition-colors", on ? segmentOn : cn(segmentOff, "text-faint line-through"))}
                   >
                     {b} <span className="tabular-nums text-faint">{bandCounts[b]}</span>
@@ -135,12 +135,12 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
               className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-brand-soft hover:text-brand-text"
             >
               <ArrowUpDown className="size-3.5 text-faint" />
-              Sort: {sortSummary(sort)}
+              Sortierung: {sortSummary(sort)}
               <ChevronDown className="size-3.5 text-faint" />
             </button>
             {sortOpen && (
-              <div role="group" aria-label="Sort by" className="absolute right-0 top-full z-20 mt-1 w-72 rounded-xl border border-border bg-surface p-1.5 shadow-xl">
-                <p className="px-2 pb-2 pt-1 text-[12px] leading-snug text-muted">Pick one or more. The order you pick is the priority. Use the chip to flip direction.</p>
+              <div role="group" aria-label="Sortieren nach" className="absolute right-0 top-full z-20 mt-1 w-72 rounded-xl border border-border bg-surface p-1.5 shadow-xl">
+                <p className="px-2 pb-2 pt-1 text-[12px] leading-snug text-muted">Wählen Sie eine oder mehrere. Die Reihenfolge der Auswahl ist die Priorität. Mit dem Chip kehren Sie die Richtung um.</p>
                 {sortKeys.map((key) => {
                   const idx = sort.findIndex((s) => s.key === key);
                   const on = idx >= 0;
@@ -151,7 +151,7 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
                         type="button"
                         aria-pressed={on}
                         aria-disabled={locked || undefined}
-                        title={locked ? "At least one sort stays on" : undefined}
+                        title={locked ? "Mindestens eine Sortierung bleibt aktiv" : undefined}
                         onClick={() => setSortSpec(toggleSortKey(sort, key))}
                         className="flex flex-1 items-center gap-2.5 rounded-md px-1.5 py-1.5 text-left text-[13px] text-foreground transition-colors hover:bg-surface-hover"
                       >
@@ -164,7 +164,7 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
                       {on && (
                         <button
                           type="button"
-                          aria-label={`${SORT_LABELS[key]}: ${dirLabel(key, sort[idx].dir)}. Flip direction`}
+                          aria-label={`${SORT_LABELS[key]}: ${dirLabel(key, sort[idx].dir)}. Richtung umkehren`}
                           onClick={() => setSortSpec(flipSortDir(sort, key))}
                           className="inline-flex items-center gap-1 rounded-md border border-border bg-surface/40 px-2 py-1 text-xs text-foreground transition-colors hover:bg-brand-soft hover:text-brand-text"
                         >
@@ -179,11 +179,11 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
             )}
           </div>
 
-          <div role="group" aria-label="View" className={segmented}>
+          <div role="group" aria-label="Ansicht" className={segmented}>
             {(
               [
-                { id: "grid", label: "Grid view", Icon: LayoutGrid },
-                { id: "list", label: "List view", Icon: List },
+                { id: "grid", label: "Rasteransicht", Icon: LayoutGrid },
+                { id: "list", label: "Listenansicht", Icon: List },
               ] as const
             ).map(({ id, label, Icon }) => (
               <button
@@ -206,7 +206,7 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
               onClick={() => addToPipeline(addable)}
               className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-brand-soft hover:text-brand-text"
             >
-              <Plus className="size-3.5" /> Add all {addable.length}
+              <Plus className="size-3.5" /> Alle {addable.length} hinzufügen
             </button>
           )}
         </div>
@@ -220,7 +220,7 @@ export function ResultsList({ offers }: { offers: EnrichedOffer[] }) {
 
       {view.length === 0 && (q.trim() || hiddenBands.size > 0 || !running) && (
         <p className="py-10 text-center text-sm text-faint">
-          {q.trim() || hiddenBands.size === 0 ? `No results match “${q}”.` : "No results in the selected fit bands."}
+          {q.trim() || hiddenBands.size === 0 ? `Keine Ergebnisse für „${q}“.` : "Keine Ergebnisse in den gewählten Fit-Stufen."}
         </p>
       )}
     </div>

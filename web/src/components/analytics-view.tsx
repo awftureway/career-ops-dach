@@ -38,27 +38,27 @@ export function AnalyticsShell({ total, view, children }: {
     <PageFrame width="wide">
       <header className="flex flex-col gap-5 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-text">Operations / Analytics</p>
-          <h1 className="mt-2 font-display text-3xl tracking-tight text-landing sm:text-4xl">Search intelligence</h1>
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-text">Betrieb / Auswertung</p>
+          <h1 className="mt-2 font-display text-3xl tracking-tight text-landing sm:text-4xl">Such-Auswertung</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
-            A read on the roles you are pursuing, the funnel they move through, and the patterns worth acting on.
+            Ein Überblick über die Stellen, die Sie verfolgen, den Trichter, den sie durchlaufen, und die Muster, auf die sich zu reagieren lohnt.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-faint">
           <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
-          <span className="tabular-nums">{total}</span> tracked evaluation{total === 1 ? "" : "s"}
+          <span className="tabular-nums">{total}</span> erfasste Bewertung{total === 1 ? "" : "en"}
         </div>
       </header>
 
-      <nav aria-label="Analytics views" className="mt-5 -mb-px flex gap-1 overflow-x-auto border-b border-border">
+      <nav aria-label="Auswertungsansichten" className="mt-5 -mb-px flex gap-1 overflow-x-auto border-b border-border">
         <AnalyticsTab href="/analytics" active={view === "progress"} icon={<BarChart3 className="size-3.5" />}>
-          Search progress
+          Suchfortschritt
         </AnalyticsTab>
         <AnalyticsTab href="/analytics?view=insights" active={view === "insights"} icon={<Sparkles className="size-3.5" />}>
-          Insights
+          Erkenntnisse
         </AnalyticsTab>
         <AnalyticsTab href="/analytics?view=search-stats" active={view === "search-stats"} icon={<Target className="size-3.5" />}>
-          Search stats
+          Such-Statistik
         </AnalyticsTab>
       </nav>
 
@@ -87,14 +87,14 @@ export function ProgressPanel({ metrics }: { metrics: ProgressMetrics }) {
   return (
     <div className="mt-6 space-y-5">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <MetricCard label="Tracked" value={metrics.tracked} icon={<BarChart3 className="size-4" />} />
-        <MetricCard label="Average score" value={metrics.avgScore ? `${metrics.avgScore.toFixed(2)}/5` : "—"} icon={<Sparkles className="size-4" />} />
-        <MetricCard label="Active applications" value={metrics.activeApps} icon={<BriefcaseBusiness className="size-4" />} />
-        <MetricCard label="Offers" value={metrics.totalOffers} icon={<ArrowUpRight className="size-4" />} />
+        <MetricCard label="Erfasst" value={metrics.tracked} icon={<BarChart3 className="size-4" />} />
+        <MetricCard label="Ø Score" value={metrics.avgScore ? `${metrics.avgScore.toFixed(2)}/5` : "—"} icon={<Sparkles className="size-4" />} />
+        <MetricCard label="Aktive Bewerbungen" value={metrics.activeApps} icon={<BriefcaseBusiness className="size-4" />} />
+        <MetricCard label="Angebote" value={metrics.totalOffers} icon={<ArrowUpRight className="size-4" />} />
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.85fr)]">
-        <Panel eyebrow="Funnel" title="Pipeline progress" description="Cumulative roles that reached each stage. Each bar is that count out of everything tracked.">
+        <Panel eyebrow="Trichter" title="Pipeline-Fortschritt" description="Kumulierte Stellen, die jede Stufe erreicht haben. Jeder Balken zeigt diese Zahl im Verhältnis zu allem Erfassten.">
           <div className="mt-5 space-y-3.5">
             {metrics.funnel.map((stage, index) => {
               const bar = funnelBarModel(stage, metrics.tracked);
@@ -103,32 +103,32 @@ export function ProgressPanel({ metrics }: { metrics: ProgressMetrics }) {
           </div>
         </Panel>
 
-        <Panel eyebrow="Conversion" title="Rates that matter" description="Response, interview and offer rates use Applied as the denominator.">
+        <Panel eyebrow="Konversion" title="Relevante Quoten" description="Antwort-, Interview- und Angebotsquote beziehen sich auf Beworben.">
           <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3 xl:grid-cols-1 xl:gap-0">
-            <RateRow label="Response" value={metrics.responseRate} />
+            <RateRow label="Antwort" value={metrics.responseRate} />
             <RateRow label="Interview" value={metrics.interviewRate} />
-            <RateRow label="Offer" value={metrics.offerRate} />
+            <RateRow label="Angebot" value={metrics.offerRate} />
           </div>
           <div className="mt-5 border-t border-border pt-4 text-xs text-muted">
-            <span className="tabular-nums text-foreground">{metrics.activeApps}</span> active applications · <span className="tabular-nums text-foreground">{metrics.totalOffers}</span> total offers
+            <span className="tabular-nums text-foreground">{metrics.activeApps}</span> aktive Bewerbungen · <span className="tabular-nums text-foreground">{metrics.totalOffers}</span> Angebote gesamt
           </div>
         </Panel>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <Panel eyebrow="Fit quality" title="Score distribution" description="Only scored evaluations are included.">
+        <Panel eyebrow="Passung" title="Score-Verteilung" description="Nur bewertete Stellen mit Score sind enthalten.">
           <div className="mt-5 space-y-3">
             {metrics.scoreDistribution.map((bucket, index) => <BarRow key={bucket.label} label={bucket.label} count={bucket.count} pct={bucket.pct} widthPct={bucket.pct} tone={BAR_TONES[index]} />)}
           </div>
         </Panel>
-        <Panel eyebrow="Cadence" title="Weekly activity" description="The latest eight populated ISO weeks.">
+        <Panel eyebrow="Takt" title="Wöchentliche Aktivität" description="Die letzten acht ISO-Wochen mit Aktivität.">
           {metrics.weeklyActivity.length ? (
             <div className="mt-5 space-y-3">
               {metrics.weeklyActivity.map((week) => {
                 return <BarRow key={week.week} label={week.week} count={week.count} widthPct={(week.count / maxWeeklyActivity) * 100} tone="bg-sky-400" />;
               })}
             </div>
-          ) : <EmptyData label="No dated activity yet" detail="Weekly activity will appear once evaluations have valid dates." />}
+          ) : <EmptyData label="Noch keine datierte Aktivität" detail="Die wöchentliche Aktivität erscheint, sobald Bewertungen gültige Daten haben." />}
         </Panel>
       </div>
     </div>
@@ -140,43 +140,43 @@ export function StatsPanel({ metrics, insights }: { metrics: StatsMetrics; insig
   return (
     <div className="mt-6 space-y-5">
       <div className="grid gap-5 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <Panel eyebrow="Signal" title="Strategic insights" icon={<Sparkles className="size-4" />}>
-          {insights.length ? <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">{insights.map((insight) => <li key={insight} className="flex gap-2"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true" />{insight}</li>)}</ul> : <EmptyData label="Not enough signal yet" detail="Insights appear as archetype, work-mode and pay data accumulate." />}
+        <Panel eyebrow="Signal" title="Strategische Erkenntnisse" icon={<Sparkles className="size-4" />}>
+          {insights.length ? <ul className="mt-4 space-y-3 text-sm leading-6 text-muted">{insights.map((insight) => <li key={insight} className="flex gap-2"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true" />{insight}</li>)}</ul> : <EmptyData label="Noch zu wenig Signal" detail="Erkenntnisse erscheinen, sobald Archetyp-, Arbeitsmodell- und Gehaltsdaten vorliegen." />}
         </Panel>
-        <Panel eyebrow="Fit quality" title="How many roles clear the bar" description="Scored roles grouped by the evaluation threshold.">
+        <Panel eyebrow="Passung" title="Wie viele Stellen die Schwelle erreichen" description="Bewertete Stellen, gruppiert nach der Bewertungsschwelle.">
           <div className="mt-4 flex items-end justify-between gap-4">
             <div className="font-display text-4xl tracking-tight text-landing">{scoredRoleCount ? `${Math.round(metrics.qualityBarPct)}%` : "—"}</div>
-            <div className="text-right text-xs text-muted">meet ≥4.0<br /><span className="tabular-nums">{scoredRoleCount}</span> scored roles</div>
+            <div className="text-right text-xs text-muted">erreichen ≥4,0<br /><span className="tabular-nums">{scoredRoleCount}</span> bewertete Stellen</div>
           </div>
           <Distribution rows={metrics.qualityTiers} />
         </Panel>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)]">
-        <Panel eyebrow="Archetypes" title="Where the search is pointed" description="Canonical role families, ranked by volume and annotated with fit.">
-          {metrics.archetypes.length ? <div className="mt-4 space-y-3">{metrics.archetypes.map((row, index) => <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_minmax(100px,0.8fr)_auto] items-center gap-3 text-sm"><div className="min-w-0"><div className="break-words text-foreground">{row.label}</div><div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-hover"><div className={`h-full rounded-full ${BAR_TONES[index % BAR_TONES.length]}`} style={{ width: `${Math.max(row.pct, row.count ? 3 : 0)}%` }} /></div></div><div className="text-right text-xs text-muted tabular-nums">{row.count} <span className="text-faint">({Math.round(row.pct)}%)</span></div><div className="min-w-14 text-right text-xs font-semibold tabular-nums text-brand-text">{row.avgScore ? `★ ${row.avgScore.toFixed(1)}` : "—"}</div></div>)}</div> : <EmptyData label="No archetype data" detail="Reports with archetype metadata will populate this view." />}
+        <Panel eyebrow="Archetypen" title="Wohin die Suche zielt" description="Kanonische Rollenfamilien, nach Anzahl sortiert und mit Passung versehen.">
+          {metrics.archetypes.length ? <div className="mt-4 space-y-3">{metrics.archetypes.map((row, index) => <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_minmax(100px,0.8fr)_auto] items-center gap-3 text-sm"><div className="min-w-0"><div className="break-words text-foreground">{row.label}</div><div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface-hover"><div className={`h-full rounded-full ${BAR_TONES[index % BAR_TONES.length]}`} style={{ width: `${Math.max(row.pct, row.count ? 3 : 0)}%` }} /></div></div><div className="text-right text-xs text-muted tabular-nums">{row.count} <span className="text-faint">({Math.round(row.pct)}%)</span></div><div className="min-w-14 text-right text-xs font-semibold tabular-nums text-brand-text">{row.avgScore ? `★ ${row.avgScore.toFixed(1)}` : "—"}</div></div>)}</div> : <EmptyData label="Keine Archetyp-Daten" detail="Berichte mit Archetyp-Metadaten füllen diese Ansicht." />}
         </Panel>
-        <Panel eyebrow="Seniority" title="Role mix" icon={<BriefcaseBusiness className="size-4" />}>
-          <Distribution rows={metrics.seniorityMix} emptyLabel="No role seniority data" />
+        <Panel eyebrow="Seniorität" title="Rollenmix" icon={<BriefcaseBusiness className="size-4" />}>
+          <Distribution rows={metrics.seniorityMix} emptyLabel="Keine Senioritätsdaten" />
         </Panel>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <Panel eyebrow="Work mode" title="How roles are structured"><BreakdownList rows={metrics.workModes} icon={<BriefcaseBusiness className="size-3.5" />} emptyLabel="No work-mode data" /></Panel>
-        <Panel eyebrow="Location" title="Where roles are based"><BreakdownList rows={metrics.locations} icon={<MapPin className="size-3.5" />} emptyLabel="No location data" /></Panel>
+        <Panel eyebrow="Arbeitsmodell" title="Wie Stellen organisiert sind"><BreakdownList rows={metrics.workModes} icon={<BriefcaseBusiness className="size-3.5" />} emptyLabel="Keine Arbeitsmodell-Daten" /></Panel>
+        <Panel eyebrow="Ort" title="Wo Stellen angesiedelt sind"><BreakdownList rows={metrics.locations} icon={<MapPin className="size-3.5" />} emptyLabel="Keine Ortsdaten" /></Panel>
       </div>
 
-      <Panel eyebrow="Compensation" title="USD pay range and salary bands" icon={<CircleDollarSign className="size-4" />}>
+      <Panel eyebrow="Vergütung" title="USD-Gehaltsspanne und Gehaltsbänder" icon={<CircleDollarSign className="size-4" />}>
         {metrics.pay.count ? <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
-            <PayStat label="Average" value={money(metrics.pay.avgPayMax)} />
+            <PayStat label="Durchschnitt" value={money(metrics.pay.avgPayMax)} />
             <PayStat label="Median" value={money(metrics.pay.medianPayMax)} />
-            <PayStat label="Peak" value={money(metrics.pay.maxPayMax)} />
-            <PayStat label="Data points" value={metrics.pay.count} />
-            <PayStat label="Posted / est." value={`${metrics.pay.postedCount} / ${metrics.pay.estimatedCount}`} />
+            <PayStat label="Spitze" value={money(metrics.pay.maxPayMax)} />
+            <PayStat label="Datenpunkte" value={metrics.pay.count} />
+            <PayStat label="Angegeben / gesch." value={`${metrics.pay.postedCount} / ${metrics.pay.estimatedCount}`} />
           </div>
-          <div className="mt-6 border-t border-border pt-5"><p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">Salary band distribution</p><div className="mt-4 space-y-3">{metrics.payHistogram.map((row, index) => <BarRow key={row.label} label={row.label} count={row.count} pct={row.pct} widthPct={row.pct} tone={BAR_TONES[index]} />)}</div></div>
-        </> : <EmptyData label="No USD compensation data" detail="Pay appears when tracker notes contain a USD-denominated posted or estimated range." />}
+          <div className="mt-6 border-t border-border pt-5"><p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">Verteilung der Gehaltsbänder</p><div className="mt-4 space-y-3">{metrics.payHistogram.map((row, index) => <BarRow key={row.label} label={row.label} count={row.count} pct={row.pct} widthPct={row.pct} tone={BAR_TONES[index]} />)}</div></div>
+        </> : <EmptyData label="Keine USD-Gehaltsdaten" detail="Gehälter erscheinen, sobald Tracker-Notizen eine angegebene oder geschätzte Spanne in USD enthalten." />}
       </Panel>
     </div>
   );
@@ -190,27 +190,27 @@ function MetricCard({ label, value, icon }: { label: string; value: string | num
   return <div className="rounded-xl border border-border bg-surface/45 p-4"><div className="flex items-center justify-between text-brand-text"><span className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-muted">{label}</span>{icon}</div><div className="mt-3 font-display text-3xl tracking-tight text-landing tabular-nums">{value}</div></div>;
 }
 
-const NO_RATE_EXPLANATION = "No applications sent yet, so this rate has nothing to measure";
+const NO_RATE_EXPLANATION = "Noch keine Bewerbungen gesendet, daher gibt es für diese Quote nichts zu messen";
 
 function RateRow({ label, value }: { label: string; value: number | null }) {
   // An em dash for a rate taken over nothing. `0.0%` here would be the view
   // stating a measurement it never made — see computeProgressMetrics.
   const absent = value === null;
-  return <div className="flex items-center justify-between gap-3 border-b border-border py-3 last:border-0 xl:first:pt-0"><span className="text-sm text-muted">{label} rate</span><span className="font-mono text-lg font-semibold tabular-nums text-foreground" title={absent ? NO_RATE_EXPLANATION : undefined}>{absent ? <><span aria-hidden="true">—</span><span className="sr-only">{NO_RATE_EXPLANATION}</span></> : `${value.toFixed(1)}%`}</span></div>;
+  return <div className="flex items-center justify-between gap-3 border-b border-border py-3 last:border-0 xl:first:pt-0"><span className="text-sm text-muted">{label}quote</span><span className="font-mono text-lg font-semibold tabular-nums text-foreground" title={absent ? NO_RATE_EXPLANATION : undefined}>{absent ? <><span aria-hidden="true">—</span><span className="sr-only">{NO_RATE_EXPLANATION}</span></> : `${value.toFixed(1)}%`}</span></div>;
 }
 
 function BarRow({ label, count, pct, widthPct, tone }: { label: string; count: number; pct?: number; widthPct: number; tone: string }) {
-  const accessibleValue = pct === undefined ? `${label}: ${count}` : `${label}: ${count}, ${Math.round(pct)} percent`;
+  const accessibleValue = pct === undefined ? `${label}: ${count}` : `${label}: ${count}, ${Math.round(pct)} Prozent`;
   return <div className="grid grid-cols-[minmax(94px,0.45fr)_minmax(80px,1fr)_auto] items-center gap-3"><span className="break-words text-xs text-muted" title={label}>{label}</span><div className="h-2 overflow-hidden rounded-full bg-surface-hover" role="img" aria-label={accessibleValue}><div className={`h-full rounded-full ${tone} transition-[width] duration-500`} style={{ width: `${Math.min(100, Math.max(0, widthPct))}%` }} /></div><span className="min-w-16 text-right font-mono text-xs tabular-nums text-foreground">{count}{pct === undefined ? null : <> <span className="text-faint">({Math.round(pct)}%)</span></>}</span></div>;
 }
 
-function Distribution({ rows, emptyLabel = "No distribution data" }: { rows: { label: string; count: number; pct: number }[]; emptyLabel?: string }) {
-  if (!rows.length) return <EmptyData label={emptyLabel} detail="More evaluated roles are needed to show this breakdown." />;
+function Distribution({ rows, emptyLabel = "Keine Verteilungsdaten" }: { rows: { label: string; count: number; pct: number }[]; emptyLabel?: string }) {
+  if (!rows.length) return <EmptyData label={emptyLabel} detail="Für diese Aufschlüsselung sind mehr bewertete Stellen nötig." />;
   return <div className="mt-5"><div className="flex h-3 overflow-hidden rounded-full bg-surface-hover" aria-hidden="true">{rows.map((row, index) => <div key={row.label} className={BAR_TONES[index % BAR_TONES.length]} style={{ width: `${row.pct}%` }} />)}</div><div className="mt-4 grid gap-2 sm:grid-cols-2">{rows.map((row, index) => <div key={row.label} className="flex items-center gap-2 text-xs"><span className={`size-2 rounded-full ${BAR_TONES[index % BAR_TONES.length]}`} aria-hidden="true" /><span className="min-w-0 flex-1 truncate text-muted">{row.label}</span><span className="font-mono tabular-nums text-foreground">{row.count} <span className="text-faint">({Math.round(row.pct)}%)</span></span></div>)}</div></div>;
 }
 
 function BreakdownList({ rows, icon, emptyLabel }: { rows: { label: string; count: number; pct: number }[]; icon: React.ReactNode; emptyLabel: string }) {
-  if (!rows.length) return <EmptyData label={emptyLabel} detail="Add an explicit work mode or location to the tracker notes to populate this dimension." />;
+  if (!rows.length) return <EmptyData label={emptyLabel} detail="Ergänzen Sie in den Tracker-Notizen ein Arbeitsmodell oder einen Ort, um diese Dimension zu füllen." />;
   return <div className="mt-4 space-y-3">{rows.map((row, index) => <div key={row.label} className="flex items-center gap-2 text-sm"><span className="text-brand-text">{icon}</span><span className="min-w-0 flex-1 break-words text-muted">{row.label}</span><span className="font-mono text-xs tabular-nums text-foreground">{row.count}</span><span className="w-12 text-right font-mono text-[11px] tabular-nums text-faint">{Math.round(row.pct)}%</span></div>)}</div>;
 }
 

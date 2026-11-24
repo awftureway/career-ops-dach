@@ -76,7 +76,7 @@ export default async function ApplyPage({
     : null;
 
   const suffix = query ? `?${query}` : "";
-  const company = app?.company || parseReport(report?.content ?? "").title || `Report #${id}`;
+  const company = app?.company || parseReport(report?.content ?? "").title || `Bericht #${id}`;
   const trackerMarked = (app?.pdf ?? "").includes("✅");
   const disk = await readCvDiskState(id, company, trackerMarked, reportNum);
   const blockedAts = await unsupportedInAppAts(postingUrl);

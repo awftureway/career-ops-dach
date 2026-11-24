@@ -16,25 +16,25 @@ export function applyDestination({ n, pdfOnDisk = false, postingUrl, alreadyOnRe
     if (alreadyOnReport) {
       return {
         kind: "need-cv",
-        message: "Generate the tailored CV on this page before you apply. Apply opens the form reader after that file is on disk.",
+        message: "Erstellen Sie auf dieser Seite den angepassten Lebenslauf, bevor Sie sich bewerben. Das Bewerben öffnet den Formular-Leser, sobald die Datei auf der Festplatte liegt.",
         nextHref: null,
         nextLabel: null,
       };
     }
     return {
       kind: "need-cv",
-      message: "This offer needs a tailored CV on disk before you can apply.",
+      message: "Für diese Stelle muss zuerst ein angepasster Lebenslauf auf der Festplatte liegen.",
       nextHref: reportHref,
-      nextLabel: "Open the report to generate the CV",
+      nextLabel: "Bericht öffnen, um den Lebenslauf zu erstellen",
     };
   }
   const url = typeof postingUrl === "string" ? postingUrl.trim() : "";
   if (!HTTP.test(url)) {
     return {
       kind: "need-link",
-      message: "This offer has no application link, so the form reader cannot open it.",
+      message: "Diese Stelle hat keinen Bewerbungslink, daher kann der Formular-Leser sie nicht öffnen.",
       nextHref: alreadyOnReport ? null : reportHref,
-      nextLabel: alreadyOnReport ? null : "Open the report",
+      nextLabel: alreadyOnReport ? null : "Bericht öffnen",
     };
   }
   return { kind: "apply", href: "/apply", url, n: id };

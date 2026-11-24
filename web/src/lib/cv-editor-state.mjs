@@ -112,20 +112,20 @@ export function editorReducer(state, action) {
 
 /** @param {EditorState} state */
 export function editorStatus(state) {
-  if (state.phase === "loading") return { label: "Loading", canSave: false };
-  if (state.phase !== "ready") return { label: "Could not load", canSave: false };
+  if (state.phase === "loading") return { label: "Lädt …", canSave: false };
+  if (state.phase !== "ready") return { label: "Laden fehlgeschlagen", canSave: false };
   if (state.inflight !== null && state.inflight !== state.content && state.content === state.saved) {
-    return { label: "Saving", canSave: false };
+    return { label: "Speichert …", canSave: false };
   }
   if (state.content !== state.saved) {
-    if (state.inflight === state.content) return { label: "Saving", canSave: false };
-    return { label: "Unsaved", canSave: state.inflight === null && !state.conflict };
+    if (state.inflight === state.content) return { label: "Speichert …", canSave: false };
+    return { label: "Nicht gespeichert", canSave: state.inflight === null && !state.conflict };
   }
   // The file changed underneath. Matching the last save this tab made is not
   // the same as the file still holding that text.
-  if (state.conflict) return { label: "Unsaved", canSave: false };
-  if (!state.exists) return { label: "No file yet", canSave: false };
-  return { label: "Saved", canSave: false };
+  if (state.conflict) return { label: "Nicht gespeichert", canSave: false };
+  if (!state.exists) return { label: "Noch keine Datei", canSave: false };
+  return { label: "Gespeichert", canSave: false };
 }
 
 /**

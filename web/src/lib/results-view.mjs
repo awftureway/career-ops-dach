@@ -27,7 +27,7 @@ export const FIT_BANDS = ["strong", "related", "weak"];
 export const SORT_KEYS = ["fresh", "title", "company", "fit"];
 
 /** @type {Record<SortKey, string>} */
-export const SORT_LABELS = { fresh: "Fresh", title: "Title", company: "Company", fit: "Fit" };
+export const SORT_LABELS = { fresh: "Aktualität", title: "Titel", company: "Firma", fit: "Passung" };
 
 /** The order Explore has always used: newest posting first. */
 export const DEFAULT_SORT = Object.freeze([Object.freeze({ key: "fresh", dir: "desc" })]);
@@ -36,10 +36,10 @@ export const DEFAULT_SORT = Object.freeze([Object.freeze({ key: "fresh", dir: "d
 const DEFAULT_DIR = { fresh: "desc", title: "asc", company: "asc", fit: "desc" };
 
 const DIR_LABELS = {
-  fresh: { desc: "Newest first", asc: "Oldest first" },
+  fresh: { desc: "Neueste zuerst", asc: "Älteste zuerst" },
   title: { asc: "A–Z", desc: "Z–A" },
   company: { asc: "A–Z", desc: "Z–A" },
-  fit: { desc: "Strongest first", asc: "Weakest first" },
+  fit: { desc: "Beste zuerst", asc: "Schwächste zuerst" },
 };
 
 // Higher = better match, so "desc" on fit puts strong first.

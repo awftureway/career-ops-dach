@@ -35,14 +35,14 @@ export function GeneratePdfButton({ n, company, onDisk }: { n: string; company: 
     [jobs, n],
   );
   const generate = () =>
-    startJob({ title: `CV PDF · ${company}`, subtitle: "tailored for this role", kind: "pdf", input: n, page: `/pipeline/${n}` });
+    startJob({ title: `Lebenslauf-PDF · ${company}`, subtitle: "zugeschnitten auf diese Stelle", kind: "pdf", input: n, page: `/pipeline/${n}` });
 
   const state = pdfButtonState(job, onDisk);
 
   if (state.kind === "running")
     return (
       <Link href={`/jobs/${state.jobId}${jobQuery}`} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand/40 bg-brand-soft px-3 py-1 text-xs font-medium text-brand-text max-sm:min-h-[44px]">
-        <Loader2 className="size-3.5 animate-spin" /> Generating CV…
+        <Loader2 className="size-3.5 animate-spin" /> Lebenslauf wird erstellt …
       </Link>
     );
 
@@ -55,18 +55,18 @@ export function GeneratePdfButton({ n, company, onDisk }: { n: string; company: 
           rel="noreferrer"
           className="inline-flex items-center justify-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-800 transition-colors hover:bg-emerald-500/15 dark:text-emerald-400 max-sm:min-h-[44px]"
         >
-          <FileText className="size-3.5" /> View tailored CV
+          <FileText className="size-3.5" /> Angepassten Lebenslauf ansehen
         </a>
         <CvPdfFileActions viewHref={viewHref} className={quietPill} />
         <Link
           href={studioHref}
           className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand/40 bg-brand-soft px-3 py-1 text-xs font-medium text-brand-text transition-colors hover:bg-brand-soft/70 max-sm:min-h-[44px]"
         >
-          <SlidersHorizontal className="size-3.5" /> Review and customize
+          <SlidersHorizontal className="size-3.5" /> Prüfen und anpassen
         </Link>
         <button
           onClick={generate}
-          title="Regenerate the tailored CV"
+          title="Angepassten Lebenslauf neu erstellen"
           className="inline-flex items-center justify-center rounded-full p-1 text-faint transition-colors hover:text-brand-text max-sm:min-h-[44px] max-sm:min-w-[44px]"
         >
           <RotateCcw className="size-3" />
@@ -83,9 +83,9 @@ export function GeneratePdfButton({ n, company, onDisk }: { n: string; company: 
       <button
         onClick={generate}
         className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]"
-        title="Generate an ATS-optimized CV tailored to this role"
+        title="ATS-optimierten Lebenslauf für diese Stelle erstellen"
       >
-        <FileDown className="size-3.5" /> Generate tailored CV (PDF)
+        <FileDown className="size-3.5" /> Angepassten Lebenslauf erstellen (PDF)
       </button>
       <CostBadge kind="spend" size="xs" />
       <FailureNote failure={state.failure} jobQuery={jobQuery} />
@@ -99,11 +99,11 @@ function FailureNote({ failure, jobQuery }: { failure: PdfFailure; jobQuery: str
     <Link
       href={`/jobs/${failure.jobId}${jobQuery}`}
       role="alert"
-      title="Open the run log"
+      title="Ausführungsprotokoll öffnen"
       className="inline-flex max-w-md items-start gap-1 text-xs text-red-700 hover:underline dark:text-red-400"
     >
       <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
-      <span>CV not generated. {failure.reason}</span>
+      <span>Lebenslauf nicht erstellt. {failure.reason}</span>
     </Link>
   );
 }

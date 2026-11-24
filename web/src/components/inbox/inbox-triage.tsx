@@ -241,7 +241,7 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
       await notice.fn();
       setUndo((current) => current?.fn === notice.fn ? null : current);
     } catch (cause) {
-      const error = cause instanceof Error ? cause.message : "Could not undo this skip. Please try again.";
+      const error = cause instanceof Error ? cause.message : "Überspringen konnte nicht rückgängig gemacht werden. Bitte erneut versuchen.";
       setUndo((current) => current?.fn === notice.fn ? { ...current, busy: false, error } : current);
     } finally {
       undoRunning.current.delete(notice.fn);
@@ -259,10 +259,10 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
     const actions = createInboxSkipActions((done) => persistSkip(job.url, done), () => {
       setHidden((h) => h.filter((u) => u !== job.url));
       setUndo((current) => current?.fn === notice.fn && !current.busy ? null : current);
-      setWriteError(`Could not skip ${job.company}. Please try Skip again.`);
+      setWriteError(`${job.company} konnte nicht übersprungen werden. Bitte erneut versuchen.`);
     });
     const notice: UndoNotice = {
-      label: `Skipped ${job.company}`,
+      label: `${job.company} übersprungen`,
       fn: async () => {
         await actions.undo();
         setHidden((h) => h.filter((u) => u !== job.url));
@@ -280,7 +280,7 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
     try {
       await Promise.all(urls.map((url) => persistSkip(url, false).then(() => {
         setHidden((h) => h.filter((u) => u !== url));
-      }).catch(() => setWriteError("Some jobs could not be restored. Try restore again."))));
+      }).catch(() => setWriteError("Einige Stellen konnten nicht wiederhergestellt werden. Bitte erneut versuchen."))));
     } finally {
       restoreRunning.current = false;
       setRestoring(false);
@@ -323,14 +323,14 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
       (index) => {
         const url = urls[index];
         if (!alreadyHidden.has(url)) setHidden((h) => h.filter((item) => item !== url));
-        setWriteError("Could not skip every selected role.");
-        setUndo((current) => current?.fn === notice.fn ? { ...current, error: "Could not skip every selected role." } : current);
+        setWriteError("Nicht alle ausgewählten Rollen konnten übersprungen werden.");
+        setUndo((current) => current?.fn === notice.fn ? { ...current, error: "Nicht alle ausgewählten Rollen konnten übersprungen werden." } : current);
       },
     ).finally(() => router.refresh());
   };
   const skipSelected = () => {
     const jobs = skippableJobs(enriched.filter((e) => selected.has(e.job.url)).map((e) => e.job), scoreByUrl);
-    skipUrls(jobs, `Skipped ${jobs.length}`);
+    skipUrls(jobs, `${jobs.length} übersprungen`);
   };
 
   const keyActions = useRef({
@@ -410,7 +410,7 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
   const scoreShortlist = () => {
     const batchId = `shortlist-${Date.now()}`;
     for (const it of shortlist) {
-      startJob({ title: `Score · ${it.company}`, subtitle: it.role, kind: "evaluate", input: it.url, page: "/pipeline", batchId, evaluationSections: sections });
+      startJob({ title: `Bewertung · ${it.company}`, subtitle: it.role, kind: "evaluate", input: it.url, page: "/pipeline", batchId, evaluationSections: sections });
     }
     setShortlist([]); // sent — the rows flip to Scoring… → badge via scoreByUrl
   };
@@ -423,12 +423,12 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
       {/* batch header: fresh/filtered slice by default; "See all" lifts the cap */}
       <div ref={listTopRef} className="mt-4 flex items-baseline justify-between gap-3">
         <p className="text-sm font-medium text-foreground">
-          {anyFacet ? `${filtered.length} match${filtered.length === 1 ? "" : "es"}` : capped ? (sortMode === "newest" ? "Fresh — worth a look" : "Best fits") : "All roles"}
+          {anyFacet ? `${filtered.length} Treffer` : capped ? (sortMode === "newest" ? "Neu – einen Blick wert" : "Beste Treffer") : "Alle Rollen"}
         </p>
         <div className="flex items-center gap-3">
-          <div role="group" aria-label="Sort inbox" className="flex items-center gap-2 text-xs">
-            <button type="button" aria-pressed={sortMode === "fit"} onClick={() => { setSortMode("fit"); setDefaultSaveFailed(false); }} className={cn("inline-flex items-center hover:text-foreground max-sm:min-h-[44px] max-sm:min-w-[44px] max-sm:justify-center", sortMode === "fit" ? "font-medium text-foreground" : "text-faint")}>Best fit</button>
-            <button type="button" aria-pressed={sortMode === "newest"} onClick={() => { setSortMode("newest"); setDefaultSaveFailed(false); }} className={cn("inline-flex items-center hover:text-foreground max-sm:min-h-[44px] max-sm:min-w-[44px] max-sm:justify-center", sortMode === "newest" ? "font-medium text-foreground" : "text-faint")}>Newest</button>
+          <div role="group" aria-label="Posteingang sortieren" className="flex items-center gap-2 text-xs">
+            <button type="button" aria-pressed={sortMode === "fit"} onClick={() => { setSortMode("fit"); setDefaultSaveFailed(false); }} className={cn("inline-flex items-center hover:text-foreground max-sm:min-h-[44px] max-sm:min-w-[44px] max-sm:justify-center", sortMode === "fit" ? "font-medium text-foreground" : "text-faint")}>Beste Passung</button>
+            <button type="button" aria-pressed={sortMode === "newest"} onClick={() => { setSortMode("newest"); setDefaultSaveFailed(false); }} className={cn("inline-flex items-center hover:text-foreground max-sm:min-h-[44px] max-sm:min-w-[44px] max-sm:justify-center", sortMode === "newest" ? "font-medium text-foreground" : "text-faint")}>Neueste</button>
             <span aria-hidden="true" className="text-border">|</span>
             <button
               type="button"
@@ -436,13 +436,13 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
               onClick={makeSortDefault}
               className="inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-faint hover:text-foreground disabled:border-transparent disabled:text-brand-text max-sm:min-h-[44px] max-sm:justify-center"
             >
-              {sortMode === defaultSort ? "✓ Default" : "Make default"}
+              {sortMode === defaultSort ? "✓ Standard" : "Als Standard"}
             </button>
-            {defaultSaveFailed && <span role="status" className="text-red-700 dark:text-red-400">Can’t save in this browser</span>}
+            {defaultSaveFailed && <span role="status" className="text-red-700 dark:text-red-400">In diesem Browser nicht speicherbar</span>}
           </div>
           {hiddenCount > 0 && (
             <button type="button" onClick={() => void restoreHidden()} disabled={restoring} aria-busy={restoring} className="text-xs text-faint transition-colors hover:text-foreground disabled:opacity-50 max-sm:min-h-[44px]">
-              {hiddenCount} hidden · {restoring ? "restoring…" : "restore"}
+              {hiddenCount} ausgeblendet · {restoring ? "wird wiederhergestellt …" : "wiederherstellen"}
             </button>
           )}
         </div>
@@ -451,15 +451,15 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
       {/* multi-select action bar */}
       {selected.size > 0 && (
         <div className="mt-2 flex items-center gap-3 rounded-lg border border-brand/30 bg-brand-soft px-3 py-2 text-sm">
-          <span className="font-medium text-brand-text tabular-nums">{selected.size} selected</span>
+          <span className="font-medium text-brand-text tabular-nums">{selected.size} ausgewählt</span>
           <button type="button" onClick={saveSelected} className="rounded-md bg-brand px-2.5 py-1 text-xs font-medium text-brand-foreground max-sm:min-h-[44px]">
-            Save to shortlist
+            Zur Merkliste
           </button>
           <button type="button" onClick={skipSelected} className="rounded-md border border-border px-2.5 py-1 text-xs font-medium text-foreground hover:border-brand/40 max-sm:min-h-[44px]">
-            Skip selected
+            Auswahl überspringen
           </button>
           <button type="button" onClick={() => setSelected(new Set())} className="text-xs text-muted hover:text-foreground max-sm:min-h-[44px]">
-            Clear
+            Leeren
           </button>
         </div>
       )}
@@ -486,8 +486,8 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
         </ul>
       ) : (
         <div className="mt-3 rounded-2xl border border-dashed border-border bg-surface/30 px-6 py-10 text-center">
-          <p className="font-display text-lg">No matches</p>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-muted">Loosen the filters to see more of your inbox.</p>
+          <p className="font-display text-lg">Keine Treffer</p>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-muted">Lockern Sie die Filter, um mehr aus Ihrem Posteingang zu sehen.</p>
         </div>
       )}
 
@@ -498,13 +498,13 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
           onClick={() => setShowAll(true)}
           className="mt-3 inline-flex w-full items-center justify-center gap-1 rounded-xl border border-border bg-surface/40 py-2.5 text-sm font-medium text-muted transition-colors hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]"
         >
-          See all {ordered.length}{anyFacet ? " matches" : " in inbox"} →
+          Alle {ordered.length} anzeigen{anyFacet ? " (Treffer)" : " (im Posteingang)"} →
         </button>
       )}
 
       {/* empty-shortlist guidance (only once there's nothing saved) */}
       {shortlist.length === 0 && (
-        <p className="mt-4 text-center text-xs text-faint">Save roles worth a look, then score them together — one token spend.</p>
+        <p className="mt-4 text-center text-xs text-faint">Merken Sie interessante Rollen vor und bewerten Sie sie gemeinsam – ein Token-Verbrauch.</p>
       )}
       </div>
       <LinkedInPaste />
@@ -527,7 +527,7 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
         anyActive={anyFacet}
         onClear={() => { setWithin(null); setSources(new Set()); setSeniorities(new Set()); setLocQ(""); setKw(""); }}
       />
-      <p className="mt-3 text-xs text-faint">j and k move. s saves. x skips. Shift+X skips the checked rows.</p>
+      <p className="mt-3 text-xs text-faint">j und k navigieren. s merkt vor. x überspringt. Umschalt+X überspringt die markierten Zeilen.</p>
       </div>
 
       {/* undo toast (sits above the tray) */}
@@ -539,7 +539,7 @@ export function InboxTriage({ inbox }: { inbox: InboxJob[] }) {
               {undo.error && <p role="alert" className="text-red-700 dark:text-red-400">{undo.error}</p>}
             </div>
             <button type="button" onClick={() => void handleUndo(undo)} disabled={undo.busy} aria-busy={Boolean(undo.busy)} className="inline-flex shrink-0 items-center gap-1 font-medium text-brand-text disabled:opacity-50 max-sm:min-h-[44px]">
-              <Undo2 className="size-3.5" /> {undo.busy ? "Undoing…" : undo.error ? "Retry undo" : "Undo"}
+              <Undo2 className="size-3.5" /> {undo.busy ? "Wird rückgängig gemacht …" : undo.error ? "Erneut versuchen" : "Rückgängig"}
             </button>
           </div>
         </div>

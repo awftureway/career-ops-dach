@@ -9,10 +9,10 @@
  * Compact mode hides those sections, so it asks for the file by name.
  */
 export const PREREQS = [
-  { key: "cv.md", label: "Your CV", ask: "my CV" },
-  { key: "config/profile.yml", label: "Profile — target roles, comp, location", ask: "my profile (target roles, comp, location)" },
-  { key: "modes/_profile.md", label: "Personalization file", compactAsk: "my personalization file (modes/_profile.md)" },
-  { key: "portals.yml", label: "Companies and roles to scan", ask: "the roles and companies to scan" },
+  { key: "cv.md", label: "Ihr Lebenslauf", ask: "meinen Lebenslauf" },
+  { key: "config/profile.yml", label: "Profil: Zielrollen, Gehalt, Ort", ask: "mein Profil (Zielrollen, Gehalt, Ort)" },
+  { key: "modes/_profile.md", label: "Personalisierungsdatei", compactAsk: "meine Personalisierungsdatei (modes/_profile.md)" },
+  { key: "portals.yml", label: "Firmen und Rollen für den Scan", ask: "die Rollen und Firmen für den Scan" },
 ];
 
 /**
@@ -32,7 +32,7 @@ export function onboardingChecklist({ missing, sections, compact = false }) {
       return ask ? [ask] : [];
     }),
     ...(showSections && generic.length
-      ? [`my personalization (${generic.map((s) => s.heading.replace(/^## Your /, "").toLowerCase()).join(", ")})`]
+      ? [`meine Personalisierung (${generic.map((s) => s.heading.replace(/^## Your /, "").toLowerCase()).join(", ")})`]
       : []),
   ];
   return { showSections, done: prereqDone + sectionDone, total: PREREQS.length + sectionTotal, asks };

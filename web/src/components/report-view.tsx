@@ -101,7 +101,7 @@ export function ReportView({
       href={`/output?company=${encodeURIComponent(companySlug(companyName)?.slug ?? "")}`}
       className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]"
     >
-      Preparation files
+      Vorbereitungsdateien
     </Link>
   );
 
@@ -119,7 +119,7 @@ export function ReportView({
         <div className="mt-2 flex items-center gap-3">
           <CompanyLogo name={company?.logoName ?? meta?.title ?? `Report #${id}`} size={40} />
           <h1 className="font-display text-3xl tracking-tight text-landing">
-            {company?.label ?? meta?.title ?? `Report #${id}`}
+            {company?.label ?? meta?.title ?? `Bericht #${id}`}
           </h1>
         </div>
         {app?.role && <p className="mt-1 text-muted">{app.role}</p>}
@@ -138,7 +138,7 @@ export function ReportView({
                 rel="noreferrer"
                 className="inline-flex items-center justify-center gap-1 text-brand-text hover:underline max-sm:min-h-[44px]"
               >
-                posting <ExternalLink className="size-3" />
+                Stellenanzeige <ExternalLink className="size-3" />
               </a>
             )}
           </div>
@@ -164,14 +164,14 @@ export function ReportView({
               : "border-border bg-surface/50";
             const callout = (
               <div className={`rounded-2xl border px-5 py-5 ${verdictClass}`}>
-                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">Verdict</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-faint">Fazit</p>
                 <div className="mt-2 flex flex-wrap items-end gap-x-3 gap-y-1">
                   {score ? (
                     <p className="font-display text-4xl tabular-nums tracking-tight text-landing">{score}</p>
                   ) : (
-                    <p className="text-sm text-muted">No score on this report.</p>
+                    <p className="text-sm text-muted">Kein Score in diesem Bericht.</p>
                   )}
-                  <p className="pb-1 text-xs text-muted">Apply line is {APPLY_LINE.toFixed(1)}</p>
+                  <p className="pb-1 text-xs text-muted">Bewerbungsgrenze: {APPLY_LINE.toFixed(1)}</p>
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {line && <Badge tone={recommended ? "good" : line === "Below the apply line" ? "muted" : "warn"}>{line}</Badge>}
@@ -193,7 +193,7 @@ export function ReportView({
                     href={applyHref}
                     className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]"
                   >
-                    Apply checklist
+                    Bewerbungs-Checkliste
                   </Link>
                 )}
                 {prepLink}
@@ -206,7 +206,7 @@ export function ReportView({
                     rel="noreferrer"
                     className="inline-flex items-center justify-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-800 transition-colors hover:bg-emerald-500/15 dark:text-emerald-400 max-sm:min-h-[44px]"
                   >
-                    <FileText className="size-3.5" /> View cover
+                    <FileText className="size-3.5" /> Anschreiben ansehen
                   </a>
                 )}
                 {disk.note && <p className="basis-full text-sm text-muted">{disk.note}</p>}
@@ -269,7 +269,7 @@ export function ReportView({
                   <div className="print:hidden">
                     <div className="mt-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.14em] text-faint">
                       <span className="h-px flex-1 bg-border" />
-                      Technical details · for developers
+                      Technische Details · für Entwickler
                       <span className="h-px flex-1 bg-border" />
                     </div>
                     {machine.map((s, i) => (

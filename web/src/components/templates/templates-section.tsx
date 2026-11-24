@@ -14,15 +14,15 @@ type Template = { name: string; displayName: string; layer: "user" | "system"; i
 type Pending = { name: string; mode: "duplicate" | "rename" | "delete" };
 
 // Matches isValidTemplateName() on the server, which stays the authority.
-const NAME_HINT = "Lowercase letters and digits, joined by single hyphens.";
+const NAME_HINT = "Kleinbuchstaben und Ziffern, verbunden durch einzelne Bindestriche.";
 
 const PAGE_WIDTH = 816;
 const PAGE_HEIGHT = 1056;
 const THUMB_WIDTH = 200;
 
 const COPY = {
-  cv: { id: "cv-templates-heading", title: "CV templates", note: "Previews use a made-up resume, not yours. The default is used for new CVs." },
-  cover: { id: "cover-templates-heading", title: "Cover letter templates", note: "Previews use a made-up letter, not yours. The default is used for new cover letters." },
+  cv: { id: "cv-templates-heading", title: "Lebenslauf-Vorlagen", note: "Die Vorschauen zeigen einen erfundenen Lebenslauf, nicht Ihren. Die Standardvorlage gilt für neue Lebensläufe." },
+  cover: { id: "cover-templates-heading", title: "Anschreiben-Vorlagen", note: "Die Vorschauen zeigen ein erfundenes Anschreiben, nicht Ihres. Die Standardvorlage gilt für neue Anschreiben." },
 } as const;
 
 export function TemplatesSection({ kind = "cv" }: { kind?: "cv" | "cover" }) {
@@ -114,14 +114,14 @@ export function TemplatesSection({ kind = "cv" }: { kind?: "cv" | "cover" }) {
         body: JSON.stringify(body),
       });
       const j = await res.json().catch(() => ({}));
-      if (!res.ok) setError(typeof j.error === "string" ? j.error : "Could not save.");
+      if (!res.ok) setError(typeof j.error === "string" ? j.error : "Speichern nicht möglich.");
       else {
         setPending(null);
         setDraft("");
       }
       if (res.ok || res.status === 409) load();
     } catch {
-      setError("Could not save.");
+      setError("Speichern nicht möglich.");
     }
     setBusy(null);
   };
@@ -144,23 +144,23 @@ export function TemplatesSection({ kind = "cv" }: { kind?: "cv" | "cover" }) {
 
       {loadError === "replace" ? (
         <p role="alert" className="mt-3 text-sm text-red-500">
-          Could not load the templates.{" "}
+          Die Vorlagen konnten nicht geladen werden.{" "}
           <button type="button" className="underline" onClick={() => load(false)}>
-            Retry
+            Erneut versuchen
           </button>
         </p>
       ) : templates === null ? (
-        <Loader2 className="mt-3 size-4 animate-spin text-muted" aria-label="Loading templates" />
+        <Loader2 className="mt-3 size-4 animate-spin text-muted" aria-label="Vorlagen werden geladen" />
       ) : (
         <ul className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
           {templates.map((t) => (
             <li key={t.name} className="rounded-xl border border-border bg-surface/40 p-3">
-              <Thumb key={`${t.name}-${rev}`} kind={kind} name={t.name} title={`${t.displayName} preview`} />
+              <Thumb key={`${t.name}-${rev}`} kind={kind} name={t.name} title={`Vorschau von ${t.displayName}`} />
               <div className="mt-2 flex items-center justify-between gap-2">
                 <span className="truncate text-sm font-medium">{t.displayName}</span>
                 {t.isDefault ? (
                   <span className="inline-flex items-center gap-1 text-xs text-muted">
-                    <Check className="size-3" aria-hidden /> Default
+                    <Check className="size-3" aria-hidden /> Standard
                   </span>
                 ) : (
                   <button
@@ -169,7 +169,7 @@ export function TemplatesSection({ kind = "cv" }: { kind?: "cv" | "cover" }) {
                     onClick={() => choose(t.name)}
                     className={cn("rounded-md border border-border px-2 py-1 text-xs hover:bg-surface", busy !== null && "opacity-60")}
                   >
-                    {busy === t.name ? "Saving…" : "Make default"}
+                    {busy === t.name ? "Speichert …" : "Als Standard festlegen"}
                   </button>
                 )}
               </div>
@@ -182,25 +182,25 @@ export function TemplatesSection({ kind = "cv" }: { kind?: "cv" | "cover" }) {
                   }}
                 >
                   {pending.mode === "delete" ? (
-                    <p className="text-xs">Delete {t.displayName}? This removes its file.</p>
+                    <p className="text-xs">{t.displayName} löschen? Das entfernt die zugehörige Datei.</p>
                   ) : (
                     <input
                       autoFocus
                       disabled={busy !== null}
-                      aria-label={pending.mode === "rename" ? "New name" : "Name for the copy"}
+                      aria-label={pending.mode === "rename" ? "Neuer Name" : "Name für die Kopie"}
                       aria-describedby={`${copy.id}-hint`}
                       value={draft}
                       onChange={(e) => {
                         setDraft(e.target.value);
                         setError(null);
                       }}
-                      placeholder={pending.mode === "rename" ? "new-name" : "copy-name"}
+                      placeholder={pending.mode === "rename" ? "neuer-name" : "kopie-name"}
                       className="w-full rounded-md border border-border bg-transparent px-2 py-1 text-xs"
                     />
                   )}
                   <div className="flex gap-2">
                     <button type="submit" disabled={busy !== null} className="rounded-md border border-border px-2 py-1 text-xs hover:bg-surface">
-                      {busy === t.name ? "Working…" : pending.mode === "delete" ? "Delete" : pending.mode === "rename" ? "Rename" : "Duplicate"}
+                      {busy === t.name ? "Arbeitet …" : pending.mode === "delete" ? "Löschen" : pending.mode === "rename" ? "Umbenennen" : "Duplizieren"}
                     </button>
                     <button
                       type="button"
@@ -211,28 +211,28 @@ export function TemplatesSection({ kind = "cv" }: { kind?: "cv" | "cover" }) {
                       }}
                       className="rounded-md px-2 py-1 text-xs underline disabled:opacity-60"
                     >
-                      Cancel
+                      Abbrechen
                     </button>
                   </div>
                 </form>
               ) : (
                 <div className="mt-2 flex gap-3 text-xs">
                   <button type="button" disabled={busy !== null} onClick={() => ask(t.name, "duplicate")} className="underline">
-                    Duplicate
+                    Duplizieren
                   </button>
                   {t.layer === "user" && (
                     <>
-                      <button type="button" disabled={busy !== null || editLocks(editing, t.name).edit} title={editLocks(editing, t.name).edit ? "Close the open editor first" : undefined} onClick={(e) => {
+                      <button type="button" disabled={busy !== null || editLocks(editing, t.name).edit} title={editLocks(editing, t.name).edit ? "Schließen Sie zuerst den geöffneten Editor" : undefined} onClick={(e) => {
                           returnFocus.current = e.currentTarget;
                           setEditing(t.name);
                         }} className="underline">
-                        Edit
+                        Bearbeiten
                       </button>
-                      <button type="button" disabled={busy !== null || editLocks(editing, t.name).rename} title={editLocks(editing, t.name).rename ? "Close the editor first" : undefined} onClick={() => ask(t.name, "rename")} className="underline">
-                        Rename
+                      <button type="button" disabled={busy !== null || editLocks(editing, t.name).rename} title={editLocks(editing, t.name).rename ? "Schließen Sie zuerst den Editor" : undefined} onClick={() => ask(t.name, "rename")} className="underline">
+                        Umbenennen
                       </button>
-                      <button type="button" disabled={busy !== null || t.isDefault || editLocks(editing, t.name).remove} title={t.isDefault ? "Make another template the default first" : editLocks(editing, t.name).remove ? "Close the editor first" : undefined} onClick={() => ask(t.name, "delete")} className="underline">
-                        Delete
+                      <button type="button" disabled={busy !== null || t.isDefault || editLocks(editing, t.name).remove} title={t.isDefault ? "Legen Sie zuerst eine andere Vorlage als Standard fest" : editLocks(editing, t.name).remove ? "Schließen Sie zuerst den Editor" : undefined} onClick={() => ask(t.name, "delete")} className="underline">
+                        Löschen
                       </button>
                     </>
                   )}
@@ -244,9 +244,9 @@ export function TemplatesSection({ kind = "cv" }: { kind?: "cv" | "cover" }) {
       )}
       {loadError === "alongside" && (
         <p role="alert" className="mt-3 text-sm text-red-500">
-          Could not refresh the templates; the list above may be out of date.{" "}
+          Die Vorlagen konnten nicht aktualisiert werden; die Liste oben ist möglicherweise veraltet.{" "}
           <button type="button" className="underline" onClick={() => load(true)}>
-            Retry
+            Erneut versuchen
           </button>
         </p>
       )}
@@ -311,7 +311,7 @@ function Thumb({ kind, name, title }: { kind: "cv" | "cover"; name: string; titl
       className="relative overflow-hidden rounded-md bg-white shadow-sm"
       style={{ width: THUMB_WIDTH, height: (PAGE_HEIGHT * THUMB_WIDTH) / PAGE_WIDTH }}
     >
-      {failed && <p className="p-3 text-xs text-neutral-500">Preview unavailable.</p>}
+      {failed && <p className="p-3 text-xs text-neutral-500">Vorschau nicht verfügbar.</p>}
       {html !== null && (
         <iframe
           title={title}

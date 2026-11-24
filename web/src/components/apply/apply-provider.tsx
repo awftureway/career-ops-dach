@@ -135,7 +135,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
       const r = await fetch("/api/apply/drive", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId: id, cliId: cliId(), goal: "reach", application: nRef.current }) });
       if (generation.current !== gen) return; // left mid-drive
       if (!r.body) {
-        setError("The agent couldn't start.");
+        setError("Der Agent konnte nicht starten.");
         setStatus("error");
         return;
       }
@@ -174,19 +174,19 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
             setStatus("ready"); // → the ready-effect auto-prefills if pending
           } else if (ev.t === "error") {
             finished = true;
-            setError(ev.message || "The agent couldn't reach a fillable form.");
+            setError(ev.message || "Der Agent hat kein ausfüllbares Formular erreicht.");
             setStatus("error");
           }
         }
       }
       if (generation.current !== gen) return; // left mid-drive
       if (!finished) {
-        setError("The agent stopped before reaching a form.");
+        setError("Der Agent hat angehalten, bevor er ein Formular erreichte.");
         setStatus("error");
       }
     } catch (e) {
       if (generation.current !== gen) return; // left mid-drive
-      setError(`The agent couldn't reach the form: ${e instanceof Error ? e.message : "stream error"}.`);
+      setError(`Der Agent konnte das Formular nicht erreichen: ${e instanceof Error ? e.message : "Stream-Fehler"}.`);
       setStatus("error");
     }
   }, []);
@@ -258,7 +258,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
       setStatus("ready");
     } catch {
       if (generation.current !== gen) return; // left while it was opening
-      setError("Could not open the form.");
+      setError("Das Formular konnte nicht geöffnet werden.");
       setStatus("error");
     }
   }, []);
@@ -267,7 +267,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     if (!sessionId.current) return;
     const gen = generation.current;
     if (!cliId()) {
-      setError("Configure a CLI in Config first, then pre-fill from your CV.");
+      setError("Richten Sie zuerst unter Einstellungen eine CLI ein und füllen Sie dann aus Ihrem Lebenslauf vor.");
       return;
     }
     setStatus("prefilling");
@@ -290,7 +290,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
       const r = await fetch("/api/apply/prefill", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId: sessionId.current, cliId: cliId(), company: companyRef.current, application: nRef.current }) });
       if (generation.current !== gen) return; // left mid-prefill
       if (!r.body) {
-        setError("Couldn't pre-fill — no response stream.");
+        setError("Vorausfüllen nicht möglich – kein Antwort-Stream.");
         setStatus("ready");
         return;
       }
@@ -320,21 +320,21 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
           } else if (ev.t === "done") {
             got = true;
             applyAnswers(ev.answers ?? {});
-            if ((ev.count ?? 0) === 0) setError("The planner returned 0 answers — see the diagnostics log below.");
-            else if (ev.truncated) setError("The planner was cut off — some fields were recovered, others may be blank. See diagnostics.");
+            if ((ev.count ?? 0) === 0) setError("Der Planer lieferte 0 Antworten – siehe Diagnoseprotokoll unten.");
+            else if (ev.truncated) setError("Der Planer wurde abgebrochen – einige Felder wurden wiederhergestellt, andere sind eventuell leer. Siehe Diagnose.");
           } else if (ev.t === "error") {
             sawError = true;
-            setError(ev.m ? `Couldn't pre-fill: ${ev.m}` : "Couldn't pre-fill from your CV.");
+            setError(ev.m ? `Vorausfüllen nicht möglich: ${ev.m}` : "Vorausfüllen aus Ihrem Lebenslauf nicht möglich.");
             setPrefillLog((p) => [...p, `✗ ${ev.m ?? "error"}${ev.raw ? ` — raw tail: ${ev.raw.slice(0, 160)}` : ""}`]);
           }
         }
       }
       if (generation.current !== gen) return; // left mid-prefill
-      if (!got && !sawError) setError("Pre-fill ended without answers — see the diagnostics log below.");
+      if (!got && !sawError) setError("Vorausfüllen endete ohne Antworten – siehe Diagnoseprotokoll unten.");
       setStatus("ready");
     } catch (e) {
       if (generation.current !== gen) return; // left mid-prefill
-      setError(`Couldn't pre-fill from your CV: ${e instanceof Error ? e.message : "stream error"}. See diagnostics.`);
+      setError(`Vorausfüllen aus Ihrem Lebenslauf nicht möglich: ${e instanceof Error ? e.message : "Stream-Fehler"}. Siehe Diagnose.`);
       setStatus("ready");
     }
   }, []);
@@ -386,7 +386,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
       // A later fill replaces the last read-back and the last handoff gaps.
       const incoming = Array.isArray(d.issues) ? (d.issues as ApplyIssue[]) : [];
       setIssues((prev) => issuesAfterFill(withoutReadbackIssues(prev), incoming));
-      if (d.navigated) setError("Heads up: the form's page changed during fill — review it carefully before submitting (career-ops never submits for you).");
+      if (d.navigated) setError("Hinweis: Die Seite des Formulars hat sich beim Ausfüllen geändert – prüfen Sie sie sorgfältig vor dem Absenden (career-ops sendet nie für Sie ab).");
       if (d.handedOff) {
         setStatus("done");
         // ESCALATION ("si no va, full agente"): if deterministic fill clearly
@@ -402,7 +402,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {
       if (generation.current !== gen) return; // left mid-fill
-      setError("Fill failed.");
+      setError("Ausfüllen fehlgeschlagen.");
       setStatus("error");
     }
   }, [answers, fields]);
@@ -445,12 +445,12 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
       } else if (gaps.length) {
         setStatus("ready");
       } else {
-        setError(outcome.error || "The agent couldn't finish. Check the real form before trying again.");
+        setError(outcome.error || "Der Agent konnte nicht abschließen. Prüfen Sie das echte Formular, bevor Sie es erneut versuchen.");
         setStatus(outcome.status);
       }
     } catch (e) {
       if (controller.signal.aborted || generation.current !== gen) return; // left mid-fill
-      setError(`The agent couldn't fill the form: ${e instanceof Error ? e.message : "stream error"}. Check the real form before trying again.`);
+      setError(`Der Agent konnte das Formular nicht ausfüllen: ${e instanceof Error ? e.message : "Stream-Fehler"}. Prüfen Sie das echte Formular, bevor Sie es erneut versuchen.`);
       setStatus("ready");
     }
   }, []);

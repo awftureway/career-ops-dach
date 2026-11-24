@@ -20,9 +20,9 @@ export async function readFillResult(response, onStep, isCurrent, signal) {
     if (!isCurrent()) return null;
     return failed(typeof body?.error === "string" && body.error.trim()
       ? body.error
-      : `The agent couldn't start filling (HTTP ${response.status}).`);
+      : `Der Agent konnte das Ausfüllen nicht starten (HTTP ${response.status}).`);
   }
-  if (!response.body) return failed("The agent couldn't start filling. No response stream was received.");
+  if (!response.body) return failed("Der Agent konnte das Ausfüllen nicht starten. Es wurde kein Antwort-Stream empfangen.");
 
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -33,7 +33,7 @@ export async function readFillResult(response, onStep, isCurrent, signal) {
   signal?.addEventListener("abort", cancelRead, { once: true });
   const consume = (line) => {
     if (!line) return null;
-    const unreadable = () => failed("The agent sent an unreadable fill result. Check the real form before trying again.");
+    const unreadable = () => failed("Der Agent hat ein unlesbares Ergebnis geliefert. Prüfen Sie das echte Formular, bevor Sie es erneut versuchen.");
     let event;
     try {
       event = JSON.parse(line);
@@ -57,7 +57,7 @@ export async function readFillResult(response, onStep, isCurrent, signal) {
     if (event?.t === "error") {
       return failed(typeof event.message === "string" && event.message.trim()
         ? event.message
-        : "The agent couldn't fill the form. Check the real form before trying again.");
+        : "Der Agent konnte das Formular nicht ausfüllen. Prüfen Sie das echte Formular, bevor Sie es erneut versuchen.");
     }
     if (event?.t === "step") onStep(event);
     return null;
@@ -83,7 +83,7 @@ export async function readFillResult(response, onStep, isCurrent, signal) {
       }
       if (done) {
         const result = consume(buffer.trim());
-        return result ?? failed("The agent stopped before confirming the fill finished. Check the real form before trying again.");
+        return result ?? failed("Der Agent hat angehalten, bevor das Ausfüllen bestätigt war. Prüfen Sie das echte Formular, bevor Sie es erneut versuchen.");
       }
     }
   } finally {
@@ -114,13 +114,13 @@ export function screenForFill(result) {
   if (result.filled) {
     const done = {
       status: /** @type {const} */ ("done"),
-      issue: "AI filled the form for you — review every answer on the real form, then submit it yourself.",
+      issue: "Die KI hat das Formular für Sie ausgefüllt. Prüfen Sie jede Antwort im echten Formular und schicken Sie es dann selbst ab.",
     };
     if (gaps.length) done.gaps = gaps;
     return done;
   }
   return {
     status: /** @type {const} */ ("ready"),
-    error: "AI did its best but couldn't finish. Check the real form before trying again.",
+    error: "Die KI konnte das Formular nicht vollständig ausfüllen. Prüfen Sie das echte Formular, bevor Sie es erneut versuchen.",
   };
 }

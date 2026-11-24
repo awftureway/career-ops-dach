@@ -155,7 +155,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
         brief: opts.brief ? { ...opts.brief } : undefined,
         batchId: opts.batchId,
         status: "running",
-        steps: [{ kind: "status", label: "Starting…", ts: Date.now() }],
+        steps: [{ kind: "status", label: "Startet …", ts: Date.now() }],
         text: "",
         startedAt: Date.now(),
       };
@@ -168,7 +168,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
         // Heavy runs wait for a free slot (run-slots.mjs), so a shortlist does
         // not start every evaluation at once.
         const release = await runSlots.acquire(opts.kind, (position) => {
-          const step: JobStep = { kind: "status", label: `Queued: ${position} waiting (at most ${maxParallelRuns()} at once)`, ts: Date.now() };
+          const step: JobStep = { kind: "status", label: `In Warteschlange: ${position} wartend (höchstens ${maxParallelRuns()} gleichzeitig)`, ts: Date.now() };
           steps.push(step);
           patch(id, (j) => ({ ...j, steps: [...j.steps, step] }));
         });
@@ -187,8 +187,8 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
           // choice without a record.
           const cliId = await resolveCliId((stale, replacement) => {
             const label = replacement
-              ? `Saved CLI '${stale}' is not installed — using '${replacement}'`
-              : `Saved CLI '${stale}' is not installed`;
+              ? `Gespeicherte CLI „${stale}“ ist nicht installiert – verwende „${replacement}“`
+              : `Gespeicherte CLI „${stale}“ ist nicht installiert`;
             const step: JobStep = { kind: "status", label, ts: Date.now() };
             steps.push(step);
             patch(id, (j) => ({ ...j, steps: [...j.steps, step] }));
@@ -199,7 +199,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
               ...j,
               status: "error",
               endedAt: Date.now(),
-              steps: [...j.steps, { kind: "status", label: "No CLI configured — open Config and click Save config", ts: Date.now() }],
+              steps: [...j.steps, { kind: "status", label: "Keine CLI konfiguriert — Einstellungen öffnen und „Speichern“ klicken", ts: Date.now() }],
             }));
             return;
           }
@@ -248,7 +248,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
             });
             if (!res.ok || !res.body) {
               const e = await res.json().catch(() => ({}));
-              finish("error", e.error || "Failed to start");
+              finish("error", e.error || "Start fehlgeschlagen");
               return;
             }
             const completion = await readJobStream(res.body, (ev) => {
@@ -273,7 +273,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
             doneTokens = completion.tokens ?? 0;
             doneCostUsd = completion.costUsd ?? null;
             if (completion.status === "gated") {
-              finish("gated", "Evaluation stopped — review the reason", {
+              finish("gated", "Bewertung gestoppt – prüfen Sie den Grund", {
                 reason: completion.reason,
                 message: completion.message,
                 confirmationRequired: completion.confirmationRequired,
@@ -281,9 +281,9 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
               return;
             }
             doneReportN = typeof completion.reportN === "number" ? completion.reportN : null;
-            finish("done", "Done");
+            finish("done", "Fertig");
           } catch {
-            finish("error", "Connection error");
+            finish("error", "Verbindungsfehler");
           }
         } finally {
           release();
@@ -308,7 +308,7 @@ export function JobsProvider({ children }: { children: React.ReactNode }) {
   return (
     <JobsContext.Provider value={value}>
       {children}
-      <div role="status" aria-label="Worker task status" aria-live="polite" aria-atomic="true" className="sr-only">{announcement}</div>
+      <div role="status" aria-label="Status der Worker-Aufgaben" aria-live="polite" aria-atomic="true" className="sr-only">{announcement}</div>
     </JobsContext.Provider>
   );
 }

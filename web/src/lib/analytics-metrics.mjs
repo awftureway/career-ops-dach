@@ -9,7 +9,7 @@ const SCORE_BUCKETS = [
   { label: "4.0–4.4", min: 4, max: 4.5 },
   { label: "3.5–3.9", min: 3.5, max: 4 },
   { label: "3.0–3.4", min: 3, max: 3.5 },
-  { label: "Below 3.0", min: -Infinity, max: 3 },
+  { label: "Unter 3.0", min: -Infinity, max: 3 },
 ];
 
 function scoreValue(value) {
@@ -160,22 +160,22 @@ function isoWeek(date) {
 
 export function canonicalizeArchetype(raw) {
   const value = String(raw ?? "").trim().toLowerCase();
-  if (!value || ["unknown", "none", "n/a", "—", "-"].includes(value) || value.startsWith("none ")) return "Unclassified";
-  if (value.includes("agentic") || value.includes("automation")) return "Agentic & Automation";
-  if (value.includes("solutions architect") || value.includes("forward deployed") || value.includes("deployment architect")) return "AI Solutions & FDE";
+  if (!value || ["unknown", "none", "n/a", "—", "-"].includes(value) || value.startsWith("none ")) return "Nicht klassifiziert";
+  if (value.includes("agentic") || value.includes("automation")) return "Agentisch & Automatisierung";
+  if (value.includes("solutions architect") || value.includes("forward deployed") || value.includes("deployment architect")) return "KI-Lösungen & FDE";
   // "ai" and "pm" are whole words here: as substrings they match "supply chain"
   // and "development", which sent unrelated roles into the PM buckets.
   const hasAi = /\b(gen)?ai\b/.test(value);
   const hasPm = /\bpm\b/.test(value);
-  if (value.includes("technical ai pm") || (hasAi && hasPm) || (hasAi && value.includes("product manager"))) return "Technical AI PM";
-  if (value.includes("llmops") || value.includes("mlops") || value.includes("platform") || value.includes("infrastructure")) return "AI Platform & LLMOps";
-  if (value.includes("ai/ml") || value.includes("ml engineer") || value.includes("ai engineer") || value.includes("ki- entwickler") || value.includes("genai") || value.includes("applied ai")) return "AI & ML Engineering";
-  if (value.includes("transformation") || value.includes("strategy") || value.includes("consultant") || value.includes("governance") || value.includes("policy")) return "AI Transformation & Governance";
-  if (value.includes("product") || value.includes("project") || value.includes("program") || hasPm || value.includes("projektkoordin")) return "Product & Program Mgmt";
-  if (value.includes("data") || value.includes("analytics") || value.includes("business intelligence")) return "Data & Analytics";
-  if (value.includes("support") || value.includes("helpdesk") || value.includes("service desk") || value.includes("customer service") || value.includes("onboarding") || value.includes("administrator") || value.includes("operations") || /\badmin\b/.test(value)) return "IT & Technical Operations";
-  if (value.includes("research") || value.includes("wissenschaft") || value.includes("universit") || value.includes("bildung")) return "Research & Academia";
-  return "Other / Cross-Functional";
+  if (value.includes("technical ai pm") || (hasAi && hasPm) || (hasAi && value.includes("product manager"))) return "Technisches KI-PM";
+  if (value.includes("llmops") || value.includes("mlops") || value.includes("platform") || value.includes("infrastructure")) return "KI-Plattform & LLMOps";
+  if (value.includes("ai/ml") || value.includes("ml engineer") || value.includes("ai engineer") || value.includes("ki- entwickler") || value.includes("genai") || value.includes("applied ai")) return "KI- & ML-Engineering";
+  if (value.includes("transformation") || value.includes("strategy") || value.includes("consultant") || value.includes("governance") || value.includes("policy")) return "KI-Transformation & Governance";
+  if (value.includes("product") || value.includes("project") || value.includes("program") || hasPm || value.includes("projektkoordin")) return "Produkt- & Programmmanagement";
+  if (value.includes("data") || value.includes("analytics") || value.includes("business intelligence")) return "Daten & Auswertung";
+  if (value.includes("support") || value.includes("helpdesk") || value.includes("service desk") || value.includes("customer service") || value.includes("onboarding") || value.includes("administrator") || value.includes("operations") || /\badmin\b/.test(value)) return "IT & technischer Betrieb";
+  if (value.includes("research") || value.includes("wissenschaft") || value.includes("universit") || value.includes("bildung")) return "Forschung & Wissenschaft";
+  return "Sonstige / Funktionsübergreifend";
 }
 
 function titleCase(value) {
@@ -198,12 +198,12 @@ export function canonicalizeLocation(raw) {
     "petaling jaya": "Petaling Jaya",
     cyberjaya: "Cyberjaya",
     singapore: "Singapore",
-    münchen: "Munich",
-    munich: "Munich",
-    zürich: "Zurich",
-    zurich: "Zurich",
-    wien: "Vienna",
-    vienna: "Vienna",
+    münchen: "München",
+    munich: "München",
+    zürich: "Zürich",
+    zurich: "Zürich",
+    wien: "Wien",
+    vienna: "Wien",
   };
   const first = parts[0].toLowerCase();
   const city = aliases[first] ?? titleCase(parts[0]);
@@ -220,12 +220,12 @@ export function canonicalizeLocation(raw) {
 
 export function deriveSeniority(role = "") {
   const value = String(role).toLowerCase();
-  if (/\b(chief|vp|vice president|director|head of)\b/.test(value)) return "Executive";
+  if (/\b(chief|vp|vice president|director|head of)\b/.test(value)) return "Führungsebene";
   if (/\b(staff|principal)\b/.test(value)) return "Staff / Principal";
   if (/\b(lead|manager|management)\b/.test(value)) return "Lead / Manager";
   if (/\b(senior|sr\.?|expert)\b/.test(value)) return "Senior";
-  if (/\b(junior|jr\.?|graduate|grad|intern|internship|trainee|entry|campus|protege|protégé)\b/.test(value)) return "Junior / Entry";
-  return "Mid-Level";
+  if (/\b(junior|jr\.?|graduate|grad|intern|internship|trainee|entry|campus|protege|protégé)\b/.test(value)) return "Junior / Einstieg";
+  return "Mittelstufe";
 }
 
 function payBand(value) {
@@ -251,7 +251,7 @@ export function computeStatsMetrics(applications = []) {
   const seniorityMap = new Map();
   const payValues = [];
   const payBands = new Map([["< $100K", 0], ["$100K – $140K", 0], ["$140K – $180K", 0], ["$180K – $220K", 0], ["$220K+", 0]]);
-  const quality = new Map([["Elite (≥4.5)", 0], ["Strong (4.0–4.4)", 0], ["Viable (3.5–3.9)", 0], ["Moderate (3.0–3.4)", 0], ["Below Bar (<3.0)", 0]]);
+  const quality = new Map([["Elite (≥4.5)", 0], ["Stark (4.0–4.4)", 0], ["Tragfähig (3.5–3.9)", 0], ["Mäßig (3.0–3.4)", 0], ["Unter Schwelle (<3.0)", 0]]);
   let archetypeTotal = 0;
   let workModeTotal = 0;
   let locationTotal = 0;
@@ -285,7 +285,7 @@ export function computeStatsMetrics(applications = []) {
 
     if (Number.isFinite(score) && score > 0) {
       scoredCount += 1;
-      const tier = score >= 4.5 ? "Elite (≥4.5)" : score >= 4 ? "Strong (4.0–4.4)" : score >= 3.5 ? "Viable (3.5–3.9)" : score >= 3 ? "Moderate (3.0–3.4)" : "Below Bar (<3.0)";
+      const tier = score >= 4.5 ? "Elite (≥4.5)" : score >= 4 ? "Stark (4.0–4.4)" : score >= 3.5 ? "Tragfähig (3.5–3.9)" : score >= 3 ? "Mäßig (3.0–3.4)" : "Unter Schwelle (<3.0)";
       quality.set(tier, quality.get(tier) + 1);
     }
     const pay = Number(app?.payMax);
@@ -308,7 +308,7 @@ export function computeStatsMetrics(applications = []) {
   const qualityTiers = [...quality.entries()]
     .filter(([, count]) => count > 0)
     .map(([label, count]) => ({ label, count, pct: percentage(count, scoredCount) }));
-  const seniorityOrder = ["Executive", "Staff / Principal", "Lead / Manager", "Senior", "Mid-Level", "Junior / Entry"];
+  const seniorityOrder = ["Führungsebene", "Staff / Principal", "Lead / Manager", "Senior", "Mittelstufe", "Junior / Einstieg"];
   const seniorityMix = seniorityOrder.filter((label) => seniorityMap.has(label)).map((label) => ({ label, count: seniorityMap.get(label), pct: percentage(seniorityMap.get(label), seniorityTotal) }));
   const payHistogram = [...payBands.entries()].map(([label, count]) => ({ label, count, pct: percentage(count, payValues.length) }));
 
@@ -317,7 +317,7 @@ export function computeStatsMetrics(applications = []) {
     workModes: mapRows(workModeMap, workModeTotal),
     locations: mapRows(locationMap, locationTotal, 8),
     qualityTiers,
-    qualityBarPct: percentage((quality.get("Elite (≥4.5)") ?? 0) + (quality.get("Strong (4.0–4.4)") ?? 0), scoredCount),
+    qualityBarPct: percentage((quality.get("Elite (≥4.5)") ?? 0) + (quality.get("Stark (4.0–4.4)") ?? 0), scoredCount),
     seniorityMix,
     pay: {
       count: payValues.length,
@@ -336,18 +336,18 @@ export function generateInsights(metrics) {
   if (metrics?.archetypes?.length) {
     const top = metrics.archetypes[0];
     const best = metrics.archetypes
-      .filter((row) => row.count >= 3 && row.avgScore > 0 && row.label !== "Unclassified")
+      .filter((row) => row.count >= 3 && row.avgScore > 0 && row.label !== "Nicht klassifiziert")
       .sort((a, b) => b.avgScore - a.avgScore || b.count - a.count)[0];
     insights.push(best && best.label !== top.label
-      ? `Primary archetype is ${top.label} (${top.count} roles, ${Math.round(top.pct)}%); strongest average fit is ${best.label} (${best.avgScore.toFixed(1)}/5).`
-      : `Primary archetype is ${top.label} (${top.count} roles, ${Math.round(top.pct)}% of the evaluated profile).`);
+      ? `Hauptarchetyp ist ${top.label} (${top.count} Rollen, ${Math.round(top.pct)} %); höchster durchschnittlicher Fit: ${best.label} (${best.avgScore.toFixed(1)}/5).`
+      : `Hauptarchetyp ist ${top.label} (${top.count} Rollen, ${Math.round(top.pct)} % des bewerteten Profils).`);
   }
   if (metrics?.workModes?.length) {
     const mode = metrics.workModes[0];
-    insights.push(`Workplace distribution: ${Math.round(mode.pct)}% of classified roles are ${mode.label}.`);
+    insights.push(`Arbeitsort-Verteilung: ${Math.round(mode.pct)} % der klassifizierten Rollen sind ${mode.label}.`);
   }
   if (metrics?.pay?.count) {
-    insights.push(`Compensation benchmark: median top pay is ${formatMoney(metrics.pay.medianPayMax)} (peak ${formatMoney(metrics.pay.maxPayMax)}) across ${metrics.pay.count} data points.`);
+    insights.push(`Gehaltsvergleich: Median des Höchstgehalts ist ${formatMoney(metrics.pay.medianPayMax)} (Spitze ${formatMoney(metrics.pay.maxPayMax)}) bei ${metrics.pay.count} Datenpunkten.`);
   }
   return insights;
 }

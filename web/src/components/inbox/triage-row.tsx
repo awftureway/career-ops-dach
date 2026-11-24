@@ -15,11 +15,11 @@ export type RowScore = { score: number | null; tone: "good" | "warn" | "bad" | "
 
 function agoLabel(age: number | null): string | null {
   if (age == null) return null;
-  if (age <= 0) return "today";
-  if (age === 1) return "yesterday";
-  if (age < 7) return `${age}d ago`;
-  if (age < 30) return `${Math.floor(age / 7)}w ago`;
-  return `${Math.floor(age / 30)}mo ago`;
+  if (age <= 0) return "heute";
+  if (age === 1) return "gestern";
+  if (age < 7) return `vor ${age} T.`;
+  if (age < 30) return `vor ${Math.floor(age / 7)} Wo.`;
+  return `vor ${Math.floor(age / 30)} Mon.`;
 }
 
 // One raw posting in the triage list. Shows ONLY cheap, free signals + an honest
@@ -78,7 +78,7 @@ export function TriageRow({
         type="checkbox"
         checked={selected}
         onChange={onToggleSelect}
-        aria-label={`Select ${job.company} ${job.role}`}
+        aria-label={`${job.company} ${job.role} auswählen`}
         className="size-4 shrink-0 accent-brand max-sm:min-h-[44px] max-sm:min-w-[24px]"
       />
 
@@ -99,7 +99,7 @@ export function TriageRow({
           {source && <span className="rounded bg-surface-hover px-1 py-px font-medium text-muted">{ATS_LABEL[source]}</span>}
           {ago && <span>{ago}</span>}
           {reason ? <span className="text-muted">{reason}</span> : null}
-          {!evaluated && <span className="italic text-muted">not scored</span>}
+          {!evaluated && <span className="italic text-muted">nicht bewertet</span>}
         </p>
       </div>
 
@@ -107,13 +107,13 @@ export function TriageRow({
       {scored?.needsReview ? (
         <div className="flex shrink-0 items-center gap-1">
           <Link href={`/jobs/${scored.jobId}`} className="flex items-center gap-1.5 text-xs text-amber-800 dark:text-amber-400">
-            <CirclePause className="size-3.5" /> Needs review
+            <CirclePause className="size-3.5" /> Prüfung nötig
           </Link>
           <button
             type="button"
             onClick={onSkip}
-            title="Skip — hide from the inbox"
-            aria-label={`Skip ${job.company} ${job.role}`}
+            title="Überspringen – im Posteingang ausblenden"
+            aria-label={`${job.company} ${job.role} überspringen`}
             className="inline-flex items-center justify-center rounded-md p-1 text-faint transition-colors hover:bg-surface-hover hover:text-foreground max-sm:min-h-[44px] max-sm:min-w-[44px]"
           >
             <X className="size-4" />
@@ -124,12 +124,12 @@ export function TriageRow({
           {scored!.running ? (
             <>
               <Loader2 className="size-3.5 animate-spin text-brand-text" />
-              <span className="text-brand-text max-sm:hidden">Scoring…</span>
+              <span className="text-brand-text max-sm:hidden">Bewertung läuft …</span>
             </>
           ) : target.showScore ? (
             <Badge tone={scored!.tone}>{scored!.score}/5</Badge>
           ) : (
-            <span className="text-brand-text">Report</span>
+            <span className="text-brand-text">Bericht</span>
           )}
         </Link>
       ) : (
@@ -137,7 +137,7 @@ export function TriageRow({
           <button
             type="button"
             onClick={onSave}
-            title={shortlisted ? "In your shortlist" : "Save to shortlist"}
+            title={shortlisted ? "In Ihrer Merkliste" : "Zur Merkliste hinzufügen"}
             aria-pressed={shortlisted}
             className={cn(
               "inline-flex items-center justify-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors max-sm:min-h-[44px] max-sm:min-w-[44px]",
@@ -145,12 +145,12 @@ export function TriageRow({
             )}
           >
             {shortlisted ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
-            <span className="max-sm:hidden">{shortlisted ? "Saved" : "Save"}</span>
+            <span className="max-sm:hidden">{shortlisted ? "Gemerkt" : "Merken"}</span>
           </button>
           <button
             type="button"
             onClick={onSkip}
-            title="Skip — hide from the inbox"
+            title="Überspringen – im Posteingang ausblenden"
             className="inline-flex items-center justify-center rounded-md p-1 text-faint transition-colors hover:bg-surface-hover hover:text-foreground max-sm:min-h-[44px] max-sm:min-w-[44px]"
           >
             <X className="size-4" />

@@ -41,11 +41,11 @@ export function PipelineSankey({
   return (
     <section id="pipeline-sankey" className="mt-10 scroll-mt-8" aria-labelledby="sankey-heading">
       <h2 id="sankey-heading" className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
-        Pipeline Sankey
+        Pipeline-Sankey
       </h2>
       <p className="mt-2 max-w-2xl text-sm text-muted">
-        Current tracker snapshot. Status-log transitions keep interview-then-reject
-        on the interview path — a later Rejected does not erase the stage.
+        Aktueller Stand des Trackers. Übergänge aus dem Statusprotokoll halten
+        Interview-dann-Absage auf dem Interview-Pfad — ein späteres Rejected löscht die Stufe nicht.
       </p>
 
       <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-surface/50 p-3">
@@ -55,10 +55,10 @@ export function PipelineSankey({
           role="img"
           aria-labelledby="sankey-title sankey-desc"
         >
-          <title id="sankey-title">Application pipeline Sankey</title>
+          <title id="sankey-title">Bewerbungs-Pipeline als Sankey</title>
           <desc id="sankey-desc">
-            {graph.total} tracked roles flowing from tracked through submitted to waiting,
-            company-engaged, and terminal outcomes.
+            {graph.total} erfasste Stellen im Fluss von erfasst über gesendet bis zu wartend,
+            Firmenkontakt und Endergebnissen.
           </desc>
 
           {layout.links.map((link) => {
@@ -67,7 +67,7 @@ export function PipelineSankey({
             const targetLabel = labelById.get(link.target) ?? link.target;
             return (
               <g key={`${link.source}-${link.target}`}>
-                <title>{`${link.value} roles: ${sourceLabel} → ${targetLabel}`}</title>
+                <title>{`${link.value} Stellen: ${sourceLabel} → ${targetLabel}`}</title>
                 <path d={link.d} className={cn(TONE_LINK[tone] ?? TONE_LINK.neutral, "outline-none")} />
               </g>
             );
@@ -113,12 +113,12 @@ export function PipelineSankey({
 
       <div className="sr-only">
         <table>
-          <caption>Pipeline Sankey flows</caption>
+          <caption>Pipeline-Sankey-Flüsse</caption>
           <thead>
             <tr>
-              <th>From</th>
-              <th>To</th>
-              <th>Roles</th>
+              <th>Von</th>
+              <th>Nach</th>
+              <th>Stellen</th>
             </tr>
           </thead>
           <tbody>

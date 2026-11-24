@@ -38,8 +38,8 @@ test("application review labels, requirements and confirmation descriptions", { 
   await page.addInitScript(() => localStorage.setItem("career-ops:config", JSON.stringify({ cliId: "fixture-cli" })));
   await page.goto(`${origin.origin}/apply`);
   await page.getByPlaceholder("Paste an application form URL (Ashby, Lever, Greenhouse…)").fill("https://example.com/fictional-application");
-  await page.getByRole("button", { name: "Read form", exact: true }).click();
-  await page.getByRole("button", { name: "Pre-fill from my CV", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Formular lesen", exact: true }).click();
+  await page.getByRole("button", { name: "Aus meinem Lebenslauf vorausfüllen", exact: true }).waitFor();
 
   async function inspectFields() {
     const inputs = page.locator("input[id], textarea[id], select[id]");
@@ -47,7 +47,7 @@ test("application review labels, requirements and confirmation descriptions", { 
     assert.equal(properties.length, fields.length - 1); // file is a handoff notice
     assert.equal(new Set(properties.map((p) => p.id)).size, properties.length);
     for (const [i, p] of properties.entries()) {
-      assert.equal(p.name, fields[i].label || "Untitled field");
+      assert.equal(p.name, fields[i].label || "Unbenanntes Feld");
       assert.equal(p.required, fields[i].required ? "true" : null);
       assert.equal(p.nativeRequired, false); // draft editing must remain unrestricted
     }
@@ -62,14 +62,14 @@ test("application review labels, requirements and confirmation descriptions", { 
     assert.equal(await page.evaluate(() => document.activeElement.id), target);
   }
   await page.getByRole("checkbox", { name: "Fixture checkbox", exact: true }).check();
-  await page.getByRole("button", { name: "Pre-fill from my CV", exact: true }).click();
+  await page.getByRole("button", { name: "Aus meinem Lebenslauf vorausfüllen", exact: true }).click();
   await page.locator(".co-skel").first().waitFor();
   release();
-  await page.getByRole("button", { name: "Pre-fill from my CV", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Aus meinem Lebenslauf vorausfüllen", exact: true }).waitFor();
   const after = await inspectFields();
   assert.deepEqual(after.map((p) => p.id), before.map((p) => p.id));
-  assert.equal(after[0].description, "you confirm");
-  assert.equal(after.find((p) => p.name === "Fixture checkbox").description, "you confirm");
+  assert.equal(after[0].description, "Sie bestätigen");
+  assert.equal(after.find((p) => p.name === "Fixture checkbox").description, "Sie bestätigen");
   assert.equal(after[1].description, null);
   assert.equal(unexpected.length, 0);
 });

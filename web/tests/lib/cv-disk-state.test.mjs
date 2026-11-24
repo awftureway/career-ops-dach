@@ -15,11 +15,11 @@ const isFile = (abs) => {
   }
 };
 
-test("a file on disk is View tailored CV, and a missing file is not", () => {
+test("a file on disk is Angepassten Lebenslauf ansehen, and a missing file is not", () => {
   assert.deepEqual(cvDiskState({ onDisk: true, trackerMarked: true }), {
     exists: true,
     stale: false,
-    viewLabel: "View tailored CV",
+    viewLabel: "Angepassten Lebenslauf ansehen",
     note: null,
   });
   assert.deepEqual(cvDiskState({ onDisk: false }), {
@@ -35,8 +35,8 @@ test("a tracker mark or a finished job with no file is a stale flag", () => {
   assert.equal(stale.exists, false);
   assert.equal(stale.stale, true);
   assert.equal(stale.viewLabel, null);
-  assert.match(stale.note, /no file is in output/);
-  assert.match(stale.note, /Generate it again/);
+  assert.match(stale.note, /in output\/ ist keine Datei/);
+  assert.match(stale.note, /Erstellen Sie ihn erneut/);
 });
 
 test("a missing output directory is an empty list, and any other read error is thrown", () => {
@@ -64,7 +64,7 @@ test("a real PDF in output counts, and deleting it leaves the tracker mark stale
       trackerMarked: false,
     });
     assert.equal(present.exists, true);
-    assert.equal(present.viewLabel, "View tailored CV");
+    assert.equal(present.viewLabel, "Angepassten Lebenslauf ansehen");
 
     rmSync(path.join(dir, "cv-sundial-pharmacy.pdf"));
     const goneNames = listOutputPdfNames(dir, isFile);

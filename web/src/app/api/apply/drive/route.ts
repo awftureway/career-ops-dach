@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   // a substitution is reported (#4607); driveSession() itself needs Claude.
   const cliId = (body.cliId && resolveCliOrFallback(body.cliId)?.spec.id) || body.cliId || "";
   const s = sessionId ? getSession(sessionId) : undefined;
-  if (!s) return Response.json({ error: "apply session not found (it may have expired)" }, { status: 404 });
+  if (!s) return Response.json({ error: "Bewerbungssitzung nicht gefunden (möglicherweise abgelaufen)" }, { status: 404 });
   let safeAnswers = answers;
   if (answers) {
     let profile;
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
             cvPath = await resolveSessionCv({ company, application, title: s.title });
           } catch (error) {
             cvPath = null;
-            cvResolveError = error instanceof Error ? error.message.slice(0, 160) : "Could not resolve the résumé.";
+            cvResolveError = error instanceof Error ? error.message.slice(0, 160) : "Der Lebenslauf konnte nicht aufgelöst werden.";
           }
           // Snapshot first. Finalizing replaces s.fields and reassigns positional ids.
           const beforeFields = Array.isArray(s.fields) ? s.fields.slice() : [];
@@ -99,7 +99,7 @@ export async function POST(req: Request) {
             return;
           }
           if (!fin) {
-            const unread = { level: "warn" as const, code: "fill-unverified", message: "Couldn't read the form back, so it is not counted as pre-filled." };
+            const unread = { level: "warn" as const, code: "fill-unverified", message: "Das Formular ließ sich nicht zurücklesen und zählt daher nicht als vorausgefüllt." };
             emit({
               t: "done",
               filled: false,
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
             ? [{
               level: "warn" as const,
               code: "fill-unverified",
-              message: `Couldn't match these answers to the form, so they are not counted as pre-filled: ${dropped.join(", ")}.`,
+              message: `Diese Antworten ließen sich nicht dem Formular zuordnen und zählen daher nicht als vorausgefüllt: ${dropped.join(", ")}.`,
             }]
             : [];
           const gaps = [
@@ -168,7 +168,7 @@ export async function POST(req: Request) {
           }
         }
         // Didn't reach a real form → classify why for a clear message.
-        const why = await classifyEmpty(page, s.url).catch(() => ({ message: "Couldn't reach a fillable form on this page." }));
+        const why = await classifyEmpty(page, s.url).catch(() => ({ message: "Auf dieser Seite wurde kein ausfüllbares Formular gefunden." }));
         emit({ t: "error", reason: result.reason, message: result.reason === "stuck" ? result.steps.at(-1)?.detail || why.message : why.message });
       } catch (e) {
         emit({ t: "error", message: e instanceof Error ? e.message.slice(0, 160) : "drive failed" });

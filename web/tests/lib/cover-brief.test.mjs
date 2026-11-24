@@ -35,31 +35,31 @@ test("parseCoverRequest: a full brief for an evaluated row resolves its report a
 test("parseCoverRequest: a blank answer is refused, because cover.md drafts nothing until all four are in", () => {
   const result = parseCoverRequest({ input: "041", brief: { ...BRIEF, approach: "   " }, root: ROOT, findReportFile });
 
-  assert.deepEqual(result, { ok: false, error: "Answer all four cover letter questions first." });
+  assert.deepEqual(result, { ok: false, error: "Beantworten Sie zuerst alle vier Fragen zum Anschreiben." });
 });
 
 test("parseCoverRequest: a tone the mode does not offer is refused", () => {
   const result = parseCoverRequest({ input: "041", brief: { ...BRIEF, tone: "playful" }, root: ROOT, findReportFile });
 
-  assert.deepEqual(result, { ok: false, error: "Answer all four cover letter questions first." });
+  assert.deepEqual(result, { ok: false, error: "Beantworten Sie zuerst alle vier Fragen zum Anschreiben." });
 });
 
 test("parseCoverRequest: a missing brief is refused", () => {
   const result = parseCoverRequest({ input: "041", brief: undefined, root: ROOT, findReportFile });
 
-  assert.deepEqual(result, { ok: false, error: "Answer all four cover letter questions first." });
+  assert.deepEqual(result, { ok: false, error: "Beantworten Sie zuerst alle vier Fragen zum Anschreiben." });
 });
 
 test("parseCoverRequest: an answer past the length cap is refused, not cut", () => {
   const result = parseCoverRequest({ input: "041", brief: { ...BRIEF, why: "x".repeat(1001) }, root: ROOT, findReportFile });
 
-  assert.deepEqual(result, { ok: false, error: "Keep each answer to 1000 characters or fewer." });
+  assert.deepEqual(result, { ok: false, error: "Halten Sie jede Antwort bei höchstens 1000 Zeichen." });
 });
 
 test("parseCoverRequest: a row with no report asks for an evaluation first", () => {
   const result = parseCoverRequest({ input: "7", brief: BRIEF, root: ROOT, findReportFile });
 
-  assert.deepEqual(result, { ok: false, error: "No report #7 found. Evaluate this posting first." });
+  assert.deepEqual(result, { ok: false, error: "Bericht #7 nicht gefunden. Bewerten Sie diese Stellenanzeige zuerst." });
 });
 
 test("parseCoverRequest: a selector that is not a bare number never reaches the report lookup", () => {
@@ -71,7 +71,7 @@ test("parseCoverRequest: a selector that is not a bare number never reaches the 
     findReportFile: (n) => (seen.push(n), REPORT),
   });
 
-  assert.deepEqual(result, { ok: false, error: 'Invalid report selector: "41/../../etc/passwd"' });
+  assert.deepEqual(result, { ok: false, error: 'Ungültige Berichtsauswahl: „41/../../etc/passwd“' });
   assert.deepEqual(seen, []);
 });
 
@@ -83,7 +83,7 @@ test("parseCoverRequest: a non-string input is refused before the selector regex
     findReportFile,
   });
   assert.equal(result.ok, false);
-  assert.match(result.error, /Invalid report selector: expected a report number string/);
+  assert.match(result.error, /Ungültige Berichtsauswahl: Erwartet wird eine Berichtsnummer als Zeichenkette/);
 });
 
 test("parseCoverRequest: a non-string tone is refused as incomplete", () => {
@@ -94,5 +94,5 @@ test("parseCoverRequest: a non-string tone is refused as incomplete", () => {
     findReportFile,
   });
   assert.equal(result.ok, false);
-  assert.equal(result.error, "Answer all four cover letter questions first.");
+  assert.equal(result.error, "Beantworten Sie zuerst alle vier Fragen zum Anschreiben.");
 });

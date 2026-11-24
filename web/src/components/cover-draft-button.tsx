@@ -39,14 +39,14 @@ export function CoverDraftButton({ n, company }: { n: string; company: string })
     const data = new FormData(e.currentTarget);
     const brief = Object.fromEntries(["why", "problem", "approach", "tone"].map((k) => [k, String(data.get(k) ?? "")]));
     setSavedBrief(brief);
-    startJob({ title: `Cover letter · ${company}`, subtitle: "draft for this role", kind: "cover", input: n, page: `/pipeline/${n}`, brief });
+    startJob({ title: `Anschreiben · ${company}`, subtitle: "Entwurf für diese Stelle", kind: "cover", input: n, page: `/pipeline/${n}`, brief });
     setOpen(false);
   };
 
   if (state.kind === "running")
     return (
       <Link href={`/jobs/${state.jobId}${jobQuery}`} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-brand/40 bg-brand-soft px-3 py-1 text-xs font-medium text-brand-text max-sm:min-h-[44px]">
-        <Loader2 className="size-3.5 motion-safe:animate-spin" /> Drafting cover letter…
+        <Loader2 className="size-3.5 motion-safe:animate-spin" /> Anschreiben wird entworfen …
       </Link>
     );
 
@@ -58,11 +58,11 @@ export function CoverDraftButton({ n, company }: { n: string; company: string })
             href={`/jobs/${job.id}${jobQuery}`}
             className="inline-flex items-center justify-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-800 transition-colors hover:bg-emerald-500/15 dark:text-emerald-400 max-sm:min-h-[44px]"
           >
-            <FileText className="size-3.5" /> View cover letter draft
+            <FileText className="size-3.5" /> Anschreiben-Entwurf ansehen
           </Link>
           <button
             onClick={() => setOpen((o) => !o)}
-            title="Draft the cover letter again"
+            title="Anschreiben erneut entwerfen"
             aria-expanded={open}
             className="inline-flex items-center justify-center rounded-full p-1 text-faint transition-colors hover:text-brand-text max-sm:min-h-[44px] max-sm:min-w-[44px]"
           >
@@ -74,24 +74,24 @@ export function CoverDraftButton({ n, company }: { n: string; company: string })
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           className="inline-flex items-center justify-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]"
-          title="Draft a cover letter for this role with your AI CLI"
+          title="Anschreiben für diese Stelle mit Ihrer KI-CLI entwerfen"
         >
-          <Mail className="size-3.5" /> Draft cover letter
+          <Mail className="size-3.5" /> Anschreiben entwerfen
         </button>
       )}
       {state.failure && (
         <Link
           href={`/jobs/${state.failure.jobId}${jobQuery}`}
           role="alert"
-          title="Open the run log"
+          title="Ausführungsprotokoll öffnen"
           className="inline-flex max-w-md items-start gap-1 text-xs text-red-700 hover:underline dark:text-red-400"
         >
           <TriangleAlert className="mt-0.5 size-3.5 shrink-0" />
-          <span>Cover letter not drafted. {state.failure.reason}</span>
+          <span>Anschreiben nicht entworfen. {state.failure.reason}</span>
         </Link>
       )}
       {open && (
-        <form onSubmit={submit} aria-label="Cover letter questions" className="basis-full rounded-2xl border border-border bg-surface/50 p-4">
+        <form onSubmit={submit} aria-label="Fragen zum Anschreiben" className="basis-full rounded-2xl border border-border bg-surface/50 p-4">
           {COVER_QUESTIONS.map((q) => (
             <label key={q.name} className="mb-3 block text-sm font-medium text-foreground">
               {q.label}
@@ -100,7 +100,7 @@ export function CoverDraftButton({ n, company }: { n: string; company: string })
             </label>
           ))}
           <label className="mb-4 block text-sm font-medium text-foreground">
-            Tone
+            Tonalität
             <select name="tone" defaultValue={prefill?.tone || "mirror"} className={fieldClass}>
               {Object.entries(COVER_TONES).map(([id, label]) => (
                 <option key={id} value={id}>{label}</option>
@@ -109,11 +109,11 @@ export function CoverDraftButton({ n, company }: { n: string; company: string })
           </label>
           <div className="flex flex-wrap items-center gap-2">
             <button type="submit" className="inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1.5 text-xs font-medium text-brand-foreground shadow-sm transition-colors hover:bg-brand-200 max-sm:min-h-[44px]">
-              <Mail className="size-3.5" /> Draft letter
+              <Mail className="size-3.5" /> Anschreiben entwerfen
             </button>
             <CostBadge kind="spend" size="xs" />
             <button type="button" onClick={() => setOpen(false)} className="text-xs text-muted hover:text-brand-text max-sm:min-h-[44px]">
-              Cancel
+              Abbrechen
             </button>
           </div>
         </form>

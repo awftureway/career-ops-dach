@@ -34,9 +34,9 @@ export async function POST(req: Request) {
     source = fs.readFileSync(file, "utf8");
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code === "ENOENT") {
-      return NextResponse.json({ error: "There is no config/profile.yml yet. Finish setup first, then choose a template." }, { status: 409 });
+      return NextResponse.json({ error: "Es gibt noch keine config/profile.yml. Schließen Sie zuerst die Einrichtung ab und wählen Sie dann eine Vorlage." }, { status: 409 });
     }
-    return NextResponse.json({ error: "config/profile.yml could not be read." }, { status: 500 });
+    return NextResponse.json({ error: "config/profile.yml konnte nicht gelesen werden." }, { status: 500 });
   }
   try {
     atomicWriteWithBackup(resolveUserFileWriteTarget(file), profileWithTemplate(source, kind, name));

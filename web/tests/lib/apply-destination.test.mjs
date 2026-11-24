@@ -21,9 +21,9 @@ test("Apply with a CV and a link opens the form reader for that offer", () => {
 test("Apply without a tailored CV names the missing file and the report", () => {
   const dest = applyDestination({ n: "15", pdfOnDisk: false, postingUrl: "https://jobs.example.com/apply/15" });
   assert.equal(dest.kind, "need-cv");
-  assert.match(dest.message, /tailored CV/);
+  assert.match(dest.message, /angepasster Lebenslauf/);
   assert.equal(dest.nextHref, "/pipeline/15");
-  assert.match(dest.nextLabel, /generate the CV/);
+  assert.match(dest.nextLabel, /Lebenslauf zu erstellen/);
   assert.equal(applyOpenArgs({ dest }), null);
 });
 
@@ -35,13 +35,13 @@ test("Apply on the report itself points at the generate step on that page", () =
     alreadyOnReport: true,
   });
   assert.equal(dest.kind, "need-cv");
-  assert.match(dest.message, /Generate the tailored CV on this page/);
+  assert.match(dest.message, /Erstellen Sie auf dieser Seite den angepassten Lebenslauf/);
   assert.equal(dest.nextHref, null);
 });
 
 test("Apply with a CV but no link does not open the form reader", () => {
   const dest = applyDestination({ n: "4", pdfOnDisk: true, postingUrl: "" });
   assert.equal(dest.kind, "need-link");
-  assert.match(dest.message, /no application link/);
+  assert.match(dest.message, /keinen Bewerbungslink/);
   assert.equal(applyOpenArgs({ dest }), null);
 });

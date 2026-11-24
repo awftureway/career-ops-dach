@@ -41,16 +41,16 @@ export function CvPreview({ html }: { html: string }) {
   const pages = previewPageCount(contentPx);
 
   return (
-    <section aria-label="Live preview" className="rounded-2xl border border-border bg-surface/40 p-3">
+    <section aria-label="Live-Vorschau" className="rounded-2xl border border-border bg-surface/40 p-3">
       <div className="mb-2 flex items-center justify-between px-1 text-xs text-muted">
-        <span>Live preview</span>
-        <span>{pages} page{pages === 1 ? "" : "s"} (estimate)</span>
+        <span>Live-Vorschau</span>
+        <span>{pages} Seite{pages === 1 ? "" : "n"} (geschätzt)</span>
       </div>
       <div ref={box} className="max-h-[80vh] overflow-auto rounded-lg bg-white shadow-sm">
         <div style={{ height: frameHeight * scale }}>
           <iframe
             ref={frame}
-            title="Tailored CV preview"
+            title="Vorschau des angepassten Lebenslaufs"
             srcDoc={previewHtml(html)}
             onLoad={measure}
             sandbox="allow-same-origin"

@@ -23,7 +23,7 @@ function errorJob(label, text = "") {
 test("no CLI configured -> auth hint", () => {
   const hint = jobErrorHint(errorJob("No CLI configured — open Config"));
   assert.equal(hint?.kind, "auth");
-  assert.equal(hint?.text, "Sign your CLI in from Config, then re-run.");
+  assert.equal(hint?.text, "Melden Sie Ihre CLI unter Einstellungen an und starten Sie den Lauf erneut.");
 });
 
 test("raw CLI stderr mentioning auth -> auth hint", () => {
@@ -65,11 +65,11 @@ test("a rate limit, an empty reply, and a Grok error are not a sign-in hint", ()
   assert.equal(jobErrorHint(errorJob("The CLI returned nothing. (API key configured; report not found)")), null);
   assert.equal(jobErrorHint(errorJob("The CLI exited with an error. (Error: proxy not configured)")), null);
   assert.equal(
-    jobErrorHint(errorJob("This run hit an error before finishing, so it isn't recorded as a confident result — re-run it to verify. (API key loaded successfully)")),
+    jobErrorHint(errorJob("Dieser Lauf ist vor dem Abschluss auf einen Fehler gestoßen und wird daher nicht als sicheres Ergebnis erfasst — starten Sie ihn zur Prüfung erneut. (API key loaded successfully)")),
     null,
   );
   assert.equal(
-    jobErrorHint(errorJob(("This run hit an error before finishing, so it isn't recorded as a confident result — re-run it to verify. (API key loaded successfully; " + "x".repeat(120)).slice(0, 200))),
+    jobErrorHint(errorJob(("Dieser Lauf ist vor dem Abschluss auf einen Fehler gestoßen und wird daher nicht als sicheres Ergebnis erfasst — starten Sie ihn zur Prüfung erneut. (API key loaded successfully; " + "x".repeat(120)).slice(0, 200))),
     null,
   );
   assert.equal(jobErrorHint(errorJob("The CLI exited with an error. (API key loaded successfully)")), null);
@@ -82,11 +82,11 @@ test("a real sign-in line still asks you to sign in", () => {
   assert.equal(jobErrorHint(errorJob("The CLI returned nothing. (No CLI configured; login required)"))?.kind, "auth");
   assert.equal(jobErrorHint(errorJob("The CLI returned nothing. (API key configured; authentication failed)"))?.kind, "auth");
   assert.equal(
-    jobErrorHint(errorJob("This run hit an error before finishing, so it isn't recorded as a confident result — re-run it to verify. (please login)"))?.kind,
+    jobErrorHint(errorJob("Dieser Lauf ist vor dem Abschluss auf einen Fehler gestoßen und wird daher nicht als sicheres Ergebnis erfasst — starten Sie ihn zur Prüfung erneut. (please login)"))?.kind,
     "auth",
   );
   assert.equal(
-    jobErrorHint(errorJob("This run hit an error before finishing, so it isn't recorded as a confident result — re-run it to verify. (authentication failed (HTTP 401))"))?.kind,
+    jobErrorHint(errorJob("Dieser Lauf ist vor dem Abschluss auf einen Fehler gestoßen und wird daher nicht als sicheres Ergebnis erfasst — starten Sie ihn zur Prüfung erneut. (authentication failed (HTTP 401))"))?.kind,
     "auth",
   );
   assert.equal(jobErrorHint(errorJob("The CLI exited with an error. (Configuration loaded; please login)"))?.kind, "auth");
@@ -126,15 +126,15 @@ test("only the TERMINAL step is classified: an earlier auth label is ignored", (
 });
 
 test("connection error -> connection hint, NOT auth", () => {
-  const hint = jobErrorHint(errorJob("Connection error"));
+  const hint = jobErrorHint(errorJob("Verbindungsfehler"));
   assert.equal(hint?.kind, "connection");
-  assert.equal(hint?.text, "Lost connection to the local server — re-run.");
+  assert.equal(hint?.text, "Verbindung zum lokalen Server verloren — Lauf erneut starten.");
 });
 
 test("page-reload interruption -> interrupted hint, NOT auth", () => {
-  const hint = jobErrorHint(errorJob("Interrupted (page reloaded)"));
+  const hint = jobErrorHint(errorJob("Unterbrochen (Seite neu geladen)"));
   assert.equal(hint?.kind, "interrupted");
-  assert.equal(hint?.text, "The run was interrupted — re-run it.");
+  assert.equal(hint?.text, "Der Lauf wurde unterbrochen — erneut starten.");
 });
 
 test("connection error with unrelated auth-flavored assistant text -> still connection, NOT auth (the bug this fixes)", () => {
@@ -143,13 +143,13 @@ test("connection error with unrelated auth-flavored assistant text -> still conn
   // must never leak into the terminal-cause classification.
   const text =
     "The candidate holds strong professional credentials and the platform's sign-in flow requires OAuth authentication for API access.";
-  const hint = jobErrorHint(errorJob("Connection error", text));
+  const hint = jobErrorHint(errorJob("Verbindungsfehler", text));
   assert.equal(hint?.kind, "connection");
 });
 
 test("interrupted with unrelated auth-flavored assistant text -> still interrupted, NOT auth", () => {
   const text = "This product requires the user to authenticate via SSO login with their corporate credentials.";
-  const hint = jobErrorHint(errorJob("Interrupted (page reloaded)", text));
+  const hint = jobErrorHint(errorJob("Unterbrochen (Seite neu geladen)", text));
   assert.equal(hint?.kind, "interrupted");
 });
 
@@ -162,7 +162,7 @@ test("other terminal errors -> no hint", () => {
     null,
   );
   assert.equal(
-    jobErrorHint(errorJob("This run hit an error before finishing, so it isn't recorded as a confident result — re-run it to verify.")),
+    jobErrorHint(errorJob("Dieser Lauf ist vor dem Abschluss auf einen Fehler gestoßen und wird daher nicht als sicheres Ergebnis erfasst — starten Sie ihn zur Prüfung erneut.")),
     null,
   );
 });

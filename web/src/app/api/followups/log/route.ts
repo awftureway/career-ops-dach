@@ -98,7 +98,7 @@ export async function POST(req: Request) {
       return Response.json({ ok: true, num, appNum, date, channel });
     });
   } catch (e) {
-    return followupsWriteError(e, "write failed");
+    return followupsWriteError(e, "Schreiben fehlgeschlagen");
   }
 }
 
@@ -113,7 +113,7 @@ export async function DELETE(req: Request) {
   if (num === null) return Response.json({ error: "num required" }, { status: 400 });
 
   const file = followupsLogPath();
-  if (!fs.existsSync(file)) return Response.json({ error: "no follow-up log" }, { status: 404 });
+  if (!fs.existsSync(file)) return Response.json({ error: "Kein Nachfass-Protokoll vorhanden" }, { status: 404 });
   try {
     return await withFollowupsWrite(() => {
       const lines = fs.readFileSync(file, "utf8").split("\n");
@@ -122,12 +122,12 @@ export async function DELETE(req: Request) {
         const first = line.split("|")[1]?.trim() ?? "";
         return Number.parseInt(first, 10) === num && /^\d+$/.test(first);
       });
-      if (idx === -1) return Response.json({ error: `follow-up #${num} not found` }, { status: 404 });
+      if (idx === -1) return Response.json({ error: `Nachfassen #${num} nicht gefunden` }, { status: 404 });
       lines.splice(idx, 1);
       atomicWrite(file, lines.join("\n"));
       return Response.json({ ok: true, num });
     });
   } catch (e) {
-    return followupsWriteError(e, "delete failed");
+    return followupsWriteError(e, "Löschen fehlgeschlagen");
   }
 }

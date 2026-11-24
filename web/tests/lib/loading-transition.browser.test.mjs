@@ -124,18 +124,18 @@ test("loading transitions keep context and only latest requests settle Today", {
       await route.fulfill({ json: endpoint === "/api/followups" ? emptyFollowups : emptyFresh });
     });
     await page.goto(origin.origin);
-    await page.getByRole("button", { name: "Retry updates" }).waitFor();
+    await page.getByRole("button", { name: "Updates erneut laden" }).waitFor();
     assert.equal(await heading.innerText(), "Some updates are unavailable.");
     assert.equal(await updatesAlert.isVisible(), true);
-    assert.equal(await page.getByText("You're all caught up.", { exact: true }).count(), 0);
+    assert.equal(await page.getByText("Sie sind auf dem neuesten Stand.", { exact: true }).count(), 0);
     retry = true;
     seen.clear();
-    await page.getByRole("button", { name: "Retry updates" }).click();
+    await page.getByRole("button", { name: "Updates erneut laden" }).click();
     await until(() => seen.size === 2);
-    assert.equal(await heading.innerText(), "Your career queue is loading.");
+    assert.equal(await heading.innerText(), "Ihre Aufgabenliste lädt …");
     await page.getByRole("region", { name: "Loading follow-ups due" }).waitFor();
     pending.release();
-    await page.getByRole("heading", { name: "You're all caught up." }).waitFor();
+    await page.getByRole("heading", { name: "Sie sind auf dem neuesten Stand." }).waitFor();
     assert.equal(await updatesAlert.count(), 0);
   });
 
@@ -147,10 +147,10 @@ test("loading transitions keep context and only latest requests settle Today", {
         : emptyFresh,
     }));
     await page.goto(origin.origin);
-    await page.getByRole("button", { name: "Retry updates" }).waitFor();
+    await page.getByRole("button", { name: "Updates erneut laden" }).waitFor();
     assert.equal(await heading.innerText(), "Some updates are unavailable.");
     assert.match(await updatesAlert.innerText(), /Follow-ups could not be loaded/);
-    assert.equal(await page.getByText("You're all caught up.", { exact: true }).count(), 0);
+    assert.equal(await page.getByText("Sie sind auf dem neuesten Stand.", { exact: true }).count(), 0);
   });
 
   await t.test("older success cannot end a newer load; older failure cannot replace newer success", async (subtest) => {
@@ -177,26 +177,26 @@ test("loading transitions keep context and only latest requests settle Today", {
     await page.reload();
     await started(1);
     release(1);
-    await page.getByRole("heading", { name: "You're all caught up." }).waitFor();
+    await page.getByRole("heading", { name: "Sie sind auf dem neuesten Stand." }).waitFor();
     await refetch(); await started(2);
     await refetch(); await started(3);
     release(2);
     await until(() => completed === 4);
     await page.waitForTimeout(100);
-    assert.equal(await heading.innerText(), "Your career queue is loading.");
+    assert.equal(await heading.innerText(), "Ihre Aufgabenliste lädt …");
     gates.get("3:/api/whats-new").release();
     await until(() => completed === 5);
-    assert.equal(await heading.innerText(), "Your career queue is loading.");
+    assert.equal(await heading.innerText(), "Ihre Aufgabenliste lädt …");
     gates.get("3:/api/followups").release();
-    await page.getByRole("heading", { name: "You're all caught up." }).waitFor();
+    await page.getByRole("heading", { name: "Sie sind auf dem neuesten Stand." }).waitFor();
     await refetch(); await started(4);
     await refetch(); await started(5);
     release(5);
-    await page.getByRole("heading", { name: "You're all caught up." }).waitFor();
+    await page.getByRole("heading", { name: "Sie sind auf dem neuesten Stand." }).waitFor();
     release(4);
     await until(() => completed === 10);
     await page.waitForTimeout(100);
-    assert.equal(await heading.innerText(), "You're all caught up.");
+    assert.equal(await heading.innerText(), "Sie sind auf dem neuesten Stand.");
     assert.equal(await updatesAlert.count(), 0);
   });
 

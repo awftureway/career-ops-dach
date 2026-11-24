@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PreparationLoading() {
   return (
-    <div className="flex h-[calc(100vh-4rem)] gap-4 p-4" aria-label="Loading preparation files">
+    <div className="flex h-[calc(100vh-4rem)] gap-4 p-4" aria-label="Vorbereitungsdateien laden …">
       <div className="w-72 shrink-0 space-y-2 rounded border border-border bg-surface/30 p-2">
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} className="h-6 w-full" />

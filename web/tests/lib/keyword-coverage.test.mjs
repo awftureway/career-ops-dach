@@ -20,7 +20,7 @@ test("legacy frequency data leaves all present terms covered", () => {
   const counts = Object.fromEntries(tiers.map((t) => [t.key, t.terms.length]));
   assert.deepEqual(counts, { covered: 5, missing: 4 });
   assert.equal(counts.covered + counts.missing, REAL.total);
-  assert.match(tiers.find((t) => t.key === "missing").hint, /may describe the skill in other words/);
+  assert.match(tiers.find((t) => t.key === "missing").hint, /mit anderen Worten/);
 });
 
 test("malformed lists cannot invent keywords", () => {

@@ -23,20 +23,20 @@ const ANSWER_FIELDS = ["why", "problem", "approach"];
  */
 export function parseCoverRequest({ input, brief, root, findReportFile }) {
   if (typeof input !== "string") {
-    return { ok: false, error: "Invalid report selector: expected a report number string." };
+    return { ok: false, error: "Ungültige Berichtsauswahl: Erwartet wird eine Berichtsnummer als Zeichenkette." };
   }
-  if (!/^\d+$/.test(input)) return { ok: false, error: `Invalid report selector: "${input}"` };
+  if (!/^\d+$/.test(input)) return { ok: false, error: `Ungültige Berichtsauswahl: „${input}“` };
 
-  const incomplete = { ok: false, error: "Answer all four cover letter questions first." };
+  const incomplete = { ok: false, error: "Beantworten Sie zuerst alle vier Fragen zum Anschreiben." };
   if (brief === null || typeof brief !== "object") return incomplete;
   const answers = ANSWER_FIELDS.map((field) => (typeof brief[field] === "string" ? brief[field].trim() : ""));
   if (answers.some((a) => !a) || typeof brief.tone !== "string" || !Object.hasOwn(COVER_TONES, brief.tone)) {
     return incomplete;
   }
-  if (answers.some((a) => a.length > MAX_ANSWER)) return { ok: false, error: `Keep each answer to ${MAX_ANSWER} characters or fewer.` };
+  if (answers.some((a) => a.length > MAX_ANSWER)) return { ok: false, error: `Halten Sie jede Antwort bei höchstens ${MAX_ANSWER} Zeichen.` };
 
   const reportFile = findReportFile(input);
-  if (!reportFile) return { ok: false, error: `No report #${input} found. Evaluate this posting first.` };
+  if (!reportFile) return { ok: false, error: `Bericht #${input} nicht gefunden. Bewerten Sie diese Stellenanzeige zuerst.` };
 
   const [why, problem, approach] = answers;
   return {

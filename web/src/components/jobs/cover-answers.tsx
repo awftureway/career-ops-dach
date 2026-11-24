@@ -25,28 +25,28 @@ export function CoverAnswers({ brief: stored }: { brief: unknown }) {
   }
 
   return (
-    <section aria-label="Your cover letter answers" className="mt-8">
+    <section aria-label="Ihre Antworten für das Anschreiben" className="mt-8">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Your answers</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Ihre Antworten</h2>
         <button
           type="button"
           onClick={copy}
           className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-colors hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]"
         >
           {copied ? <CheckIcon className="size-3.5 text-brand-text" aria-hidden="true" /> : <CopyIcon className="size-3.5" aria-hidden="true" />}
-          {copied ? "Copied" : "Copy answers"}
+          {copied ? "Kopiert" : "Antworten kopieren"}
         </button>
       </div>
       <dl className="mt-3 space-y-3 rounded-2xl border border-border bg-surface/40 p-5 text-sm">
         {COVER_QUESTIONS.map((q) => (
           <div key={q.name}>
             <dt className="font-medium text-foreground">{q.label}</dt>
-            <dd className="mt-0.5 whitespace-pre-wrap break-words text-muted">{brief[q.name].trim() || "No answer"}</dd>
+            <dd className="mt-0.5 whitespace-pre-wrap break-words text-muted">{brief[q.name].trim() || "Keine Antwort"}</dd>
           </div>
         ))}
         {brief.tone && (
           <div>
-            <dt className="font-medium text-foreground">Tone</dt>
+            <dt className="font-medium text-foreground">Tonalität</dt>
             <dd className="mt-0.5 text-muted">{COVER_TONES[brief.tone]}</dd>
           </div>
         )}

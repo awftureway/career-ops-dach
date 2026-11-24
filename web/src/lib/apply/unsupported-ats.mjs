@@ -56,11 +56,11 @@ function loadAtsVendor() {
 export function unsupportedAtsMessage(hit, opened = false) {
   const label = typeof hit === "string" ? hit : hit.label;
   if (typeof hit === "object" && hit.vendor === "handoff") {
-    const lead = `This posting is on ${label}, which you listed in apply.handoff_hosts (config/profile.yml) as a site you sign in to yourself. Career-ops does not drive it in the app`;
-    return opened ? `${lead}. The window was closed.` : `${lead}, so no browser was opened.`;
+    const lead = `Diese Stellenanzeige liegt auf ${label}, das Sie in apply.handoff_hosts (config/profile.yml) als Seite eingetragen haben, bei der Sie sich selbst anmelden. career-ops steuert sie in der App nicht`;
+    return opened ? `${lead}. Das Fenster wurde geschlossen.` : `${lead}, daher wurde kein Browser geöffnet.`;
   }
-  const lead = `This posting is on ${label}. Career-ops cannot fill Workday, iCIMS, or UKG forms in the app`;
-  return opened ? `${lead}. The window was closed.` : `${lead}, so no browser was opened.`;
+  const lead = `Diese Stellenanzeige liegt auf ${label}. career-ops kann Workday-, iCIMS- oder UKG-Formulare in der App nicht ausfüllen`;
+  return opened ? `${lead}. Das Fenster wurde geschlossen.` : `${lead}, daher wurde kein Browser geöffnet.`;
 }
 
 /**

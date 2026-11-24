@@ -31,11 +31,11 @@ export function scanFailureMessage(result, { timeoutMs } = {}) {
   const error = result?.error;
   if (error?.code === "ETIMEDOUT") {
     const minutes = timeoutMs ? Math.round(timeoutMs / 60_000) : null;
-    return minutes ? `Scanner timed out after ${minutes} minutes.` : "Scanner timed out.";
+    return minutes ? `Scanner nach ${minutes} Minuten abgebrochen (Zeitüberschreitung).` : "Scanner abgebrochen (Zeitüberschreitung).";
   }
-  if (error) return String(error.message || error).split(/\r?\n/)[0].slice(0, MAX_LENGTH) || "Scan failed";
+  if (error) return String(error.message || error).split(/\r?\n/)[0].slice(0, MAX_LENGTH) || "Scan fehlgeschlagen";
   const cause = stderrCause(result?.stderr);
   if (cause) return cause;
-  if (result?.signal) return `Scanner stopped by ${result.signal}.`;
+  if (result?.signal) return `Scanner durch ${result.signal} beendet.`;
   return `scanner exit ${result?.status ?? "unknown"}`;
 }

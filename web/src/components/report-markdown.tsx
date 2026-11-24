@@ -55,10 +55,10 @@ function StarCards({ header, rows }: { header: string[]; rows: string[][] }) {
 
   const fields = [
     { label: "Situation", i: iS },
-    { label: "Task", i: iT },
-    { label: "Action", i: iA },
-    { label: "Result", i: iR },
-    { label: "Reflection", i: iRef },
+    { label: "Aufgabe", i: iT },
+    { label: "Handlung", i: iA },
+    { label: "Ergebnis", i: iR },
+    { label: "Reflexion", i: iRef },
   ].filter((f) => f.i >= 0);
 
   return (
@@ -83,7 +83,7 @@ function StarCards({ header, rows }: { header: string[]; rows: string[][] }) {
                   const value = row[f.i] ?? "";
                   if (!value) return null;
                   return (
-                    <div key={f.label} className={f.label === "Reflection" ? "sm:col-span-2" : undefined}>
+                    <div key={f.label} className={f.label === "Reflexion" ? "sm:col-span-2" : undefined}>
                       <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-faint">{f.label}</dt>
                       <dd className="mt-1 text-sm text-foreground">{value}</dd>
                     </div>

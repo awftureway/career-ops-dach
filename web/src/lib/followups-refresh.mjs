@@ -1,4 +1,4 @@
-export const FOLLOWUPS_NETWORK_ERROR = "Couldn't refresh follow-ups. Check your connection.";
+export const FOLLOWUPS_NETWORK_ERROR = "Nachfassen konnte nicht aktualisiert werden. Prüfen Sie Ihre Verbindung.";
 
 // A dropped request is not a missing script. Keep the last list.
 export function followupsAfterRefreshFailure(current) {

@@ -32,37 +32,37 @@ test("classifyTracker separates missing, empty, and malformed files", () => {
 test("trackerEmptyMessage does not blame the search when the file has no rows", () => {
   const filtered = trackerEmptyMessage({ shape: "rows", query: "Northwind", min: null, tab: "ALL" });
   assert.equal(filtered.kind, "filtered");
-  assert.match(filtered.detail, /clear the search/);
+  assert.match(filtered.detail, /Suche zurück/);
 
   const empty = trackerEmptyMessage({ shape: "empty", query: "", min: null, tab: "ALL" });
   assert.equal(empty.kind, "empty");
-  assert.equal(empty.title, "No applications yet");
-  assert.doesNotMatch(empty.detail, /clear the search/);
+  assert.equal(empty.title, "Noch keine Bewerbungen");
+  assert.doesNotMatch(empty.detail, /Suche zurück/);
 
   const emptySearch = trackerEmptyMessage({ shape: "empty", query: "Northwind", min: null, tab: "ALL" });
   assert.equal(emptySearch.kind, "empty");
-  assert.doesNotMatch(emptySearch.detail, /clear the search/);
+  assert.doesNotMatch(emptySearch.detail, /Suche zurück/);
 
   const emptyTab = trackerEmptyMessage({ shape: "empty", query: "", min: null, tab: "APPLIED" });
   assert.equal(emptyTab.kind, "empty");
-  assert.doesNotMatch(emptyTab.detail, /clear the search/);
+  assert.doesNotMatch(emptyTab.detail, /Suche zurück/);
 
   const missing = trackerEmptyMessage({ shape: "missing", query: "", min: null, tab: "ALL" });
   assert.equal(missing.kind, "empty");
 
   const missingSearch = trackerEmptyMessage({ shape: "missing", query: "Northwind", min: null, tab: "ALL" });
   assert.equal(missingSearch.kind, "empty");
-  assert.doesNotMatch(missingSearch.detail, /clear the search/);
+  assert.doesNotMatch(missingSearch.detail, /Suche zurück/);
 
   const missingTab = trackerEmptyMessage({ shape: "missing", query: "", min: null, tab: "APPLIED" });
   assert.equal(missingTab.kind, "empty");
-  assert.doesNotMatch(missingTab.detail, /clear the search/);
+  assert.doesNotMatch(missingTab.detail, /Suche zurück/);
 
   const bad = trackerEmptyMessage({ shape: "malformed", query: "", min: null, tab: "ALL" });
   assert.equal(bad.kind, "malformed");
-  assert.match(bad.detail, /not a tracker table/);
-  assert.match(bad.detail, /not changed/);
-  assert.doesNotMatch(bad.detail, /clear the search/);
+  assert.match(bad.detail, /keine Tracker-Tabelle/);
+  assert.match(bad.detail, /nicht geändert/);
+  assert.doesNotMatch(bad.detail, /Suche zurück/);
 
   const tab = trackerEmptyMessage({ shape: "rows", query: "", min: null, tab: "APPLIED" });
   assert.equal(tab.kind, "filtered");

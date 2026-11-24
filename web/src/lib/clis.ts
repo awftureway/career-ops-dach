@@ -180,7 +180,7 @@ export function resolveCliOrFallback(id: string): CliResolution | null {
 /** The notice a route shows when it ran a different CLI than the one it was sent. */
 export function cliSubstitutionNotice(r: CliResolution): string | null {
   if (!r.substitutedFrom) return null;
-  return `Saved CLI '${r.substitutedFrom}' is not installed — using ${r.spec.name} instead. Pick one in Config to make this permanent.`;
+  return `Die gespeicherte CLI „${r.substitutedFrom}“ ist nicht installiert — stattdessen wird ${r.spec.name} verwendet. Wählen Sie unter Einstellungen eine CLI, um das dauerhaft zu ändern.`;
 }
 
 /** The 404 body when no CLI can be resolved: which CLIs ARE installed, and where to choose. */

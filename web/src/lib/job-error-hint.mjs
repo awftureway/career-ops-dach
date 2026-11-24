@@ -43,9 +43,9 @@ import {
 // authenticat\w* matches authenticate/authenticated/authentication (the
 // actual terminal-label forms listed above) without matching author/authority.
 const AUTH_PATTERN =
-  /authenticat\w*|login|sign[ -]?in|credential|api[ -]?key|unauthorized|no cli configured/i;
+  /authenticat\w*|login|sign[ -]?in|credential|api[ -]?key|unauthorized|no cli configured|keine cli konfiguriert/i;
 
-const PARTIAL_RUN_PREFIX = "This run hit an error before finishing";
+const PARTIAL_RUN_PREFIX = "Dieser Lauf ist vor dem Abschluss auf einen Fehler gestoßen";
 
 /**
  * The stderr quote on a message that did not already say to sign in.
@@ -77,9 +77,9 @@ function quoteIsSignIn(detail) {
 }
 
 const HINTS = {
-  auth: { kind: "auth", text: "Sign your CLI in from Config, then re-run." },
-  connection: { kind: "connection", text: "Lost connection to the local server — re-run." },
-  interrupted: { kind: "interrupted", text: "The run was interrupted — re-run it." },
+  auth: { kind: "auth", text: "Melden Sie Ihre CLI unter Einstellungen an und starten Sie den Lauf erneut." },
+  connection: { kind: "connection", text: "Verbindung zum lokalen Server verloren — Lauf erneut starten." },
+  interrupted: { kind: "interrupted", text: "Der Lauf wurde unterbrochen — erneut starten." },
 };
 
 /** The message set on the job's last step — the authoritative terminal cause. */
@@ -93,8 +93,8 @@ function lastStepLabel(job) {
 export function jobErrorHint(job) {
   const label = lastStepLabel(job);
   if (!label) return null;
-  if (label === "Connection error") return HINTS.connection;
-  if (label === "Interrupted (page reloaded)") return HINTS.interrupted;
+  if (label === "Verbindungsfehler") return HINTS.connection;
+  if (label === "Unterbrochen (Seite neu geladen)") return HINTS.interrupted;
   // "API key" or "login" inside a 429 line is why the limit fired.
   if (RATE_LIMIT_RE.test(label)) return null;
   const quoted = nonAuthQuote(label);

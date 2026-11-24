@@ -4,8 +4,8 @@ export const MAX_CV_SOURCE_CHARS = 60_000;
 
 /** @param {{name: string, size: number}} file */
 export function cvUploadError(file) {
-  if (!/\.(pdf|tex|md|markdown|txt|docx)$/i.test(file.name)) return "Choose a PDF, TeX, Markdown, text or Word file.";
-  if (!file.size) return "That file is empty. Choose a CV with text in it.";
-  if (file.size > MAX_CV_UPLOAD_BYTES) return "That file is too large. Choose a CV under 10 MB.";
+  if (!/\.(pdf|tex|md|markdown|txt|docx)$/i.test(file.name)) return "Wählen Sie eine PDF-, TeX-, Markdown-, Text- oder Word-Datei.";
+  if (!file.size) return "Diese Datei ist leer. Wählen Sie einen Lebenslauf mit Text.";
+  if (file.size > MAX_CV_UPLOAD_BYTES) return "Diese Datei ist zu groß. Wählen Sie einen Lebenslauf unter 10 MB.";
   return null;
 }

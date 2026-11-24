@@ -34,7 +34,7 @@ export function FunnelRates() {
   if (state === "loading") {
     return (
       <section className="mt-10">
-        <h2 className="font-display text-lg text-landing">Conversion</h2>
+        <h2 className="font-display text-lg text-landing">Konversion</h2>
         <div className="mt-4 grid gap-3" aria-hidden>
           {/* Inline rather than a shared Skeleton primitive: this branch is
               independent of the route-loading work, so it carries no dependency
@@ -61,10 +61,10 @@ export function FunnelRates() {
   if (state === "unavailable") {
     return (
       <section className="mt-10">
-        <h2 className="font-display text-lg text-landing">Conversion</h2>
+        <h2 className="font-display text-lg text-landing">Konversion</h2>
         <p className="mt-3 rounded-2xl border border-dashed border-border bg-surface/30 px-5 py-6 text-sm text-muted">
-          Nothing to convert yet — these rates come from applications you have
-          sent. Apply to a role and the funnel fills in here.
+          Noch nichts zu konvertieren — diese Raten stammen aus Bewerbungen, die Sie
+          gesendet haben. Bewerben Sie sich auf eine Stelle, dann füllt sich der Trichter hier.
         </p>
       </section>
     );
@@ -76,9 +76,9 @@ export function FunnelRates() {
   return (
     <section className="mt-10">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <h2 className="font-display text-lg text-landing">Conversion</h2>
+        <h2 className="font-display text-lg text-landing">Konversion</h2>
         <p className="text-xs text-faint">
-          Cumulative — reaching a stage counts every stage before it, matching{" "}
+          Kumulativ — wer eine Stufe erreicht, zählt auch für alle vorherigen, wie in{" "}
           <code className="text-muted">stats.mjs</code>
         </p>
       </div>
@@ -87,7 +87,7 @@ export function FunnelRates() {
         // stats.mjs's own smallSample flag. Said plainly, because three
         // percentages off a handful of applications look like a finding.
         <p className="mt-2 text-xs text-muted">
-          Small sample so far — these rates will move a lot with each new outcome.
+          Bisher kleine Stichprobe — diese Raten schwanken mit jedem neuen Ergebnis stark.
         </p>
       )}
 

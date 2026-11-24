@@ -42,7 +42,7 @@ function runJob(runner: string, id: string) {
         windowsHide: true,
       });
     } catch (error) {
-      finish({ code: 1, stdout, stderr: error instanceof Error ? error.message : "Could not start scheduled scan.", timedOut });
+      finish({ code: 1, stdout, stderr: error instanceof Error ? error.message : "Geplanter Scan konnte nicht gestartet werden.", timedOut });
       return;
     }
 
@@ -71,28 +71,28 @@ function runJob(runner: string, id: string) {
 
 export async function POST(_req: Request, { params }: RouteContext) {
   const { id } = await params;
-  if (!isSafeScheduledId(id)) return NextResponse.json({ error: "Invalid scheduled job identifier." }, { status: 400 });
+  if (!isSafeScheduledId(id)) return NextResponse.json({ error: "Ungültige Kennung des geplanten Scans." }, { status: 400 });
   let job;
   try {
     job = getScheduledJob(id);
-    if (!job || job.status === "deleted") return NextResponse.json({ error: "Scheduled job not found" }, { status: 404 });
+    if (!job || job.status === "deleted") return NextResponse.json({ error: "Geplanter Scan nicht gefunden" }, { status: 404 });
   } catch {
-    return NextResponse.json({ error: "Could not read scheduled jobs." }, { status: 500 });
+    return NextResponse.json({ error: "Geplante Scans konnten nicht gelesen werden." }, { status: 500 });
   }
 
   const runner = path.join(resolveCodeRoot(process.cwd(), process.env), "web", "scripts", "scheduled-jobs-runner.mjs");
   if (!fs.existsSync(runner)) {
-    return NextResponse.json({ error: "Scheduled job runner is not installed." }, { status: 404 });
+    return NextResponse.json({ error: "Der Runner für geplante Scans ist nicht installiert." }, { status: 404 });
   }
 
   const result = await runJob(runner, id);
   if (result.timedOut) {
-    return NextResponse.json({ error: "Scheduled scan timed out." }, { status: 504 });
+    return NextResponse.json({ error: "Zeitüberschreitung beim geplanten Scan." }, { status: 504 });
   }
   if (result.code !== 0) {
     // The runner's own error is its last stderr line; anything Node printed
     // before it (warnings) is not the cause.
-    const message = stderrCause(result.stderr) || "Scan failed.";
+    const message = stderrCause(result.stderr) || "Scan fehlgeschlagen.";
     const status = /lock timeout/i.test(message) ? 409 : 500;
     return NextResponse.json({ error: message }, { status });
   }
@@ -102,6 +102,6 @@ export async function POST(_req: Request, { params }: RouteContext) {
     const rolesFound = Number.isFinite(Number(summary.rolesFound)) ? Number(summary.rolesFound) : 0;
     return NextResponse.json({ success: true, rolesFound, summary });
   } catch {
-    return NextResponse.json({ error: "Scheduled scan returned an invalid result." }, { status: 500 });
+    return NextResponse.json({ error: "Der geplante Scan hat ein ungültiges Ergebnis geliefert." }, { status: 500 });
   }
 }

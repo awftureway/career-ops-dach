@@ -20,11 +20,11 @@ import { machineSummarySection } from "./machine-summary-section.mjs";
 const IMPORTANCE_RANK = { critical: 0, high: 1, meaningful: 2, preferred: 3, low_signal: 4 };
 
 const EVIDENCE_LABEL = {
-  cv_match: "CV match",
-  north_star: "North Star alignment",
-  compensation: "Compensation",
-  culture: "Culture",
-  red_flags: "Red flags",
+  cv_match: "Lebenslauf-Match",
+  north_star: "North-Star-Passung",
+  compensation: "Vergütung",
+  culture: "Kultur",
+  red_flags: "Warnsignale",
 };
 
 const FENCE = /^##\s*Machine Summary\s*\n+```(?:yaml|yml)?\s*\n([\s\S]*?)\n```/i;
@@ -80,7 +80,7 @@ export function scoreLevers(s) {
   return {
     holding: s.hardStops.map((text) => ({ text, importance: null })),
     close: [...new Set(s.softGaps)].map((text) => ({ text, importance: null })),
-    verify: [...s.confidenceGaps, ...s.unknownEvidence.map((label) => `${label} evidence is unknown`)],
+    verify: [...s.confidenceGaps, ...s.unknownEvidence.map((label) => `Belege zu „${label}“ sind unbekannt`)],
     strengths: s.strengths,
   };
 }
@@ -109,9 +109,9 @@ export function cardReason(report) {
  */
 
 const QUESTION_BY_MATCH = {
-  strong: (r) => `Walk me through your strongest example of ${r}. What was the outcome?`,
-  partial: (r) => `Where have you used ${r}, and how deep did you go?`,
-  missing: (r) => `The role asks for ${r}. How would you close that gap?`,
+  strong: (r) => `Führen Sie mich durch Ihr stärkstes Beispiel für ${r}. Was war das Ergebnis?`,
+  partial: (r) => `Wo haben Sie ${r} eingesetzt, und wie tief waren Sie dabei?`,
+  missing: (r) => `Die Stelle verlangt ${r}. Wie würden Sie diese Lücke schließen?`,
 };
 
 /**

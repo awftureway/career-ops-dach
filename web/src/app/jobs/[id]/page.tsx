@@ -40,13 +40,13 @@ export default function JobPage({ params }: { params: Promise<{ id: string }> })
         <div className="relative z-10">
           <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.18em] text-faint">
             {job.status === "running" ? (
-              <><Loader2 className="size-3 animate-spin text-brand-text" /> working</>
+              <><Loader2 className="size-3 animate-spin text-brand-text" /> arbeitet</>
             ) : gate || job.status === "gated" ? (
-              <><CirclePause className="size-3 text-amber-500" /> needs review</>
+              <><CirclePause className="size-3 text-amber-500" /> Prüfung nötig</>
             ) : job.status === "done" ? (
-              <><Check className="size-3 text-emerald-500" /> done</>
+              <><Check className="size-3 text-emerald-500" /> fertig</>
             ) : (
-              <><X className="size-3 text-red-400" /> error</>
+              <><X className="size-3 text-red-400" /> Fehler</>
             )}
           </p>
           <h1 className="mt-2 font-display text-2xl tracking-tight text-landing">{job.title}</h1>
@@ -61,18 +61,18 @@ export default function JobPage({ params }: { params: Promise<{ id: string }> })
       </section>
 
       {gate && (
-        <section aria-label="Evaluation needs review" className="mt-5 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5">
-          <h2 className="font-medium text-foreground">{gate.confirmationRequired ? "Review your conditions before continuing" : "Evaluation stopped by your conditions"}</h2>
+        <section aria-label="Bewertung erfordert Prüfung" className="mt-5 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5">
+          <h2 className="font-medium text-foreground">{gate.confirmationRequired ? "Prüfen Sie Ihre Bedingungen, bevor Sie fortfahren" : "Bewertung durch Ihre Bedingungen gestoppt"}</h2>
           <p className="mt-2 text-sm text-muted">{gate.message}</p>
           <p className="mt-2 text-sm text-muted">
-            {gate.legacy ? "The saved output records an evaluation stop. The earlier run's process exit could not be verified; its technical details are kept below." : "No score or evaluation report was created. Your conditions were kept."}
+            {gate.legacy ? "Die gespeicherte Ausgabe verzeichnet einen Bewertungsstopp. Das Prozessende des früheren Laufs konnte nicht verifiziert werden; die technischen Details stehen unten." : "Es wurde kein Score und kein Bewertungsbericht erstellt. Ihre Bedingungen wurden beibehalten."}
           </p>
           <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("co-assistant"))} className="mt-3 rounded-md border border-border bg-surface px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover">
-            Open assistant to review
+            Assistenten zur Prüfung öffnen
           </button>
           {gate.legacy && (
             <details className="mt-3 text-sm text-muted">
-              <summary className="cursor-pointer font-medium">Earlier run details</summary>
+              <summary className="cursor-pointer font-medium">Details des früheren Laufs</summary>
               <p className="mt-2 break-words">{job.steps.at(-1)?.label}</p>
             </details>
           )}
@@ -89,14 +89,14 @@ export default function JobPage({ params }: { params: Promise<{ id: string }> })
             )}
             <span className={s.kind === "tool" ? "font-medium" : "text-muted"}>
               {gate?.legacy && isLegacyMissingReportMessage(s.label)
-                ? "Earlier run returned no report. Review the recorded stop and technical details above."
-                : s.kind === "tool" ? `Using ${s.label}` : s.label}
+                ? "Der frühere Lauf lieferte keinen Bericht. Prüfen Sie den erfassten Stopp und die technischen Details oben."
+                : s.kind === "tool" ? `Verwende ${s.label}` : s.label}
             </span>
           </li>
         ))}
         {job.status === "running" && (
           <li className="flex items-center gap-2.5 text-sm text-muted">
-            <Loader2 className="size-3.5 animate-spin text-brand-text" /> thinking…
+            <Loader2 className="size-3.5 animate-spin text-brand-text" /> denkt nach …
           </li>
         )}
       </ol>
@@ -105,13 +105,13 @@ export default function JobPage({ params }: { params: Promise<{ id: string }> })
 
       {job.text && (
         <div className="mt-8">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Output</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">Ausgabe</h2>
           <div className="report-prose mt-3 rounded-2xl border border-border bg-surface/40 p-5">
             <ReactMarkdown remarkPlugins={[remarkGfm]} {...noMarkdownImages}>{displayOutput}</ReactMarkdown>
           </div>
           {displayOutput !== job.text && (
             <details className="mt-3 text-sm text-muted">
-              <summary className="cursor-pointer font-medium">Raw worker output</summary>
+              <summary className="cursor-pointer font-medium">Rohausgabe des Workers</summary>
               <pre className="mt-2 whitespace-pre-wrap break-words rounded-lg border border-border p-3 text-xs">{job.text}</pre>
             </details>
           )}

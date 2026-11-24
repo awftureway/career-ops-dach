@@ -31,8 +31,8 @@ test("version pill and Ask stay out of the main column at 1440x900", {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${origin.origin}/`, { waitUntil: "domcontentloaded" });
-  const ask = page.getByRole("button", { name: "Ask the assistant", exact: true });
-  const report = page.getByRole("button", { name: "Report a bug" });
+  const ask = page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true });
+  const report = page.getByRole("button", { name: "Fehler melden" });
   await ask.waitFor();
   await report.waitFor();
 
@@ -59,8 +59,8 @@ test("version pill and Ask stay out of the main column at 1440x900", {
       right: labelAt(1400, 860),
     };
   });
-  assert.equal(hits.left.includes("Report a bug"), false, `bottom of the main column hit ${hits.left}`);
-  assert.equal(hits.right.includes("Ask the assistant"), false, `bottom-right of the viewport hit ${hits.right}`);
+  assert.equal(hits.left.includes("Fehler melden"), false, `bottom of the main column hit ${hits.left}`);
+  assert.equal(hits.right.includes("Fragen Sie den Assistenten"), false, `bottom-right of the viewport hit ${hits.right}`);
   assert.deepEqual(errors, []);
 });
 
@@ -76,7 +76,7 @@ test("Ask stays off the sidebar's links and controls at short and tall desktop h
   for (const height of [480, 560, 720, 900]) {
     const page = await browser.newPage({ viewport: { width: 1280, height } });
     await page.goto(`${origin.origin}/`, { waitUntil: "domcontentloaded" });
-    const ask = page.getByRole("button", { name: "Ask the assistant", exact: true });
+    const ask = page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true });
     const sidebar = page.getByRole("complementary").filter({ has: page.getByRole("navigation") });
     await ask.waitFor();
     await sidebar.getByRole("button", { name: "Dark mode" }).waitFor();

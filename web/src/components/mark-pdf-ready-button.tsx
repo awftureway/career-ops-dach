@@ -37,13 +37,13 @@ export function MarkPdfReadyButton({
       });
       const body = await res.json().catch(() => null);
       if (!res.ok) {
-        setError(typeof body?.error === "string" ? body.error : "Could not mark the PDF ready.");
+        setError(typeof body?.error === "string" ? body.error : "PDF konnte nicht als bereit markiert werden.");
         return;
       }
       setSaved(true);
       router.refresh();
     } catch {
-      setError("Could not mark the PDF ready.");
+      setError("PDF konnte nicht als bereit markiert werden.");
     } finally {
       setBusy(false);
     }
@@ -52,7 +52,7 @@ export function MarkPdfReadyButton({
   return (
     <span className="inline-flex flex-col items-start gap-1">
       {markedWithoutFile ? (
-        <span className={`${PILL} border-border text-muted`}>Tracker marked</span>
+        <span className={`${PILL} border-border text-muted`}>Tracker markiert</span>
       ) : (
         <button
           type="button"
@@ -65,11 +65,11 @@ export function MarkPdfReadyButton({
           }
         >
           {settled && <Check className="size-3.5" />}
-          {busy ? "Saving…" : settled ? "PDF ready" : saved ? "Tracker marked" : "Mark PDF ready"}
+          {busy ? "Speichert …" : settled ? "PDF bereit" : saved ? "Tracker markiert" : "PDF als bereit markieren"}
         </button>
       )}
       {markedWithoutFile && (
-        <span className="text-xs text-muted">Generate the tailored CV for this report. Marking the tracker again does not add that file.</span>
+        <span className="text-xs text-muted">Erstellen Sie den angepassten Lebenslauf für diesen Bericht. Erneutes Markieren im Tracker fügt diese Datei nicht hinzu.</span>
       )}
       {error && <span className="text-xs text-red-500">{error}</span>}
     </span>

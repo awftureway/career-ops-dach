@@ -1,5 +1,5 @@
 export const NO_REPORT_EXPLANATION =
-  "No report file for this row. Generate tailored CV and Apply checklist stay off until an evaluation exists.";
+  "Für diese Zeile gibt es keine Berichtsdatei. „Lebenslauf erstellen“ und die Bewerbungs-Checkliste bleiben aus, bis eine Bewertung vorliegt.";
 
 /**
  * @param {boolean} hasReport

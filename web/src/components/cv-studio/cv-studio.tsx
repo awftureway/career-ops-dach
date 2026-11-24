@@ -24,14 +24,14 @@ type SaveState =
   | { kind: "failed"; error: string };
 
 const REASONS: Record<string, { title: string; body: string }> = {
-  "no-tailored-cv": { title: "No tailored CV yet", body: "Generate a tailored CV from the report page first. The Studio opens it for review once it exists." },
-  "unreadable-layout": { title: "This CV layout is not supported yet", body: "The Studio reads CVs built from the career-ops templates. Open the PDF from the report page instead." },
-  "no-report": { title: "Report not found", body: "There is no evaluation report with this number." },
+  "no-tailored-cv": { title: "Noch kein angepasster Lebenslauf", body: "Erstellen Sie zuerst auf der Berichtsseite einen angepassten Lebenslauf. Das Studio öffnet ihn danach zur Prüfung." },
+  "unreadable-layout": { title: "Dieses Lebenslauf-Layout wird noch nicht unterstützt", body: "Das Studio liest Lebensläufe, die aus den career-ops-Vorlagen erstellt wurden. Öffnen Sie stattdessen das PDF auf der Berichtsseite." },
+  "no-report": { title: "Bericht nicht gefunden", body: "Es gibt keinen Bewertungsbericht mit dieser Nummer." },
 };
 
-const STALE = "This CV was regenerated in another tab. Reload the Studio.";
+const STALE = "Dieser Lebenslauf wurde in einem anderen Tab neu erstellt. Laden Sie das Studio neu.";
 const KEEPALIVE_BYTES = 60_000;
-const SAVE_ERRORS: Record<string, string> = { stale: STALE, busy: "This CV is already being saved. Wait for that save to finish." };
+const SAVE_ERRORS: Record<string, string> = { stale: STALE, busy: "Dieser Lebenslauf wird bereits gespeichert. Warten Sie, bis das Speichern abgeschlossen ist." };
 
 export function CvStudio({ n }: { n: string }) {
   const listQuery = pipelineQuery(useSearchParams().toString());
@@ -51,13 +51,13 @@ export function CvStudio({ n }: { n: string }) {
   return (
     <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6">
       <BackLink href={reportHref} className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-brand-text">
-        <ArrowLeft className="size-4" /> Report #{n}
+        <ArrowLeft className="size-4" /> Bericht #{n}
       </BackLink>
-      {load.kind === "loading" && <div className="mt-6 h-[70vh] animate-pulse rounded-2xl bg-muted/15" aria-label="Loading the CV Studio" />}
+      {load.kind === "loading" && <div className="mt-6 h-[70vh] animate-pulse rounded-2xl bg-muted/15" aria-label="Lebenslauf-Studio lädt …" />}
       {load.kind === "error" && (
         <div className="mt-8 max-w-xl rounded-2xl border border-border bg-surface/40 px-6 py-5">
-          <h1 className="font-display text-xl text-landing">{REASONS[load.reason]?.title ?? "The CV Studio could not open this CV"}</h1>
-          <p className="mt-2 text-sm text-muted">{REASONS[load.reason]?.body ?? "Reload the page to try again."}</p>
+          <h1 className="font-display text-xl text-landing">{REASONS[load.reason]?.title ?? "Das Lebenslauf-Studio konnte diesen Lebenslauf nicht öffnen"}</h1>
+          <p className="mt-2 text-sm text-muted">{REASONS[load.reason]?.body ?? "Laden Sie die Seite neu und versuchen Sie es erneut."}</p>
         </div>
       )}
       {load.kind === "ready" && <Studio n={n} data={load.data} />}
@@ -97,7 +97,7 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
   }, []);
   const rejectedOnLoad = data.pdfExport?.ok === false;
   const [pdfRejected, setPdfRejected] = useState(rejectedOnLoad);
-  const [save, setSave] = useState<SaveState>(rejectedOnLoad ? { kind: "failed", error: data.pdfExport?.error ?? "Saving failed." } : { kind: "idle" });
+  const [save, setSave] = useState<SaveState>(rejectedOnLoad ? { kind: "failed", error: data.pdfExport?.error ?? "Speichern fehlgeschlagen." } : { kind: "idle" });
   const [autosaveError, setAutosaveError] = useState<string | null>(null);
   const resolved = useMemo(() => resolveStudio(doc, edits), [doc, edits]);
   const html = useMemo(() => renderBlocks(tree, resolved.view, { added: resolved.added }), [tree, resolved]);
@@ -151,7 +151,7 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
           if (savingJsonRef.current !== serialized) return;
           savingJsonRef.current = null;
           if (!r.ok) {
-            setAutosaveError(r.status === 409 ? STALE : "Autosave failed. Your latest changes are not saved yet.");
+            setAutosaveError(r.status === 409 ? STALE : "Automatisches Speichern fehlgeschlagen. Ihre letzten Änderungen sind noch nicht gespeichert.");
             showStatus();
             return;
           }
@@ -169,7 +169,7 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
           // The response was lost, so the server may already hold this payload.
           // Do not send again from here. The next edit or page exit does.
           autosaveUncertainRef.current = true;
-          setAutosaveError("Autosave failed. Is the dashboard still running?");
+          setAutosaveError("Automatisches Speichern fehlgeschlagen. Läuft das Dashboard noch?");
           showStatus();
         });
     },
@@ -228,12 +228,12 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
       }
       if (shouldPutAfterPost(wrote, serialized, JSON.stringify(editsRef.current))) putEdits(editsRef.current, false);
       if (body.superseded) {
-        publishStatus({ kind: "failed", error: "A newer edit was saved while this one was sending. Save again to export the latest." });
+        publishStatus({ kind: "failed", error: "Während des Sendens wurde eine neuere Änderung gespeichert. Speichern Sie erneut, um die aktuelle Fassung zu exportieren." });
         return;
       }
       if (!r.ok || !body.pdf) {
         publishRejected(true);
-        publishStatus({ kind: "failed", error: SAVE_ERRORS[body.error ?? ""] ?? body.error ?? "Saving failed." });
+        publishStatus({ kind: "failed", error: SAVE_ERRORS[body.error ?? ""] ?? body.error ?? "Speichern fehlgeschlagen." });
       } else if (latestEdits.current !== sent) {
         publishRejected(false);
         publishStatus({ kind: "outdated", pdf: body.pdf });
@@ -247,7 +247,7 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
       // later undo is measured against the write that may have landed.
       putEdits(editsRef.current, true);
       if (postingJsonRef.current === serialized) postingJsonRef.current = null;
-      publishStatus({ kind: "failed", error: "Saving failed. Is the dashboard still running?" });
+      publishStatus({ kind: "failed", error: "Speichern fehlgeschlagen. Läuft das Dashboard noch?" });
     }
   }, [edits, putEdits, send]);
 
@@ -274,14 +274,14 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
       const body = (await r.json().catch(() => ({}))) as { restored?: boolean; reason?: string };
       if (!ownsStatus(epoch, statusEpoch.current)) return;
       if (body.reason === "missing") {
-        setSave({ kind: "failed", error: "Reset cleared the preview. Apply still has the shortened PDF, because the full PDF is not on disk." });
+        setSave({ kind: "failed", error: "Das Zurücksetzen hat die Vorschau geleert. Beim Bewerben wird weiterhin das gekürzte PDF verwendet, weil das vollständige PDF nicht auf dem Datenträger liegt." });
         return;
       }
       setPdfRejected(false);
       setSave({ kind: "idle" });
     }).catch(() => {
       if (!ownsStatus(epoch, statusEpoch.current)) return;
-      setSave({ kind: "failed", error: "Reset cleared the preview. Apply may still have the shortened PDF." });
+      setSave({ kind: "failed", error: "Das Zurücksetzen hat die Vorschau geleert. Beim Bewerben wird möglicherweise weiterhin das gekürzte PDF verwendet." });
     });
   }, [recordEdit, send]);
 
@@ -292,20 +292,20 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
     <>
       <header className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.18em] text-faint">CV Studio</p>
+          <p className="font-mono text-xs uppercase tracking-[0.18em] text-faint">Lebenslauf-Studio</p>
           <h1 className="mt-1 font-display text-3xl tracking-tight text-landing">{data.company}</h1>
           <p className="mt-1 text-sm text-muted">
-            {changed} {changed === 1 ? "change" : "changes"} from your base CV. Review each one, then save the version you will send.
+            {changed} {changed === 1 ? "Änderung" : "Änderungen"} gegenüber Ihrem Basis-Lebenslauf. Prüfen Sie jede einzelne und speichern Sie dann die Version, die Sie senden.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Segmented label="Length" value={edits.preset.length} options={[["full", "Full"], ["one-page", "One page"]]} onChange={(v) => recordEdit({ type: "preset", preset: { length: v as "full" | "one-page" } })} />
-          <Segmented label="Tone" value={edits.preset.tone} options={[["tailored", "Tailored"], ["conservative", "Conservative"]]} onChange={(v) => recordEdit({ type: "preset", preset: { tone: v as "tailored" | "conservative" } })} />
+          <Segmented label="Länge" value={edits.preset.length} options={[["full", "Voll"], ["one-page", "Eine Seite"]]} onChange={(v) => recordEdit({ type: "preset", preset: { length: v as "full" | "one-page" } })} />
+          <Segmented label="Ton" value={edits.preset.tone} options={[["tailored", "Angepasst"], ["conservative", "Zurückhaltend"]]} onChange={(v) => recordEdit({ type: "preset", preset: { tone: v as "tailored" | "conservative" } })} />
           <button type="button" onClick={undo} disabled={!canUndo} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:border-brand/40 hover:text-brand-text disabled:opacity-40">
-            <Undo2 className="size-3.5" /> Undo
+            <Undo2 className="size-3.5" /> Rückgängig
           </button>
           <button type="button" onClick={resetStudio} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted transition-colors hover:border-brand/40 hover:text-brand-text">
-            <RotateCcw className="size-3.5" /> Reset
+            <RotateCcw className="size-3.5" /> Zurücksetzen
           </button>
           <p role="status" className="text-xs text-muted">{editStatus}</p>
           <button
@@ -313,25 +313,25 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
             disabled={save.kind === "saving"}
             className="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-1.5 text-sm font-medium text-brand-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
           >
-            {save.kind === "saving" ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />} Save for apply
+            {save.kind === "saving" ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />} Für Bewerbung speichern
           </button>
         </div>
       </header>
 
-      {data.stale && <Notice tone="warn">This CV was regenerated since your last visit, so earlier edits were cleared.</Notice>}
-      {!data.hasBase && <Notice tone="warn">No cv.md found, so changes cannot be compared with your base CV.</Notice>}
+      {data.stale && <Notice tone="warn">Dieser Lebenslauf wurde seit Ihrem letzten Besuch neu erstellt, daher wurden frühere Änderungen verworfen.</Notice>}
+      {!data.hasBase && <Notice tone="warn">Keine cv.md gefunden, daher lassen sich Änderungen nicht mit Ihrem Basis-Lebenslauf vergleichen.</Notice>}
       {save.kind === "saved" && (
         <Notice tone={save.indexed ? "ok" : "warn"}>
           {save.indexed ? (
             <>
-              Saved. Apply now uploads this version.{" "}
+              Gespeichert. Beim Bewerben wird nun diese Version hochgeladen.{" "}
               <a href={pdfHref} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium underline">
-                <FileText className="size-3.5" /> Open {save.pdf}
+                <FileText className="size-3.5" /> {save.pdf} öffnen
               </a>{" "}
               <CvPdfFileActions viewHref={pdfHref} className="inline-flex items-center gap-1 font-medium underline" />
             </>
           ) : (
-            <>Saved {save.pdf}, but data/pdf-index.tsv was not updated, so Apply still uploads the earlier PDF.</>
+            <>{save.pdf} gespeichert, aber data/pdf-index.tsv wurde nicht aktualisiert. Beim Bewerben wird daher weiterhin das frühere PDF hochgeladen.</>
           )}
           {save.warnings.filter((w) => !/cv-facts\.json/.test(w)).map((w) => (
             <span key={w} className="mt-1 block text-xs opacity-80">{w}</span>
@@ -339,7 +339,7 @@ function Studio({ n, data }: { n: string; data: Loaded }) {
         </Notice>
       )}
       {save.kind === "outdated" && (
-        <Notice tone="warn">Saved {save.pdf} from the CV as it was when you clicked Save. You changed it since, so Save for apply again before you apply.</Notice>
+        <Notice tone="warn">{save.pdf} wurde mit dem Stand beim Klick auf Speichern gesichert. Seitdem haben Sie den Lebenslauf geändert. Speichern Sie ihn erneut für die Bewerbung, bevor Sie sich bewerben.</Notice>
       )}
       {save.kind === "failed" && <Notice tone="error">{save.error}</Notice>}
       {autosaveError && <Notice tone="error">{autosaveError}</Notice>}

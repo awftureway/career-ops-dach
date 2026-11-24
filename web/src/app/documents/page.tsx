@@ -32,7 +32,7 @@ export default function DocumentsPage() {
     const ticket = requests.current.start();
     fetch("/api/documents")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to load documents");
+        if (!res.ok) throw new Error("Dokumente konnten nicht geladen werden");
         return res.json();
       })
       .then((data) => {
@@ -42,7 +42,7 @@ export default function DocumentsPage() {
       })
       .catch((err) => {
         if (!requests.current.isLatest(ticket)) return;
-        setError(err.message || "Something went wrong");
+        setError(err.message || "Etwas ist schiefgelaufen");
       })
       .finally(() => {
         if (!requests.current.isLatest(ticket)) return;
@@ -86,14 +86,14 @@ export default function DocumentsPage() {
         <div className="mb-4 rounded-full bg-red-500/10 p-3 text-red-500">
           <File className="h-6 w-6" />
         </div>
-        <h2 className="text-lg font-medium text-foreground">Failed to load</h2>
+        <h2 className="text-lg font-medium text-foreground">Laden fehlgeschlagen</h2>
         <p className="mt-1 text-sm text-muted">{error}</p>
         <Button
           variant="outline"
           className="mt-4"
           onClick={() => window.location.reload()}
         >
-          Try again
+          Erneut versuchen
         </Button>
       </div>
     );
@@ -104,19 +104,19 @@ export default function DocumentsPage() {
       <div className={`mx-auto space-y-6 px-6 py-8 ${pageFrameWidthClass.wide}`}>
         <div>
           <h1 className="font-display text-2xl tracking-tight text-landing">
-            Documents
+            Dokumente
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Browse your generated CVs and cover letters.
+            Durchsuchen Sie Ihre erstellten Lebensläufe und Anschreiben.
           </p>
         </div>
         <div className="flex flex-col items-center justify-center p-8 text-center">
           <div className="mb-4 rounded-full bg-surface-hover p-3 text-muted">
             <FileText className="h-6 w-6" />
           </div>
-          <h2 className="text-lg font-medium text-foreground">No documents found</h2>
+          <h2 className="text-lg font-medium text-foreground">Keine Dokumente gefunden</h2>
           <p className="mt-1 max-w-md text-sm text-muted">
-            Open a report and choose Generate tailored CV (PDF). The file shows up here.
+            Öffnen Sie einen Bericht und wählen Sie „Angepassten Lebenslauf erstellen (PDF)“. Die Datei erscheint dann hier.
           </p>
         </div>
       </div>
@@ -127,10 +127,10 @@ export default function DocumentsPage() {
     <div className={`mx-auto space-y-6 px-6 py-8 ${pageFrameWidthClass.wide}`}>
       <div>
         <h1 className="font-display text-2xl tracking-tight text-landing">
-          Documents
+          Dokumente
         </h1>
         <p className="mt-1 text-sm text-muted">
-          Browse your generated CVs and cover letters.
+          Durchsuchen Sie Ihre erstellten Lebensläufe und Anschreiben.
         </p>
       </div>
 
@@ -160,7 +160,7 @@ export default function DocumentsPage() {
               
               <div className="mt-4 flex flex-wrap gap-2">
                 <Badge tone="info" className="capitalize">
-                  {doc.kind === "cv" ? "CV" : doc.kind === "cover" ? "Cover Letter" : "Document"}
+                  {doc.kind === "cv" ? "Lebenslauf" : doc.kind === "cover" ? "Anschreiben" : "Dokument"}
                 </Badge>
                 {doc.date && (
                   <Badge tone="muted" className="flex items-center gap-1 font-normal">
@@ -182,7 +182,7 @@ export default function DocumentsPage() {
                 className="w-full justify-between"
                 onClick={() => window.open(`/api/documents?id=${doc.id}`, "_blank")}
               >
-                Open PDF
+                PDF öffnen
                 <ExternalLink className="h-4 w-4 text-muted" />
               </Button>
             </div>

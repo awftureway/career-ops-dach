@@ -43,7 +43,7 @@ function StatusEditor({ n, current, inline = false, applicationLabel, onSaved, h
   const select = useRef<HTMLSelectElement>(null);
   const router = useRouter();
   const id = useId();
-  const label = applicationLabel ?? `application #${n}`;
+  const label = applicationLabel ?? `Bewerbung #${n}`;
 
   useEffect(() => {
     if (!saving.current) {
@@ -119,7 +119,7 @@ function StatusEditor({ n, current, inline = false, applicationLabel, onSaved, h
         requestAnimationFrame(() => pencil.current?.focus());
       }
     } catch (cause) {
-      const message = cause instanceof Error ? cause.message : "Could not save status. Please try again.";
+      const message = cause instanceof Error ? cause.message : "Status konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.";
       onHeldSave?.({ type: "fail", error: message });
       if (!mounted.current) return;
       setStatus(prev); // revert on failure
@@ -169,7 +169,7 @@ function StatusEditor({ n, current, inline = false, applicationLabel, onSaved, h
     <select
       ref={select}
       id={id}
-      aria-label={inline ? `Status for ${label}` : undefined}
+      aria-label={inline ? `Status für ${label}` : undefined}
       aria-invalid={errorShown ? true : undefined}
       aria-describedby={errorShown ? `${id}-error` : undefined}
       value={shown}
@@ -199,7 +199,7 @@ function StatusEditor({ n, current, inline = false, applicationLabel, onSaved, h
         {inline ? (editing || heldPending !== "") ? (
           <>
             {control}
-            <button type="button" aria-label={`Cancel editing status for ${label}`} title="Cancel" onClick={cancel} disabled={savingNow} className={buttonClass}>
+            <button type="button" aria-label={`Statusbearbeitung für ${label} abbrechen`} title="Abbrechen" onClick={cancel} disabled={savingNow} className={buttonClass}>
               <X aria-hidden="true" className="size-3.5" />
             </button>
           </>
@@ -209,20 +209,20 @@ function StatusEditor({ n, current, inline = false, applicationLabel, onSaved, h
               <span aria-hidden="true" className={cn("size-1.5 shrink-0 rounded-full", statusDot(shown))} />
               <span className="min-w-0 truncate" title={shown}>{shown}</span>
             </span>
-            <button ref={pencil} type="button" aria-label={`Edit status for ${label}`} title="Edit status" onClick={() => { setError(""); onHeldSave?.({ type: "clear" }); setEditing(true); }} className={buttonClass}>
+            <button ref={pencil} type="button" aria-label={`Status für ${label} bearbeiten`} title="Status bearbeiten" onClick={() => { setError(""); onHeldSave?.({ type: "clear" }); setEditing(true); }} className={buttonClass}>
               <Pencil aria-hidden="true" className="size-4" />
             </button>
           </>
         ) : (
           <>
-            <label htmlFor={id} className="text-xs text-faint">status</label>
+            <label htmlFor={id} className="text-xs text-faint">Status</label>
             {control}
           </>
         )}
-        {inline && savingNow && <span role="status" className="shrink-0 text-xs text-faint">saving…</span>}
+        {inline && savingNow && <span role="status" className="shrink-0 text-xs text-faint">Speichert …</span>}
         {inline && saved && (
           <span role="status" className="inline-flex shrink-0 animate-terminal-popup items-center gap-1 text-xs font-medium text-brand-text">
-            <Check aria-hidden="true" className="size-3" /> saved
+            <Check aria-hidden="true" className="size-3" /> Gespeichert
           </span>
         )}
       </span>
@@ -233,14 +233,14 @@ function StatusEditor({ n, current, inline = false, applicationLabel, onSaved, h
             {appliedAsk.yesLabel}
           </button>
           <button type="button" onClick={declineApplied} disabled={savingNow} className="text-xs text-muted hover:text-foreground disabled:opacity-60">
-            Not yet
+            Noch nicht
           </button>
         </span>
       )}
-      {!inline && savingNow && <span role="status" className="text-xs text-faint">saving…</span>}
+      {!inline && savingNow && <span role="status" className="text-xs text-faint">Speichert …</span>}
       {!inline && saved && (
         <span role="status" className="animate-terminal-popup inline-flex items-center gap-1 text-xs font-medium text-brand-text">
-          <Check aria-hidden="true" className="size-3" /> saved
+          <Check aria-hidden="true" className="size-3" /> Gespeichert
         </span>
       )}
       {errorShown && <span id={`${id}-error`} role="alert" className="basis-full whitespace-normal text-xs text-red-700 dark:text-red-400">{errorShown}</span>}

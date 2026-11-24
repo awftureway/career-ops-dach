@@ -664,7 +664,7 @@ test("executeJob reports a scanner timeout as a timeout and does not retry it", 
     assert.equal(attempts, 1);
     assert.equal(timedOut.state, "failed");
     assert.equal(timedOut.attempt, 1);
-    assert.equal(timedOut.message, `Scanner timed out after ${SCAN_TIMEOUT_MS / 60_000} minutes.`);
+    assert.equal(timedOut.message, `Scanner nach ${SCAN_TIMEOUT_MS / 60_000} Minuten abgebrochen (Zeitüberschreitung).`);
   } finally {
     fs.rmSync(temp, { recursive: true, force: true });
   }
@@ -701,7 +701,7 @@ test("scan failure messages skip progress, stack frames and the Node banner", ()
   assert.equal(stderrCause("starting\nboard list unavailable\n"), "board list unavailable");
   assert.equal(stderrCause(""), "");
   assert.equal(scanFailureMessage({ status: 2, stderr: "" }), "scanner exit 2");
-  assert.equal(scanFailureMessage({ status: null, signal: "SIGKILL", stderr: "" }), "Scanner stopped by SIGKILL.");
+  assert.equal(scanFailureMessage({ status: null, signal: "SIGKILL", stderr: "" }), "Scanner durch SIGKILL beendet.");
   assert.equal(scanFailureMessage({ status: null, stderr: FULL_SCAN_PROGRESS, error: Object.assign(new Error("spawnSync node ENOBUFS"), { code: "ENOBUFS" }) }), "spawnSync node ENOBUFS");
 });
 
@@ -742,7 +742,7 @@ test("completion history is capped at 100 records", async () => {
 
 test("a non-object scheduled-job patch is rejected by input validation", () => {
   for (const value of [null, "status", ["status"]]) {
-    assert.throws(() => assertScheduledJobBody(value), /object/);
+    assert.throws(() => assertScheduledJobBody(value), /Objekt/);
   }
 });
 

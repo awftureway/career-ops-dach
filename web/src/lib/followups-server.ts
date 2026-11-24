@@ -60,10 +60,10 @@ export function withFollowupsWrite<T>(fn: () => T | Promise<T>): Promise<T> {
 // else — the CLI, the seeder, another tab — holds it right now), so it is 409 +
 // Retry-After, not a 500: the caller should retry, not treat the write as
 // rejected. Anything else is a real failure on this machine → 500.
-export function followupsWriteError(e: unknown, fallback = "write failed"): Response {
+export function followupsWriteError(e: unknown, fallback = "Schreiben fehlgeschlagen"): Response {
   if (e instanceof FollowupsBusyError) {
     return Response.json(
-      { error: "follow-ups file is busy — try again in a moment" },
+      { error: "Die Nachfass-Datei ist gerade belegt. Versuchen Sie es gleich noch einmal." },
       { status: 409, headers: { "Retry-After": "1" } },
     );
   }

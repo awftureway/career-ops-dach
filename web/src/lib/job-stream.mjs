@@ -82,7 +82,7 @@ export async function readJobStream(stream, onProgress) {
   } catch (error) {
     return {
       status: "error",
-      message: error instanceof Error && error.name === "AbortError" ? "Interrupted. Check the pipeline before retrying." : "Connection error",
+      message: error instanceof Error && error.name === "AbortError" ? "Unterbrochen. Prüfen Sie die Pipeline, bevor Sie es erneut versuchen." : "Verbindungsfehler",
     };
   } finally {
     // A terminal error can arrive while the worker is still streaming. Release

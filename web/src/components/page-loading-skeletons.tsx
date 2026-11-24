@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function FollowupsDueSectionSkeleton({ rows = 3 }: { rows?: number }) {
   return (
-    <section className="mt-10" aria-label="Loading follow-ups due">
+    <section className="mt-10" aria-label="Fällige Nachfass-Aktionen werden geladen">
       <div className="mb-3 flex items-center gap-2">
         <Skeleton className="size-4 rounded" />
         <Skeleton className="h-3 w-28" />
@@ -62,7 +62,7 @@ export function PipelineTableRowsSkeleton({ rows = 8, trackerColumn = false }: {
 
 export function PipelinePageSkeleton() {
   return (
-    <div className={`mx-auto px-4 py-6 sm:px-6 sm:py-8 max-sm:pb-24 ${pageFrameWidthClass.wide}`} aria-label="Loading pipeline">
+    <div className={`mx-auto px-4 py-6 sm:px-6 sm:py-8 max-sm:pb-24 ${pageFrameWidthClass.wide}`} aria-label="Pipeline wird geladen">
       <div className="flex items-end justify-between gap-4">
         <div>
           <Skeleton className="h-8 w-36" />
@@ -121,7 +121,7 @@ export function FollowupsTableRowsSkeleton({ rows = 6 }: { rows?: number }) {
 
 export function FollowupsPageSkeleton() {
   return (
-    <div className="mx-auto max-w-none px-6 py-8" aria-label="Loading follow-ups">
+    <div className="mx-auto max-w-none px-6 py-8" aria-label="Nachfass-Aktionen werden geladen">
       <div className="flex items-end justify-between gap-4">
         <div>
           <Skeleton className="h-8 w-48" />
@@ -157,7 +157,7 @@ export function FollowupsPageSkeleton() {
 
 export function AnalyticsPageSkeleton() {
   return (
-    <div className={`mx-auto px-4 py-6 sm:px-6 sm:py-8 max-sm:pb-24 ${pageFrameWidthClass.wide}`} aria-label="Loading analytics">
+    <div className={`mx-auto px-4 py-6 sm:px-6 sm:py-8 max-sm:pb-24 ${pageFrameWidthClass.wide}`} aria-label="Auswertung wird geladen">
       <Skeleton className="h-8 w-32" />
       <Skeleton className="mt-2 h-4 w-64" />
 

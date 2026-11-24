@@ -77,9 +77,9 @@ test("picking a sort only changes the view; Make default is what saves it", () =
   // The pill is disabled when the view already is the default, and reads as a check mark then.
   assert.match(triage, /disabled=\{sortMode === defaultSort\}/);
   assert.match(triage, /onClick=\{makeSortDefault\}/);
-  assert.match(triage, /"✓ Default" : "Make default"/);
+  assert.match(triage, /"✓ Standard" : "Als Standard"/);
   // A failed save is shown, not swallowed.
-  assert.match(triage, /Can’t save in this browser/);
+  assert.match(triage, /In diesem Browser nicht speicherbar/);
   // Another tab's save updates the saved default only, never this tab's view.
   assert.match(triage, /window\.addEventListener\("storage", onStorage\)/);
   assert.match(triage, /window\.removeEventListener\("storage", onStorage\)/);

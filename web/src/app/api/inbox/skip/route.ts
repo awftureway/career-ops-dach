@@ -22,9 +22,9 @@ const ERROR_HTTP: Record<string, number> = {
 
 const ERROR_MSG: Record<string, string> = {
   "invalid-url": "url must be an http(s) posting URL",
-  "unmatched": "no pipeline row for that URL",
-  "not-found": "pipeline.md not found",
-  "busy": "The pipeline is being written right now (CLI or another tab). Try again.",
+  "unmatched": "Keine Pipeline-Zeile für diese URL",
+  "not-found": "pipeline.md nicht gefunden",
+  "busy": "Die Pipeline wird gerade geschrieben (CLI oder anderer Tab). Bitte erneut versuchen.",
 };
 
 export async function POST(req: Request) {
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   const lockModule = path.join(resolveCodeRoot(process.cwd(), process.env), "pipeline-lock.mjs");
   if (!fs.existsSync(lockModule)) {
     return NextResponse.json(
-      { error: "inbox skip needs the career-ops scripts; this root has data only", code: "core-script-missing" },
+      { error: "Das Überspringen im Posteingang benötigt die career-ops-Skripte; dieses Verzeichnis enthält nur Daten.", code: "core-script-missing" },
       { status: 503 },
     );
   }
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     if (!result.ok) {
       const code = result.error;
       return NextResponse.json(
-        { error: ERROR_MSG[code] ?? "skip failed", code },
+        { error: ERROR_MSG[code] ?? "Überspringen fehlgeschlagen", code },
         {
           status: ERROR_HTTP[code] ?? 400,
           ...(code === "busy" ? { headers: { "Retry-After": "5" } } : {}),
@@ -61,6 +61,6 @@ export async function POST(req: Request) {
     }
     return NextResponse.json({ ok: true, done, matched: result.matched, changed: result.changed });
   } catch {
-    return NextResponse.json({ error: "write failed" }, { status: 500 });
+    return NextResponse.json({ error: "Schreiben fehlgeschlagen" }, { status: 500 });
   }
 }

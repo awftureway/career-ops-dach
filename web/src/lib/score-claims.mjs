@@ -8,20 +8,20 @@ import { APPLY_MIN, MAYBE_MIN, SCORE_BANDS, STRONG_APPLY_MIN } from "./core/scor
 
 export function scoringDimensions() {
   return [
-    { name: "CV match", detail: "How well your CV maps to the stated requirements. This moves the score." },
-    { name: "North Star alignment", detail: "How close the role is to the career goal in your profile. This moves the score." },
-    { name: "Compensation", detail: "Pay the posting states. When the posting states none, this is unknown and does not move the score." },
-    { name: "Cultural signals", detail: "Culture evidence in the posting. No evidence means unknown, not a middle score, and unknown does not move the score." },
-    { name: "Red flags", detail: "Warnings can move the score down. A hard stop forces Skip and does not change the score." },
+    { name: "Lebenslauf-Match", detail: "Wie gut Ihr Lebenslauf zu den genannten Anforderungen passt. Das verändert den Score." },
+    { name: "North-Star-Passung", detail: "Wie nah die Stelle an dem Karriereziel in Ihrem Profil liegt. Das verändert den Score." },
+    { name: "Vergütung", detail: "Das Gehalt, das die Stellenanzeige nennt. Nennt sie keines, ist es unbekannt und verändert den Score nicht." },
+    { name: "Kultursignale", detail: "Hinweise auf die Unternehmenskultur in der Stellenanzeige. Ohne Hinweise gilt: unbekannt, nicht ein mittlerer Wert. Unbekannt verändert den Score nicht." },
+    { name: "Warnsignale", detail: "Warnungen können den Score senken. Ein Ausschlusskriterium erzwingt „Skip“ und ändert den Score nicht." },
   ];
 }
 
 export function ignoredByScore() {
   return [
-    "Posting legitimacy (report block G)",
-    "How important a requirement is (block B)",
-    "Evidence confidence",
-    "Role clarity",
+    "Seriosität der Stellenanzeige (Berichtsblock G)",
+    "Wie wichtig eine Anforderung ist (Block B)",
+    "Belastbarkeit der Belege",
+    "Klarheit der Rolle",
   ];
 }
 
@@ -31,23 +31,23 @@ export function scoreBandSummary() {
   const maybe = SCORE_BANDS.find((band) => band.id === "maybe");
   const skip = SCORE_BANDS.find((band) => band.id === "skip");
   return [
-    `${strong.label} starts at ${STRONG_APPLY_MIN.toFixed(1)}. The recommendation is ${strong.decision}.`,
-    `${apply.label} starts at ${APPLY_MIN.toFixed(1)}. The recommendation is ${apply.decision}.`,
-    `${maybe.label} starts at ${MAYBE_MIN.toFixed(1)}. The recommendation is ${maybe.decision}. Do not apply unless you have a reason.`,
-    `${skip.label} is below ${MAYBE_MIN.toFixed(1)}. The recommendation is ${skip.decision}.`,
+    `${strong.label} beginnt bei ${STRONG_APPLY_MIN.toFixed(1)}. Die Empfehlung lautet ${strong.decision}.`,
+    `${apply.label} beginnt bei ${APPLY_MIN.toFixed(1)}. Die Empfehlung lautet ${apply.decision}.`,
+    `${maybe.label} beginnt bei ${MAYBE_MIN.toFixed(1)}. Die Empfehlung lautet ${maybe.decision}. Bewerben Sie sich nur mit einem guten Grund.`,
+    `${skip.label} liegt unter ${MAYBE_MIN.toFixed(1)}. Die Empfehlung lautet ${skip.decision}.`,
   ];
 }
 
 export function leverCopy() {
   return {
-    sectionTitle: "Score and recommendation",
-    holdingTitle: "Holding it down",
-    holdingHint: "Hard stops force Skip. They do not change the score.",
-    closeTitle: "CV gaps",
-    closeHint: "Gaps in the match between your CV and the role. The match dimension can move the score.",
-    verifyTitle: "Check the evidence",
-    verifyHint: "Open questions. Evidence confidence does not change the 1 to 5 score.",
-    strengthsTitle: "Working for you",
-    strengthsHint: "The strongest matches named for this role.",
+    sectionTitle: "Score und Empfehlung",
+    holdingTitle: "Was den Score drückt",
+    holdingHint: "Ausschlusskriterien erzwingen „Skip“. Sie ändern den Score nicht.",
+    closeTitle: "Lücken im Lebenslauf",
+    closeHint: "Lücken zwischen Ihrem Lebenslauf und der Stelle. Die Match-Dimension kann den Score verändern.",
+    verifyTitle: "Belege prüfen",
+    verifyHint: "Offene Fragen. Die Belastbarkeit der Belege ändert den Score von 1 bis 5 nicht.",
+    strengthsTitle: "Was für Sie spricht",
+    strengthsHint: "Die stärksten Übereinstimmungen für diese Stelle.",
   };
 }

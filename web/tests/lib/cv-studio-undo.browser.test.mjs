@@ -28,7 +28,7 @@ test("undo puts a hidden bullet back and the saved edits do not keep the hide", 
 
   await page.goto(`${origin.origin}/pipeline/11/cv-studio`);
   await page.getByRole("heading", { name: "Fixture Alpha", exact: true }).waitFor();
-  const undo = page.getByRole("button", { name: "Undo", exact: true });
+  const undo = page.getByRole("button", { name: "Rückgängig", exact: true });
   await undo.waitFor();
   assert.equal(await undo.isDisabled(), true);
 
@@ -50,10 +50,10 @@ test("undo puts a hidden bullet back and the saved edits do not keep the hide", 
 
   // Undo before autosave writes. A missing file is not a saved hide. A hide that
   // lands late still has to be gone before the wait ends.
-  await page.getByRole("button", { name: "Hide bullet", exact: true }).click();
-  await page.getByRole("button", { name: "Show bullet", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Stichpunkt ausblenden", exact: true }).click();
+  await page.getByRole("button", { name: "Stichpunkt einblenden", exact: true }).waitFor();
   await undo.click();
-  await page.getByRole("button", { name: "Hide bullet", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Stichpunkt ausblenden", exact: true }).waitFor();
   const deadline = Date.now() + 8_000;
   let sawHide = false;
   let hidden = hiddenNow();
@@ -66,12 +66,12 @@ test("undo puts a hidden bullet back and the saved edits do not keep the hide", 
   assert.ok(hidden === null || !hidden.includes(section0Item0Bullet0));
 
   // Undo after the hide is on disk. The stored edits have to drop it.
-  await page.getByRole("button", { name: "Hide bullet", exact: true }).click();
-  await page.getByRole("button", { name: "Show bullet", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Stichpunkt ausblenden", exact: true }).click();
+  await page.getByRole("button", { name: "Stichpunkt einblenden", exact: true }).waitFor();
   const stored = await waitForHide((value) => Array.isArray(value) && value.includes(section0Item0Bullet0));
   assert.deepEqual(stored, [section0Item0Bullet0]);
   await undo.click();
-  await page.getByRole("button", { name: "Hide bullet", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Stichpunkt ausblenden", exact: true }).waitFor();
   const cleared = await waitForHide((value) => Array.isArray(value) && !value.includes(section0Item0Bullet0));
   assert.deepEqual(cleared, []);
   assert.deepEqual(errors, []);
@@ -96,8 +96,8 @@ test("undo then leaving keeps the restored edits after the older hide lands", {
 
   await page.goto(`${origin.origin}/pipeline/11/cv-studio`);
   await page.getByRole("heading", { name: "Fixture Alpha", exact: true }).waitFor();
-  const status = () => page.getByRole("status").filter({ hasText: /^(?:Unsaved|Saving|Saved)$/ });
-  await status().filter({ hasText: /^Saved$/ }).waitFor();
+  const status = () => page.getByRole("status").filter({ hasText: /^(?:Nicht gespeichert|Speichert …|Gespeichert)$/ });
+  await status().filter({ hasText: /^Gespeichert$/ }).waitFor();
 
   // Hold the hide on the wire, undo, then fire pagehide without navigating.
   // A real navigation aborts that held request, so the older hide would never
@@ -141,10 +141,10 @@ test("undo then leaving keeps the restored edits after the older hide lands", {
     markExit();
   });
 
-  await page.getByRole("button", { name: "Hide bullet", exact: true }).click();
+  await page.getByRole("button", { name: "Stichpunkt ausblenden", exact: true }).click();
   await hideSeen;
-  await page.getByRole("button", { name: "Undo", exact: true }).click();
-  await page.getByRole("button", { name: "Hide bullet", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Rückgängig", exact: true }).click();
+  await page.getByRole("button", { name: "Stichpunkt ausblenden", exact: true }).waitFor();
   await page.evaluate(() => window.dispatchEvent(new Event("pagehide")));
   const exitOrTimeout = await Promise.race([
     exitSeen.then(() => "exit"),

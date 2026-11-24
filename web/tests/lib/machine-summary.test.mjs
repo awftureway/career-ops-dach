@@ -64,7 +64,7 @@ test("levers name hard stops and leave requirement importance out of the score",
       { text: "Requires on-site in a city outside the profile", importance: null },
     ],
     close: [],
-    verify: ["Confirm the salary band", "Compensation evidence is unknown"],
+    verify: ["Confirm the salary band", "Belege zu „Vergütung“ sind unbekannt"],
     strengths: ["Five years of Python services"],
   });
   const names = [...levers.holding, ...levers.close].map((item) => item.text);
@@ -153,10 +153,10 @@ test("a soft gap listed twice is one close call", () => {
 
 test("prep questions follow importance and pick the question from the match", () => {
   assert.deepEqual(prepQuestions(readMachineSummary(full)), [
-    { requirement: "Kubernetes in production", importance: "critical", match: "missing", question: "The role asks for Kubernetes in production. How would you close that gap?" },
-    { requirement: "Python", importance: "critical", match: "strong", question: "Walk me through your strongest example of Python. What was the outcome?" },
-    { requirement: "On-call leadership", importance: "high", match: "partial", question: "Where have you used On-call leadership, and how deep did you go?" },
-    { requirement: "Terraform", importance: "meaningful", match: "missing", question: "The role asks for Terraform. How would you close that gap?" },
+    { requirement: "Kubernetes in production", importance: "critical", match: "missing", question: "Die Stelle verlangt Kubernetes in production. Wie würden Sie diese Lücke schließen?" },
+    { requirement: "Python", importance: "critical", match: "strong", question: "Führen Sie mich durch Ihr stärkstes Beispiel für Python. Was war das Ergebnis?" },
+    { requirement: "On-call leadership", importance: "high", match: "partial", question: "Wo haben Sie On-call leadership eingesetzt, und wie tief waren Sie dabei?" },
+    { requirement: "Terraform", importance: "meaningful", match: "missing", question: "Die Stelle verlangt Terraform. Wie würden Sie diese Lücke schließen?" },
   ]);
 });
 

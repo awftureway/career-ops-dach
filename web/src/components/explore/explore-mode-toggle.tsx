@@ -44,11 +44,11 @@ export function ExploreModeToggle({
         )}
       >
         <Sparkles className="size-4" />
-        <span className="font-medium">AI search</span>
+        <span className="font-medium">KI-Suche</span>
         <span className="hidden sm:inline-flex">
           <CostBadge kind="spend" size="xs" />
         </span>
-        {!cliConfigured && <span className="text-[10px] text-faint">needs a CLI</span>}
+        {!cliConfigured && <span className="text-[10px] text-faint">braucht eine CLI</span>}
       </button>
     </div>
   );

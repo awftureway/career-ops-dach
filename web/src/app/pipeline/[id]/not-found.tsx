@@ -20,9 +20,9 @@ export default function ReportNotFound() {
       <div className="mt-8 flex gap-3 rounded-2xl border border-dashed border-border bg-surface/30 p-5">
         <FileText className="mt-1 size-5 shrink-0 text-faint" />
         <div>
-          <h1 className="font-display text-2xl tracking-tight text-landing">No report #{id}</h1>
+          <h1 className="font-display text-2xl tracking-tight text-landing">Kein Bericht #{id}</h1>
           <p className="mt-2 text-sm text-muted">
-            No tracker row or <code className="text-foreground">reports/</code> file has that number.
+            Keine Tracker-Zeile und keine Datei in <code className="text-foreground">reports/</code> hat diese Nummer.
           </p>
         </div>
       </div>

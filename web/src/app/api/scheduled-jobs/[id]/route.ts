@@ -19,7 +19,7 @@ export async function PATCH(req: Request, { params }: RouteContext) {
       : NextResponse.json({ error: "Not found" }, { status: 404 });
   } catch (error) {
     const status = error instanceof ScheduledJobValidationError || error instanceof SyntaxError ? 400 : error instanceof Error && /lock timeout/i.test(error.message) ? 409 : 500;
-    return NextResponse.json({ error: status === 500 ? "Could not update scheduled job." : error instanceof Error ? error.message : "Invalid update" }, { status });
+    return NextResponse.json({ error: status === 500 ? "Geplanter Scan konnte nicht aktualisiert werden." : error instanceof Error ? error.message : "Ungültige Aktualisierung" }, { status });
   }
 }
 
@@ -30,6 +30,6 @@ export async function DELETE(_req: Request, { params }: RouteContext) {
     return job ? NextResponse.json(job) : NextResponse.json({ error: "Not found" }, { status: 404 });
   } catch (error) {
     const status = error instanceof Error && /lock timeout/i.test(error.message) ? 409 : 500;
-    return NextResponse.json({ error: status === 409 ? "Scheduled jobs are busy; try again." : "Could not delete scheduled job." }, { status });
+    return NextResponse.json({ error: status === 409 ? "Geplante Scans sind gerade belegt. Versuchen Sie es erneut." : "Geplanter Scan konnte nicht gelöscht werden." }, { status });
   }
 }

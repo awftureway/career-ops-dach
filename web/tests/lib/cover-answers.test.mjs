@@ -47,17 +47,17 @@ test("coverAnswersText: letters the answers as modes/cover.md Step 6 asks for th
   assert.equal(
     coverAnswersText(BRIEF),
     [
-      "A. Why this role or company?\nTheir platform team runs the training cluster I want to own.",
-      "B. What problem would you solve for them?\nModel rollouts take days.",
-      "C. How would you approach it on day one?\nMap the rollout path in week one.",
-      "D. Tone\nDirect",
+      "A. Warum diese Stelle oder diese Firma?\nTheir platform team runs the training cluster I want to own.",
+      "B. Welches Problem würden Sie für die Firma lösen?\nModel rollouts take days.",
+      "C. Wie würden Sie am ersten Tag vorgehen?\nMap the rollout path in week one.",
+      "D. Tone\nDirekt",
     ].join("\n\n"),
   );
 });
 
 test("coverAnswersText: a blank answer is marked and an unknown tone is left out", () => {
   const text = coverAnswersText({ ...BRIEF, approach: "  ", tone: null });
-  assert.match(text, /C\. How would you approach it on day one\?\n\(no answer\)$/);
+  assert.match(text, /C\. Wie würden Sie am ersten Tag vorgehen\?\n\(no answer\)$/);
   assert.doesNotMatch(text, /D\. Tone/);
 });
 

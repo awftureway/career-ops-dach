@@ -13,12 +13,12 @@ const ready = (content, extra = {}) => ({
 
 test("a new edit is unsaved, and a finished save of that same text is saved", () => {
   let state = editorReducer(ready("Jane Doe\n"), { type: "edit", content: "Jane Doe\n\nTuesday review." });
-  assert.equal(editorStatus(state).label, "Unsaved");
+  assert.equal(editorStatus(state).label, "Nicht gespeichert");
   assert.equal(editorStatus(state).canSave, true);
   state = editorReducer(state, { type: "save-start", content: state.content });
-  assert.equal(editorStatus(state).label, "Saving");
+  assert.equal(editorStatus(state).label, "Speichert …");
   state = editorReducer(state, { type: "save-ok", content: "Jane Doe\n\nTuesday review." });
-  assert.equal(editorStatus(state).label, "Saved");
+  assert.equal(editorStatus(state).label, "Gespeichert");
   assert.equal(shouldSave(state), false);
   assert.equal(draftToStore(state), null);
 });
@@ -27,11 +27,11 @@ test("a save that finishes after a newer edit does not call the newer edit saved
   let state = editorReducer(ready("one"), { type: "edit", content: "one two" });
   state = editorReducer(state, { type: "save-start", content: "one two" });
   state = editorReducer(state, { type: "edit", content: "one two three" });
-  assert.equal(editorStatus(state).label, "Unsaved");
+  assert.equal(editorStatus(state).label, "Nicht gespeichert");
   state = editorReducer(state, { type: "save-ok", content: "one two" });
   assert.equal(state.saved, "one two");
   assert.equal(state.content, "one two three");
-  assert.equal(editorStatus(state).label, "Unsaved");
+  assert.equal(editorStatus(state).label, "Nicht gespeichert");
   assert.equal(shouldSave(state), true);
   assert.deepEqual(draftToStore(state), { base: "one two", content: "one two three" });
 });
@@ -40,7 +40,7 @@ test("a failed save stays unsaved and names the error", () => {
   let state = editorReducer(ready("one"), { type: "edit", content: "one two" });
   state = editorReducer(state, { type: "save-start", content: "one two" });
   state = editorReducer(state, { type: "save-failed", content: "one two", error: "write failed" });
-  assert.equal(editorStatus(state).label, "Unsaved");
+  assert.equal(editorStatus(state).label, "Nicht gespeichert");
   assert.equal(editorStatus(state).canSave, true);
   assert.equal(state.error, "write failed");
   assert.equal(state.inflight, null);
@@ -55,7 +55,7 @@ test("an edit made while a save is in flight still autosaves after that save fai
   assert.equal(state.error, null);
   assert.equal(state.inflight, null);
   assert.equal(shouldSave(state), true);
-  assert.equal(editorStatus(state).label, "Unsaved");
+  assert.equal(editorStatus(state).label, "Nicht gespeichert");
 });
 
 test("a failed save does not autosave again until the next edit", () => {
@@ -82,7 +82,7 @@ test("a draft written on top of the file comes back, and a draft for an older fi
     draft: { base: "on disk", content: "on disk plus a line" },
   });
   assert.equal(restored.content, "on disk plus a line");
-  assert.equal(editorStatus(restored).label, "Unsaved");
+  assert.equal(editorStatus(restored).label, "Nicht gespeichert");
 
   const stale = editorReducer(initialEditor(), {
     type: "loaded",
@@ -91,13 +91,13 @@ test("a draft written on top of the file comes back, and a draft for an older fi
     draft: { base: "on disk", content: "on disk plus a line" },
   });
   assert.equal(stale.content, "replaced on disk");
-  assert.equal(editorStatus(stale).label, "Saved");
+  assert.equal(editorStatus(stale).label, "Gespeichert");
 });
 
 test("an empty editor does not say Saved when cv.md does not exist", () => {
   const state = editorReducer(initialEditor(), { type: "loaded", content: "", exists: false, draft: null });
   assert.equal(state.exists, false);
-  assert.equal(editorStatus(state).label, "No file yet");
+  assert.equal(editorStatus(state).label, "Noch keine Datei");
   assert.equal(editorStatus(state).canSave, false);
 });
 
@@ -106,7 +106,7 @@ test("reverting to the saved text while another save is in flight still says Sav
   state = editorReducer(state, { type: "save-start", content: "B" });
   state = editorReducer(state, { type: "edit", content: "A" });
   assert.equal(state.inflight, "B");
-  assert.equal(editorStatus(state).label, "Saving");
+  assert.equal(editorStatus(state).label, "Speichert …");
   assert.deepEqual(draftToStore(state), { base: "A", inflight: "B", content: "A" });
   const landed = editorReducer(initialEditor(), {
     type: "loaded",
@@ -168,7 +168,7 @@ test("reverting to the saved text during a conflict does not look saved", () => 
   });
   assert.equal(state.content, "A");
   assert.equal(state.saved, "A");
-  assert.equal(editorStatus(state).label, "Unsaved");
+  assert.equal(editorStatus(state).label, "Nicht gespeichert");
   assert.equal(editorStatus(state).canSave, false);
   assert.equal(shouldSave(state), false);
   assert.deepEqual(draftToStore(state), { base: "A", content: "A" });
@@ -228,7 +228,7 @@ test("an imported CV replaces the box, and a late save result does not bring the
   assert.equal(state.saved, "# Imported\n");
   assert.equal(state.inflight, null);
   assert.equal(state.conflict, false);
-  assert.equal(editorStatus(state).label, "Saved");
+  assert.equal(editorStatus(state).label, "Gespeichert");
   assert.equal(draftToStore(state), null);
   const lateFail = editorReducer(state, {
     type: "save-failed",

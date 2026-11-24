@@ -12,7 +12,7 @@ test("scheduled scans shows loading and load errors instead of the empty create 
   assert.equal(scheduledScansBody("loading", 2), "list");
   assert.equal(scheduledScansBody("error", 2), "list");
   assert.match(view, /useState<"loading" \| "ready" \| "error">\("loading"\)/);
-  assert.match(view, /Loading scheduled scans…/);
+  assert.match(view, /Geplante Scans werden geladen …/);
   assert.match(view, /scheduledScansBody\(phase, store\.jobs\.length\) === "loading"/);
   assert.match(view, /scheduledScansBody\(phase, store\.jobs\.length\) === "error"/);
 });

@@ -32,8 +32,8 @@ test("Tracker search explains what it filtered and how to undo it", { skip: live
   await t.test("a search that matches only under All offers to show it there", async () => {
     await page.goto(`${origin.origin}/pipeline?tab=EVALUATED`);
     await search.fill("Beta");
-    await page.getByRole("heading", { name: "No matches for “Beta” in Evaluated" }).waitFor();
-    await page.getByRole("button", { name: "Show 1 in All", exact: true }).click();
+    await page.getByRole("heading", { name: "Keine Treffer für „Beta“ in „Evaluated“" }).waitFor();
+    await page.getByRole("button", { name: "1 in „Alle“ anzeigen", exact: true }).click();
     await tabPressed("ALL").waitFor();
     await company("Fixture Beta").waitFor();
     assert.equal(await company("Fixture Alpha").count(), 0);
@@ -50,7 +50,7 @@ test("Tracker search explains what it filtered and how to undo it", { skip: live
     await search.fill("Alpha");
     await page.getByRole("status").filter({ hasText: "1 of 3 shown" }).waitFor();
     await company("Fixture Gamma").waitFor({ state: "detached" });
-    await page.getByRole("button", { name: "Clear search" }).click();
+    await page.getByRole("button", { name: "Suche zurücksetzen" }).click();
     assert.equal(await search.inputValue(), "");
     await allRowsShown();
     assert.equal(await page.getByText(/\d+ of \d+ shown/).count(), 0);
@@ -58,14 +58,14 @@ test("Tracker search explains what it filtered and how to undo it", { skip: live
 
   await t.test("an empty status tab with no search does not mention search", async () => {
     await page.goto(`${origin.origin}/pipeline?tab=OFFER`);
-    await page.getByRole("heading", { name: "No Offer applications yet" }).waitFor();
+    await page.getByRole("heading", { name: "Noch keine Bewerbungen in „Offer“" }).waitFor();
     assert.equal(await page.getByRole("main").getByText(/search/i).count(), 0);
   });
 
   await t.test("a score filter that empties the list names it and clears it", async () => {
     await page.goto(`${origin.origin}/pipeline?tab=ALL&min=4.9`);
-    await page.getByRole("heading", { name: "No applications score 4.9 or higher" }).waitFor();
-    await page.getByRole("button", { name: "Clear score filter", exact: true }).click();
+    await page.getByRole("heading", { name: "Keine Bewerbungen mit Score 4.9 oder höher" }).waitFor();
+    await page.getByRole("button", { name: "Score-Filter zurücksetzen", exact: true }).click();
     await page.waitForURL((u) => !u.searchParams.has("min"));
     await allRowsShown();
   });

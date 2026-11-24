@@ -67,29 +67,29 @@ export function ApplyChecklist({
         <ArrowLeft className="size-4" /> Pipeline
       </BackLink>
       <header className="mt-5">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-faint">Apply checklist</p>
+        <p className="font-mono text-xs uppercase tracking-[0.18em] text-faint">Bewerbungs-Checkliste</p>
         <h1 className="mt-2 font-display text-3xl tracking-tight text-landing">{company}</h1>
         {role && <p className="mt-1 text-muted">{role}</p>}
         <Link href={reportHref} className="mt-3 inline-flex text-sm text-brand-text hover:underline">
-          Back to the report
+          Zurück zum Bericht
         </Link>
       </header>
 
-      <Section title="After you submit">
+      <Section title="Nach dem Absenden">
         <div className="flex flex-wrap items-start gap-2">
           <AppliedButton trackerNum={trackerNum} status={status} />
           {status.trim().toLowerCase() === "applied" && <SeedButton key={trackerNum} trackerNum={trackerNum} />}
           <MarkPdfReadyButton reportNum={reportNum} ready={pdfReady} trackerMarked={trackerMarked} />
         </div>
-        <p className="mt-2 text-xs text-muted">Marking an application Applied also tries to schedule its first follow-up. If the reminder is missing, you can retry here.</p>
+        <p className="mt-2 text-xs text-muted">Wenn Sie eine Bewerbung als Beworben markieren, wird auch versucht, das erste Nachfassen zu planen. Fehlt die Erinnerung, können Sie es hier erneut versuchen.</p>
         {pdfNote && <p className="mt-2 text-sm text-muted">{pdfNote}</p>}
-        {!trackerNum && <p className="mt-2 text-xs text-faint">Applied and seed follow-up need a tracker row.</p>}
+        {!trackerNum && <p className="mt-2 text-xs text-faint">Beworben und Nachfassen anlegen brauchen eine Tracker-Zeile.</p>}
       </Section>
 
       {blocked ? (
         <Section title={blocked.label}>
           <table className="w-full text-sm">
-            <caption className="sr-only">Why this portal is filled outside the app</caption>
+            <caption className="sr-only">Warum dieses Portal außerhalb der App ausgefüllt wird</caption>
             <tbody>
               <tr className="border-t border-border">
                 <td className="py-2 pr-4 align-top font-medium">{blocked.label}</td>
@@ -103,26 +103,26 @@ export function ApplyChecklist({
         </Section>
       ) : null}
 
-      <Section title="Posting">
+      <Section title="Stellenanzeige">
         {postingUrl ? (
           <div className="flex flex-wrap items-center gap-2">
             <a href={postingUrl} target="_blank" rel="noreferrer" className={PILL}>
-              Open <ExternalLink className="size-3.5" />
+              Öffnen <ExternalLink className="size-3.5" />
             </a>
-            <CopyButton text={postingUrl} label="Copy URL" />
+            <CopyButton text={postingUrl} label="URL kopieren" />
             <span className="min-w-0 break-all font-mono text-xs text-faint">{postingUrl}</span>
           </div>
         ) : (
-          <Empty>No posting URL on this application.</Empty>
+          <Empty>Keine Anzeigen-URL bei dieser Bewerbung.</Empty>
         )}
       </Section>
 
-      <Section title="Resume and cover letter">
-        <PdfRow label="Resume" file={resume} empty="No resume in the PDF index for this report." />
-        <PdfRow label="Cover letter" file={cover} empty="No cover letter in the PDF index for this report." />
+      <Section title="Lebenslauf und Anschreiben">
+        <PdfRow label="Lebenslauf" file={resume} empty="Kein Lebenslauf im PDF-Index dieses Berichts." />
+        <PdfRow label="Anschreiben" file={cover} empty="Kein Anschreiben im PDF-Index dieses Berichts." />
       </Section>
 
-      <Section title="Application answers">
+      <Section title="Bewerbungsantworten">
         {answers.length > 0 ? (
           <div className="grid gap-3">
             {answers.map((item) => (
@@ -130,11 +130,11 @@ export function ApplyChecklist({
             ))}
           </div>
         ) : (
-          <Empty>No saved application answers on this report.</Empty>
+          <Empty>Keine gespeicherten Bewerbungsantworten in diesem Bericht.</Empty>
         )}
       </Section>
 
-      <Section title="Work history">
+      <Section title="Berufserfahrung">
         {work.length > 0 ? (
           <div className="grid gap-3">
             {work.map((item) => (
@@ -146,21 +146,21 @@ export function ApplyChecklist({
         )}
       </Section>
 
-      <Section title="Education">
+      <Section title="Ausbildung">
         {education ? (
-          <CopyField item={{ label: "Education", text: education }} />
+          <CopyField item={{ label: "Ausbildung", text: education }} />
         ) : (
           <Empty>{educationEmpty}</Empty>
         )}
       </Section>
 
-      <Section title="Portal tips">
+      <Section title="Portal-Tipps">
         <table className="w-full text-sm">
-          <caption className="sr-only">Portal tips</caption>
+          <caption className="sr-only">Portal-Tipps</caption>
           <thead>
             <tr className="text-left text-xs uppercase tracking-wide text-faint">
               <th className="py-2 pr-4 font-medium">Portal</th>
-              <th className="py-2 font-medium">Tip</th>
+              <th className="py-2 font-medium">Tipp</th>
             </tr>
           </thead>
           <tbody>
@@ -195,7 +195,7 @@ function CopyField({ item }: { item: CopyItem }) {
     <div className="rounded-xl border border-border bg-surface/30 px-4 py-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-medium">{item.label}</p>
-        <CopyButton text={item.text} label="Copy" />
+        <CopyButton text={item.text} label="Kopieren" />
       </div>
       <pre className="mt-2 whitespace-pre-wrap font-sans text-sm text-muted">{item.text}</pre>
     </div>
@@ -208,10 +208,10 @@ function PdfRow({ label, file, empty }: { label: string; file: PdfFile; empty: s
     <div className="mb-3 flex flex-wrap items-center gap-2">
       <span className="text-sm font-medium">{label}</span>
       <a href={file.downloadHref} target="_blank" rel="noreferrer" className={PILL}>
-        View
+        Ansehen
       </a>
       <CvPdfFileActions viewHref={file.downloadHref} className={PILL} />
-      <CopyButton text={file.relativePath} label="Copy path" />
+      <CopyButton text={file.relativePath} label="Pfad kopieren" />
       <span className="font-mono text-xs text-faint">{file.relativePath}</span>
     </div>
   );
@@ -233,7 +233,7 @@ function CopyButton({ text, label }: { text: string; label: string }) {
         window.setTimeout(() => setState("idle"), 1500);
       }}
     >
-      {state === "copied" ? "Copied" : state === "failed" ? "Copy failed" : label}
+      {state === "copied" ? "Kopiert" : state === "failed" ? "Kopieren fehlgeschlagen" : label}
     </button>
   );
 }
@@ -261,7 +261,7 @@ function AppliedButton({ trackerNum, status }: { trackerNum: string | null; stat
       setAsk(false);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not mark this Applied.");
+      setError(err instanceof Error ? err.message : "Konnte nicht als Beworben markiert werden.");
     } finally {
       setBusy(false);
     }
@@ -278,7 +278,7 @@ function AppliedButton({ trackerNum, status }: { trackerNum: string | null; stat
             if (!pending.write) setAsk(true);
           }}
         >
-          {busy ? "Saving…" : "Applied"}
+          {busy ? "Speichert …" : "Beworben"}
         </button>
       )}
       {ask && (
@@ -286,10 +286,10 @@ function AppliedButton({ trackerNum, status }: { trackerNum: string | null; stat
           <span className="text-xs text-foreground">{pending.prompt}</span>
           <span className="inline-flex items-center gap-2">
             <button ref={yesRef} type="button" className={PILL} disabled={!trackerNum || busy} onClick={() => void markApplied()}>
-              {busy ? "Saving…" : pending.yesLabel}
+              {busy ? "Speichert …" : pending.yesLabel}
             </button>
             <button type="button" className="text-xs text-muted hover:text-foreground disabled:opacity-60" disabled={busy} onClick={() => setAsk(false)}>
-              Not yet
+              Noch nicht
             </button>
           </span>
         </span>
@@ -318,13 +318,13 @@ function SeedButton({ trackerNum }: { trackerNum: string | null }) {
       });
       const body = await res.json().catch(() => null);
       if (!res.ok) {
-        setError(typeof body?.error === "string" ? body.error : "Could not seed the follow-up.");
+        setError(typeof body?.error === "string" ? body.error : "Nachfassen konnte nicht angelegt werden.");
         return;
       }
-      setNote(body?.seeded !== false ? "Follow-up seeded." : body?.reason === "disabled" ? "Follow-ups are turned off in your profile, so nothing was seeded." : "Already seeded.");
+      setNote(body?.seeded !== false ? "Nachfassen angelegt." : body?.reason === "disabled" ? "Nachfassen ist in Ihrem Profil deaktiviert, daher wurde nichts angelegt." : "Bereits angelegt.");
       router.refresh();
     } catch {
-      setError("Could not seed the follow-up.");
+      setError("Nachfassen konnte nicht angelegt werden.");
     } finally {
       setBusy(false);
     }
@@ -333,7 +333,7 @@ function SeedButton({ trackerNum }: { trackerNum: string | null }) {
   return (
     <span className="inline-flex flex-col items-start gap-1">
       <button type="button" className={PILL} disabled={!trackerNum || busy} onClick={seed}>
-        {busy ? "Checking…" : "Retry missing follow-up"}
+        {busy ? "Prüft …" : "Fehlendes Nachfassen erneut anlegen"}
       </button>
       {note && <span className="text-xs text-muted">{note}</span>}
       {error && <span className="max-w-xs text-xs text-red-500">{error}</span>}

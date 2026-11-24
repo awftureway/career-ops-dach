@@ -25,15 +25,15 @@ test("EOF after a progress step releases filling without claiming success", asyn
   const result = await read(response, (event) => steps.push(event));
   assert.deepEqual(steps, [step]);
   assert.equal(result.status, "ready");
-  assert.match(result.error, /stopped before confirming/);
-  assert.match(result.error, /Check the real form before trying again/);
+  assert.match(result.error, /angehalten, bevor das Ausfüllen bestätigt/);
+  assert.match(result.error, /Prüfen Sie das echte Formular/);
   assert.equal(response.body.locked, false);
 });
 
 test("an empty response releases filling with an actionable interruption", async () => {
   const result = await read(responseFor([]));
   assert.equal(result.status, "ready");
-  assert.match(result.error, /stopped before confirming/);
+  assert.match(result.error, /angehalten, bevor das Ausfüllen bestätigt/);
 });
 
 test("a complete terminal result without a trailing newline finishes the fill", async () => {
@@ -48,13 +48,13 @@ test("an unsuccessful but completed agent attempt preserves its filled=false res
 test("filled false leaves the success screen and returns to the editor", () => {
   const outcome = screenForFill({ status: "done", filled: false });
   assert.equal(outcome.status, "ready");
-  assert.equal(outcome.error, "AI did its best but couldn't finish. Check the real form before trying again.");
+  assert.equal(outcome.error, "Die KI konnte das Formular nicht vollständig ausfüllen. Prüfen Sie das echte Formular, bevor Sie es erneut versuchen.");
 });
 
 test("filled true stays on the success screen", () => {
   const outcome = screenForFill({ status: "done", filled: true });
   assert.equal(outcome.status, "done");
-  assert.equal(outcome.issue, "AI filled the form for you — review every answer on the real form, then submit it yourself.");
+  assert.equal(outcome.issue, "Die KI hat das Formular für Sie ausgefüllt. Prüfen Sie jede Antwort im echten Formular und schicken Sie es dann selbst ab.");
 });
 
 test("a held handoff keeps its gaps and stays on the editor", async () => {
@@ -62,7 +62,7 @@ test("a held handoff keeps its gaps and stays on the editor", async () => {
     level: "warn",
     code: "screening-empty",
     field: "Visa sponsorship",
-    message: "Required sponsorship question is still empty (Visa sponsorship). Fill it on this page before the employer form opens.",
+    message: "Die Pflichtfrage zum Visa-Sponsoring ist noch leer (Visa sponsorship). Füllen Sie sie auf dieser Seite aus, bevor sich das Arbeitgeber-Formular öffnet.",
   }];
   const result = await read(responseFor([record({ t: "done", filled: false, gaps })]));
   assert.deepEqual(result, { status: "done", filled: false, gaps });
@@ -93,7 +93,7 @@ test("a completed handoff keeps a résumé warning on the success screen", () =>
   }];
   const outcome = screenForFill({ status: "done", filled: true, gaps });
   assert.equal(outcome.status, "done");
-  assert.equal(outcome.issue, "AI filled the form for you — review every answer on the real form, then submit it yourself.");
+  assert.equal(outcome.issue, "Die KI hat das Formular für Sie ausgefüllt. Prüfen Sie jede Antwort im echten Formular und schicken Sie es dann selbst ab.");
   assert.deepEqual(outcome.gaps, gaps);
 });
 
@@ -104,7 +104,7 @@ test("a blocking gap still holds the editor when a résumé warning is also pres
       level: "warn",
       code: "screening-empty",
       field: "Visa sponsorship",
-      message: "Required sponsorship question is still empty (Visa sponsorship). Fill it on this page before the employer form opens.",
+      message: "Die Pflichtfrage zum Visa-Sponsoring ist noch leer (Visa sponsorship). Füllen Sie sie auf dieser Seite aus, bevor sich das Arbeitgeber-Formular öffnet.",
     },
   ];
   const outcome = screenForFill({ status: "done", filled: true, gaps });
@@ -138,7 +138,7 @@ test("a terminal error without a trailing newline restores the editor with its m
 test("a terminal error with no usable message gives recovery guidance", async () => {
   const result = await read(responseFor([record({ t: "error", message: {} })]));
   assert.equal(result.status, "ready");
-  assert.match(result.error, /Check the real form before trying again/);
+  assert.match(result.error, /Prüfen Sie das echte Formular/);
 });
 
 test("HTTP errors keep the API's explanation instead of waiting for NDJSON", async () => {
@@ -155,14 +155,14 @@ test("non-JSON HTTP errors include their status and never count as done", async 
 test("a missing response body releases filling", async () => {
   const result = await read(new Response(null));
   assert.equal(result.status, "ready");
-  assert.match(result.error, /No response stream/);
+  assert.match(result.error, /kein Antwort-Stream/);
 });
 
 test("malformed and unknown records never impersonate successful completion", async () => {
   for (const text of ['{"t":"done"}', '{"t":"done","filled":"true"}', '{"t":"done",', "null\n", "{}\n", '{"t":"heartbeat"}\n']) {
     const result = await read(responseFor([text]));
     assert.equal(result.status, "ready", text);
-    assert.match(result.error, /stopped before confirming|unreadable fill result/, text);
+    assert.match(result.error, /angehalten, bevor das Ausfüllen bestätigt|unlesbares Ergebnis/, text);
   }
 });
 
@@ -174,13 +174,13 @@ test("blank and unknown valid progress records do not discard a later valid resu
 test("a malformed error record cannot be silently dropped before a later done", async () => {
   const result = await read(responseFor(['{"t":"error","message":"Page closed"\n', record({ t: "done", filled: true })]));
   assert.equal(result.status, "ready");
-  assert.match(result.error, /unreadable fill result/);
+  assert.match(result.error, /unlesbares Ergebnis/);
 });
 
 test("a malformed terminal result cannot be replaced by a later done", async () => {
   const result = await read(responseFor([record({ t: "done" }), record({ t: "done", filled: true })]));
   assert.equal(result.status, "ready");
-  assert.match(result.error, /unreadable fill result/);
+  assert.match(result.error, /unlesbares Ergebnis/);
 });
 
 test("terminal completion does not wait for the transport to close", async () => {
@@ -271,5 +271,5 @@ test("a drive that reached a refused host returns the refusal panel's details", 
 test("an unsupported record without the refusal flag is unreadable, not a refusal", async () => {
   const result = await read(responseFor([record({ t: "unsupported", message: "x" })]));
   assert.equal(result.status, "ready");
-  assert.match(result.error, /unreadable/);
+  assert.match(result.error, /unlesbares/);
 });

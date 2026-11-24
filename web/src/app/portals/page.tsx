@@ -27,18 +27,18 @@ export default function PortalsPage() {
     <div className="mx-auto max-w-3xl px-6 py-8">
       <div className="flex items-center gap-3">
         <Radar className="size-6 text-brand-text" />
-        <h1 className="font-display text-2xl tracking-tight text-landing">Portals</h1>
+        <h1 className="font-display text-2xl tracking-tight text-landing">Portale</h1>
       </div>
       <p className="mt-1.5 max-w-xl text-sm text-muted">
-        The companies career-ops watches for new roles. Run a health check to catch company boards that have quietly
-        broken — a broken link means that company silently disappears from every future scan.
+        Die Firmen, die career-ops auf neue Stellen beobachtet. Starten Sie eine Prüfung, um Firmen-Jobbörsen zu finden, die
+        unbemerkt ausgefallen sind – ein defekter Link bedeutet, dass die Firma still aus jedem künftigen Scan verschwindet.
       </p>
       <p className="mt-1.5 text-xs text-faint">
-        Backed by <code className="text-muted">portals.yml</code> — edit it directly or ask the assistant.
+        Basiert auf <code className="text-muted">portals.yml</code> – direkt bearbeiten oder den Assistenten bitten.
       </p>
       {error && (
         <p role="alert" className="mt-4 rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-600 dark:text-rose-400">
-          Could not read <code>portals.yml</code>: {error}
+          <code>portals.yml</code> konnte nicht gelesen werden: {error}
         </p>
       )}
       <div className="mt-6">

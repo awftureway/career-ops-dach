@@ -38,28 +38,28 @@ export function LinkedInPaste() {
         router.refresh();
       }
       if (!response.ok || data.error) {
-        setError(data.message || "Could not add those jobs. Nothing was saved.");
+        setError(data.message || "Die Stellen konnten nicht hinzugefügt werden. Es wurde nichts gespeichert.");
         return;
       }
       setMessage(data.message || "");
     } catch {
-      setError("Could not add those jobs. Nothing was saved.");
+      setError("Die Stellen konnten nicht hinzugefügt werden. Es wurde nichts gespeichert.");
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <section className="mt-4 rounded-2xl border border-border bg-surface/40 p-5" aria-label="LinkedIn job alerts">
-      <h2 className="text-sm font-medium text-foreground">LinkedIn job alerts</h2>
+    <section className="mt-4 rounded-2xl border border-border bg-surface/40 p-5" aria-label="LinkedIn-Job-Alerts">
+      <h2 className="text-sm font-medium text-foreground">LinkedIn-Job-Alerts</h2>
       <p className="mt-1 max-w-xl text-sm text-muted">
-        Open a LinkedIn job alert. Select all, copy, and paste it here. CareerOps adds the jobs to your Pipeline inbox. You do not need a Google account.
+        Öffnen Sie einen LinkedIn-Job-Alert. Alles markieren, kopieren und hier einfügen. CareerOps legt die Stellen in Ihrem Pipeline-Posteingang ab. Ein Google-Konto ist nicht nötig.
       </p>
       <textarea
         value={text}
         onChange={(event) => setText(event.target.value)}
         rows={5}
-        placeholder="Paste the alert email, or a list of LinkedIn job links"
+        placeholder="Alert-E-Mail oder eine Liste von LinkedIn-Stellenlinks einfügen"
         className="mt-3 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm text-foreground"
       />
       <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -69,10 +69,10 @@ export function LinkedInPaste() {
           disabled={busy || !text.trim()}
           className="rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200 disabled:opacity-50"
         >
-          {busy ? "Adding…" : "Add these jobs"}
+          {busy ? "Wird hinzugefügt …" : "Diese Stellen hinzufügen"}
         </button>
         <label className="cursor-pointer text-sm text-muted">
-          Or choose a saved email
+          Oder gespeicherte E-Mail wählen
           <input
             type="file"
             accept=".eml,.txt,.mbox,text/plain,message/rfc822"
@@ -89,7 +89,7 @@ export function LinkedInPaste() {
                 },
                 () => {
                   setMessage("");
-                  setError("Could not read that file. Copy the email text and paste it here.");
+                  setError("Die Datei konnte nicht gelesen werden. Kopieren Sie den E-Mail-Text und fügen Sie ihn hier ein.");
                 },
               );
             }}

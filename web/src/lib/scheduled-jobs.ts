@@ -64,26 +64,26 @@ function read(): Store {
 function cleanUnit(value: unknown, fallback: ScheduleUnit): ScheduleUnit {
   if (value === undefined) return fallback;
   if (value === "minutes" || value === "hours" || value === "days") return value;
-  throw new ScheduledJobValidationError("Invalid schedule unit.");
+  throw new ScheduledJobValidationError("Ungültige Zeiteinheit.");
 }
 
 function cleanEvery(value: unknown, unit: ScheduleUnit, fallback: number): number {
   if (value === undefined) return fallback;
   const parsed = Number(value);
-  if (!Number.isFinite(parsed)) throw new ScheduledJobValidationError("Invalid cadence.");
+  if (!Number.isFinite(parsed)) throw new ScheduledJobValidationError("Ungültiger Rhythmus.");
   const minimum = unit === "minutes" ? 15 : 1;
   return Math.min(10_000, Math.max(minimum, Math.round(parsed)));
 }
 
 function cleanStartAt(value: unknown, fallback: string): string {
-  if (value !== undefined && typeof value !== "string" && typeof value !== "number") throw new ScheduledJobValidationError("Invalid start time.");
+  if (value !== undefined && typeof value !== "string" && typeof value !== "number") throw new ScheduledJobValidationError("Ungültige Startzeit.");
   const parsed = new Date(typeof value === "string" || typeof value === "number" ? value : fallback);
-  if (Number.isNaN(parsed.getTime())) throw new ScheduledJobValidationError("Invalid start time.");
+  if (Number.isNaN(parsed.getTime())) throw new ScheduledJobValidationError("Ungültige Startzeit.");
   return parsed.toISOString();
 }
 
 function validateTimezone(value: string): string {
-  try { new Intl.DateTimeFormat("en-US", { timeZone: value }).format(); } catch { throw new ScheduledJobValidationError("Invalid timezone."); }
+  try { new Intl.DateTimeFormat("en-US", { timeZone: value }).format(); } catch { throw new ScheduledJobValidationError("Ungültige Zeitzone."); }
   return value;
 }
 
@@ -92,11 +92,11 @@ export function parseScheduledJobInput(raw: unknown, base?: ScheduledJob): JobFi
   try {
     input = assertScheduledJobBody(raw) as Record<string, unknown>;
   } catch (error) {
-    throw new ScheduledJobValidationError(error instanceof Error ? error.message : "Scheduled job body must be an object.");
+    throw new ScheduledJobValidationError(error instanceof Error ? error.message : "Anfrage für geplanten Scan muss ein Objekt sein.");
   }
   const fallbackName = base?.name || "Scheduled scan";
   const name = String(input.name ?? fallbackName).trim().slice(0, 80) || fallbackName;
-  if (input.engine !== undefined && input.engine !== "portals" && input.engine !== "full") throw new ScheduledJobValidationError("Invalid scan engine.");
+  if (input.engine !== undefined && input.engine !== "portals" && input.engine !== "full") throw new ScheduledJobValidationError("Ungültige Scan-Engine.");
   const engine: ScanEngine = input.engine === "portals" || input.engine === "full" ? input.engine : base?.engine || "full";
   const unit = cleanUnit(input.unit, base?.unit || "hours");
   const every = cleanEvery(input.every, unit, base?.every || 1);
@@ -164,9 +164,9 @@ export async function patchScheduledJob(id: string, raw: unknown): Promise<Sched
     if (!current) return null;
     let input: Record<string, unknown>;
     try { input = assertScheduledJobBody(raw) as Record<string, unknown>; }
-    catch (error) { throw new ScheduledJobValidationError(error instanceof Error ? error.message : "Scheduled job body must be an object."); }
+    catch (error) { throw new ScheduledJobValidationError(error instanceof Error ? error.message : "Anfrage für geplanten Scan muss ein Objekt sein."); }
     if (input.status !== undefined && input.status !== "active" && input.status !== "paused") {
-      throw new ScheduledJobValidationError("Invalid status.");
+      throw new ScheduledJobValidationError("Ungültiger Status.");
     }
     const fields = parseScheduledJobInput(input, current);
     const startChanged = fields.startAt !== current.startAt;

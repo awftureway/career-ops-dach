@@ -49,7 +49,7 @@ export function employerEntry(id, request) {
 
 /** Reject invalid/empty selections instead of silently substituting sources. */
 export function employerRequest(raw) {
-  if (!isEmployerPreset(raw?.preset)) throw new Error("Unknown employer preset.");
+  if (!isEmployerPreset(raw?.preset)) throw new Error("Unbekannte Arbeitgeber-Vorgabe.");
   const allowed = PRESET_SOURCES[raw.preset];
   if (
     !Array.isArray(raw.employers) ||
@@ -58,8 +58,8 @@ export function employerRequest(raw) {
   ) {
     throw new Error(
       raw.preset === DACH_PRESET
-        ? "Select at least one of Bundesagentur, Arbeitnow, GermanTechJobs and stellenanzeigen.de."
-        : "Select at least one of Tencent, ByteDance and Meituan.",
+        ? "Wählen Sie mindestens eine Quelle: Bundesagentur, Arbeitnow, GermanTechJobs oder stellenanzeigen.de."
+        : "Wählen Sie mindestens einen Arbeitgeber: Tencent, ByteDance oder Meituan.",
     );
   }
   const terms = (value) =>
@@ -91,16 +91,16 @@ export function employerOutcome(sources, count) {
     .map((s) => `${EMPLOYER_LABEL[s.id] ?? s.id}: ${s.reason || s.state}`)
     .join("; ");
   if (!complete.length && sources.every((s) => s.state === "failed"))
-    return { state: "failed", message: `Failed — ${problems}.` };
+    return { state: "failed", message: `Fehlgeschlagen: ${problems}.` };
   if (incomplete.length)
     return {
       state: "partial",
-      message: `Partial / incomplete — ${count} matches. ${problems}.`,
+      message: `Teilweise / unvollständig: ${count} Treffer. ${problems}.`,
     };
   return {
     state: "complete",
     message: count
-      ? `Completed — ${count} matches from ${names}.`
-      : `No matches for this scan — ${names}.`,
+      ? `Abgeschlossen: ${count} Treffer von ${names}.`
+      : `Keine Treffer für diesen Scan: ${names}.`,
   };
 }

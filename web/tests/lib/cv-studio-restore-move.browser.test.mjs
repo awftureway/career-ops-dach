@@ -34,9 +34,9 @@ test("an added-back bullet moves up among the tailored bullets and the move is s
   const entry = page.locator("section[aria-label='Work Experience']");
   const order = () => entry.locator("li[data-bullet]").evaluateAll((lis) => lis.map((li) => li.getAttribute("data-bullet")));
 
-  await entry.getByRole("button", { name: "Add back" }).click();
-  const up = entry.getByRole("button", { name: "Move added-back bullet up", exact: true });
-  const down = entry.getByRole("button", { name: "Move added-back bullet down", exact: true });
+  await entry.getByRole("button", { name: "Wieder hinzufügen" }).click();
+  const up = entry.getByRole("button", { name: "Wieder hinzugefügten Stichpunkt nach oben verschieben", exact: true });
+  const down = entry.getByRole("button", { name: "Wieder hinzugefügten Stichpunkt nach unten verschieben", exact: true });
   await up.waitFor();
   assert.deepEqual(await order(), ["s0i0b0", "s0i0b1", restored]);
   assert.equal(await down.isDisabled(), true, "the last row cannot move down");

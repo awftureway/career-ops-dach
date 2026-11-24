@@ -88,14 +88,14 @@ export function shouldPutAfterPost(wrote, sent, current) {
  * @param {string | null} posting
  * @param {boolean} [uncertain] - A previous response may have been lost after writing.
  * @param {boolean} [rejected] - Save for apply stored this draft, then the PDF render failed.
- * @returns {"Saving" | "Unsaved" | "Saved" | "Not in the PDF"}
+ * @returns {"Speichert …" | "Nicht gespeichert" | "Gespeichert" | "Nicht im PDF"}
  */
 export function editSaveStatus(saved, current, saving, posting, uncertain = false, rejected = false) {
   const inflight = inflightEdits(saving, posting, current);
-  if (inflight === current || (current === saved && inflight !== null)) return "Saving";
-  if (current !== saved || uncertain) return "Unsaved";
-  if (rejected) return "Not in the PDF";
-  return "Saved";
+  if (inflight === current || (current === saved && inflight !== null)) return "Speichert …";
+  if (current !== saved || uncertain) return "Nicht gespeichert";
+  if (rejected) return "Nicht im PDF";
+  return "Gespeichert";
 }
 
 /**

@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ExploreLoading() {
   return (
-    <div className={`mx-auto px-5 py-8 md:px-8 ${pageFrameWidthClass.wide}`} aria-label="Loading job discovery">
+    <div className={`mx-auto px-5 py-8 md:px-8 ${pageFrameWidthClass.wide}`} aria-label="Lädt Stellensuche">
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2.5">

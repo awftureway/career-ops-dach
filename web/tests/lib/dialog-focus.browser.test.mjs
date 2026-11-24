@@ -78,7 +78,7 @@ test("Modal dialogs take focus, trap Tab, close on Escape and return focus", { s
     await page.keyboard.press("Escape");
     await until(async () => (await dialog.count()) === 0, "Escape closes the date dialog");
   });
-  await t.test("Report a bug", () =>
-    assertModalKeyboard("/", () => page.getByRole("button", { name: "Report a bug", exact: true }), /Report a bug/));
+  await t.test("Fehler melden", () =>
+    assertModalKeyboard("/", () => page.getByRole("button", { name: "Fehler melden", exact: true }), /Fehler melden/));
   assert.deepEqual(unexpected, []);
 });

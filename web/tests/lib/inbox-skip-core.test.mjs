@@ -162,7 +162,7 @@ test("/api/inbox/skip skips, undoes and refuses as before, with the checkout's l
     assert.deepEqual(await post({ url: BETA, done: false }), { status: 200, body: { ok: true, done: false, matched: 1, changed: 1 } });
     assert.equal(fs.readFileSync(file, "utf8"), PENDING);
     assert.deepEqual(await post({ url: "https://nobody.example/jobs/9" }), {
-      status: 404, body: { error: "no pipeline row for that URL", code: "unmatched" },
+      status: 404, body: { error: "Keine Pipeline-Zeile für diese URL", code: "unmatched" },
     });
     assert.deepEqual(await post({ url: "file:///etc/passwd" }), {
       status: 400, body: { error: "url must be an http(s) posting URL", code: "invalid-url" },

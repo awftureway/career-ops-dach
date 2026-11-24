@@ -21,18 +21,18 @@ export function FirstRunHome() {
         <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-surface/55 backdrop-blur-[2px] dark:bg-background/45" />
         <div className="relative z-10">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted">
-            <span className="text-faint">//</span> local-first · your machine
+            <span className="text-faint">//</span> lokal · Ihr Rechner
           </p>
           <h1 className={`${instrumentSerif.className} mt-3 text-4xl leading-[1.05] text-landing md:text-5xl`}>
-            Drop your CV. See who&apos;s hiring you in 60 seconds.
+            Lebenslauf ablegen. In 60 Sekunden sehen, wer Sie einstellen will.
           </h1>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted">
-            No account. Paste text or drop a .md / .txt file to start. A PDF needs an AI CLI in{" "}
+            Ohne Konto. Fügen Sie Text ein oder legen Sie eine .md- / .txt-Datei ab. Ein PDF braucht zuerst eine KI-CLI in den{" "}
             <a href="/config" className="text-foreground underline-offset-2 hover:underline">
-              Config
-            </a>{" "}
-            first. The market scan is <span className="text-foreground">free</span>. You only spend tokens when you
-            choose to score a role.
+              Einstellungen
+            </a>
+            . Der Markt-Scan ist <span className="text-foreground">kostenlos</span>. Tokens verbrauchen Sie erst, wenn Sie
+            eine Stelle bewerten.
           </p>
           <div className="mt-7">
             <CvIngest />

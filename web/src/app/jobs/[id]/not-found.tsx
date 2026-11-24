@@ -15,9 +15,9 @@ export default function JobNotFound() {
         <ArrowLeft className="size-4" /> Jobs
       </Link>
       <div className="mt-8 rounded-2xl border border-dashed border-border bg-surface/30 p-5">
-        <h1 className="font-display text-2xl tracking-tight text-landing">No job {id}</h1>
+        <h1 className="font-display text-2xl tracking-tight text-landing">Kein Job {id}</h1>
         <p className="mt-2 text-sm text-muted">
-          Nothing in this browser matches that address. It may have finished and been cleared, or the link is wrong.
+          In diesem Browser passt nichts zu dieser Adresse. Der Job wurde eventuell abgeschlossen und entfernt, oder der Link ist falsch.
         </p>
       </div>
     </div>

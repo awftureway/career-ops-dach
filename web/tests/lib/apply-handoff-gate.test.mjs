@@ -25,7 +25,7 @@ test("a required sponsorship answer left blank holds the employer form", () => {
   assert.equal(decision.gaps[0].level, "warn");
   assert.equal(
     decision.gaps[0].message,
-    "Required sponsorship question is still empty (Will you require visa sponsorship?). Fill it on this page before the employer form opens.",
+    "Die Pflichtfrage zum Visa-Sponsoring ist noch leer (Will you require visa sponsorship?). Füllen Sie sie auf dieser Seite aus, bevor sich das Arbeitgeber-Formular öffnet.",
   );
 });
 
@@ -73,7 +73,7 @@ test("salary history is not a compensation question this page fills", () => {
 test("a required compensation answer left blank holds the employer form", () => {
   const decision = handoffDecision({ fields: [salary], answers: { pay: "" } });
   assert.equal(decision.handoff, false);
-  assert.match(decision.gaps[0].message, /Required compensation question is still empty \(Desired salary\)/);
+  assert.match(decision.gaps[0].message, /Die Pflichtfrage zum Gehalt ist noch leer \(Desired salary\)/);
 });
 
 test("years of experience is not invented and does not hold the form by itself", () => {
@@ -111,7 +111,7 @@ test("work authorization uses the same hold as sponsorship", () => {
       answers: { auth: "" },
     });
     assert.equal(decision.handoff, false, label);
-    assert.match(decision.gaps[0].message, /Required work authorization question is still empty/);
+    assert.match(decision.gaps[0].message, /Die Pflichtfrage zur Arbeitserlaubnis ist noch leer/);
   }
 });
 
@@ -134,7 +134,7 @@ test("a required résumé with no resolved file holds the form", () => {
   assert.equal(decision.gaps[0].code, "resume-missing");
   assert.equal(
     decision.gaps[0].message,
-    "No tailored CV was resolved for Resume/CV, so nothing will be attached. Open the report in another tab and choose Generate tailored CV, then retry filling here. The employer form stays on this page until a file is attached.",
+    "Für Resume/CV wurde kein angepasster Lebenslauf gefunden, daher wird nichts angehängt. Öffnen Sie den Bericht in einem anderen Tab und wählen Sie „Angepassten Lebenslauf erstellen“. Versuchen Sie danach das Ausfüllen hier erneut. Das Arbeitgeber-Formular bleibt auf dieser Seite, bis eine Datei angehängt ist.",
   );
 });
 
@@ -154,7 +154,7 @@ test("a claimed résumé that failed to attach holds the form", () => {
     steps: [{ fieldId: "cv", ok: false }],
   });
   assert.equal(decision.handoff, false);
-  assert.match(decision.gaps[0].message, /The tailored CV did not attach to Resume\/CV/);
+  assert.match(decision.gaps[0].message, /Der angepasste Lebenslauf wurde nicht an Resume\/CV angehängt/);
 });
 
 test("a résumé the live form still reports empty holds the form even after an ok step", () => {
@@ -179,15 +179,15 @@ test("a cover letter upload is left to the person", () => {
 test("the review screen claims a résumé only when a file was resolved", () => {
   const claimed = resumeFieldNotice({ label: "Resume/CV", cvAttached: true });
   assert.equal(claimed.claim, true);
-  assert.equal(claimed.text, "Your tailored CV (PDF) will be attached automatically. You can swap it on the real form.");
+  assert.equal(claimed.text, "Ihr angepasster Lebenslauf (PDF) wird automatisch angehängt. Sie können ihn im echten Formular austauschen.");
 
   const missing = resumeFieldNotice({ label: "Résumé", cvAttached: false });
   assert.equal(missing.claim, false);
-  assert.equal(missing.text, "No tailored CV was resolved, so this file will not be attached.");
+  assert.equal(missing.text, "Es wurde kein angepasster Lebenslauf gefunden, daher wird diese Datei nicht angehängt.");
 
   const other = resumeFieldNotice({ label: "Portfolio", cvAttached: true });
   assert.equal(other.claim, false);
-  assert.equal(other.text, "Attach this file yourself on the real form at the handoff.");
+  assert.equal(other.text, "Hängen Sie diese Datei bei der Übergabe selbst im echten Formular an.");
 });
 
 test("labeled answers land on field ids, and a blank stays blank", () => {
@@ -357,7 +357,7 @@ test("a retry replaces a stale required-empty warning and keeps unrelated issues
 
 test("a retry can drop the previous handoff gaps without dropping other issues", () => {
   const next = withoutHandoffGaps([
-    { code: "screening-empty", message: "Required sponsorship question is still empty" },
+    { code: "screening-empty", message: "Die Pflichtfrage zum Visa-Sponsoring ist noch leer" },
     { code: "resume-missing", message: "The tailored CV did not attach" },
     { code: "fill-mismatch", message: "A field did not match" },
   ]);
@@ -384,7 +384,7 @@ test("one unmet label holds every required field that shares it", () => {
 
 test("a finished fill replaces the last gaps and a stopped agent fill does not add an ai-filled note", () => {
   const previous = [
-    { code: "screening-empty", message: "Required sponsorship question is still empty" },
+    { code: "screening-empty", message: "Die Pflichtfrage zum Visa-Sponsoring ist noch leer" },
     { code: "resume-missing", message: "old résumé gap" },
     { code: "fill-mismatch", message: "A field did not match" },
   ];
@@ -402,7 +402,7 @@ test("a finished fill replaces the last gaps and a stopped agent fill does not a
     { code: "fill-mismatch", message: "A field did not match" },
     { code: "resume-missing", message: "new résumé gap" },
   ]);
-  const note = "AI filled the form for you — review every answer on the real form, then submit it yourself.";
+  const note = "Die KI hat das Formular für Sie ausgefüllt. Prüfen Sie jede Antwort im echten Formular und schicken Sie es dann selbst ab.";
   assert.deepEqual(issuesAfterAgent([
     ...previous,
     { code: "ai-filled", message: note },
@@ -418,13 +418,13 @@ test("a finished fill replaces the last gaps and a stopped agent fill does not a
 
 test("a retry keeps one ai-filled note and both résumé gaps", () => {
   const previous = [
-    { code: "ai-filled", message: "AI filled the form for you — review every answer on the real form, then submit it yourself." },
+    { code: "ai-filled", message: "Die KI hat das Formular für Sie ausgefüllt. Prüfen Sie jede Antwort im echten Formular und schicken Sie es dann selbst ab." },
     { code: "resume-missing", message: "No tailored CV was resolved for Resume/CV." },
   ];
   const incoming = [
     { code: "resume-missing", message: "No tailored CV was resolved for Resume/CV." },
     { code: "resume-missing", message: "No tailored CV was resolved for Cover letter." },
-    { code: "ai-filled", message: "AI filled the form for you — review every answer on the real form, then submit it yourself." },
+    { code: "ai-filled", message: "Die KI hat das Formular für Sie ausgefüllt. Prüfen Sie jede Antwort im echten Formular und schicken Sie es dann selbst ab." },
     { code: "ai-filled", message: "AI filled the form again." },
   ];
   assert.deepEqual(mergeIssues(previous, incoming), [

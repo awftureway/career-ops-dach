@@ -18,7 +18,7 @@ export function CreateJobModal({
   onClose: () => void;
   onCreated: () => void;
 }) {
-  const [name, setName] = useState("Scheduled scan");
+  const [name, setName] = useState("Geplanter Scan");
   const [engine, setEngine] = useState<ScanEngine>("full");
   const [every, setEvery] = useState(6);
   const [unit, setUnit] = useState<"minutes" | "hours" | "days">("hours");
@@ -45,7 +45,7 @@ export function CreateJobModal({
       onCreated();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creating job");
+      setError(err instanceof Error ? err.message : "Fehler beim Erstellen des Jobs");
     } finally {
       setSubmitting(false);
     }
@@ -59,8 +59,8 @@ export function CreateJobModal({
               <CalendarPlus className="size-5" />
             </div>
             <div>
-              <h2 id="create-scheduled-scan-title" className="text-lg font-semibold text-foreground">Create Scheduled Scan</h2>
-              <p className="text-xs text-muted">Choose which boards to check, and how often.</p>
+              <h2 id="create-scheduled-scan-title" className="text-lg font-semibold text-foreground">Geplanten Scan erstellen</h2>
+              <p className="text-xs text-muted">Wählen Sie, welche Boards geprüft werden und wie oft.</p>
             </div>
           </div>
           <button
@@ -77,7 +77,7 @@ export function CreateJobModal({
 
           {/* ─── Name + Engine + Cadence ─── */}
           <div>
-            <label className="mb-1 block text-[13px] font-medium text-foreground">Scan Name</label>
+            <label className="mb-1 block text-[13px] font-medium text-foreground">Name des Scans</label>
             <input
               ref={nameRef}
               type="text"
@@ -85,13 +85,13 @@ export function CreateJobModal({
               onChange={(e) => setName(e.target.value)}
               required
               className="w-full rounded-xl border border-border bg-surface-hover/60 px-3.5 py-2 text-sm text-foreground outline-none focus:border-brand/60 focus:ring-2 focus:ring-brand/20"
-              placeholder="e.g. Roles matching my profile"
+              placeholder="z. B. Stellen passend zu meinem Profil"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-[13px] font-medium text-foreground">Where to check</label>
+              <label className="mb-1 block text-[13px] font-medium text-foreground">Wo prüfen</label>
               <select
                 value={engine}
                 onChange={(e) => setEngine(e.target.value as ScanEngine)}
@@ -104,7 +104,7 @@ export function CreateJobModal({
             </div>
 
             <div>
-              <label className="mb-1 block text-[13px] font-medium text-foreground">Repeat Cadence</label>
+              <label className="mb-1 block text-[13px] font-medium text-foreground">Wiederholung</label>
               <div className="flex gap-2">
                 <input
                   type="number"
@@ -122,9 +122,9 @@ export function CreateJobModal({
                   }}
                   className="flex-1 rounded-xl border border-border bg-surface-hover/60 px-3.5 py-2 text-sm text-foreground outline-none focus:border-brand/60"
                 >
-                  <option value="hours">Hours</option>
-                  <option value="days">Days</option>
-                  <option value="minutes">Minutes</option>
+                  <option value="hours">Stunden</option>
+                  <option value="days">Tage</option>
+                  <option value="minutes">Minuten</option>
                 </select>
               </div>
             </div>
@@ -142,7 +142,7 @@ export function CreateJobModal({
               onClick={onClose}
               className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
             >
-              Cancel
+              Abbrechen
             </button>
             <button
               type="submit"
@@ -150,7 +150,7 @@ export function CreateJobModal({
               className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2 text-xs font-medium text-brand-foreground shadow transition-colors hover:bg-brand-200 disabled:opacity-50"
             >
               {submitting ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
-              {submitting ? "Creating…" : "Save Scheduled Scan"}
+              {submitting ? "Erstelle …" : "Geplanten Scan speichern"}
             </button>
           </div>
         </form>

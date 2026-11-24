@@ -119,7 +119,7 @@ export function MobileNav({ followupsEnabled }: { followupsEnabled: boolean }) {
       <style>{STYLE}</style>
 
       <header className="co-mnav flex items-center gap-2 border-b border-border px-4 pb-3 md:hidden">
-        <Link href="/" className="flex min-h-[44px] items-center gap-2" aria-label="career-ops home">
+        <Link href="/" className="flex min-h-[44px] items-center gap-2" aria-label="career-ops Startseite">
           <CoMark size={26} />
           <span className={`${instrumentSerif.className} relative -top-px text-xl text-landing`}>career-ops</span>
         </Link>
@@ -128,7 +128,7 @@ export function MobileNav({ followupsEnabled }: { followupsEnabled: boolean }) {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            aria-label="Open menu"
+            aria-label="Menü öffnen"
             aria-expanded={open}
             className="relative inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-2 text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
           >
@@ -144,7 +144,7 @@ export function MobileNav({ followupsEnabled }: { followupsEnabled: boolean }) {
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Navigation menu"
+        aria-label="Navigationsmenü"
         inert={!open}
         className={cn("co-mdrawer flex flex-col border-l border-border bg-surface md:hidden", open && "open")}
         onTouchStart={onTouchStart}
@@ -152,11 +152,11 @@ export function MobileNav({ followupsEnabled }: { followupsEnabled: boolean }) {
         onTouchEnd={onTouchEnd}
       >
         <div className="flex items-center justify-between px-4 py-3">
-          <span className={`${instrumentSerif.className} text-lg text-landing`}>Menu</span>
+          <span className={`${instrumentSerif.className} text-lg text-landing`}>Menü</span>
           <button
             type="button"
             onClick={() => setOpen(false)}
-            aria-label="Close menu"
+            aria-label="Menü schließen"
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md p-1.5 text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
           >
             <X className="size-5" />

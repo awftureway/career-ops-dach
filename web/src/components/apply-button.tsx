@@ -60,11 +60,11 @@ export function ApplyButton({
       }
       title={
         quiet
-          ? "Below the apply line or flagged caution. Opens the form pre-filled. You review and submit it yourself."
-          : "Opens the form pre-filled. You review and submit it yourself."
+          ? "Unter der Bewerbungsschwelle oder mit Warnhinweis. Öffnet das vorausgefüllte Formular. Sie prüfen und senden es selbst ab."
+          : "Öffnet das vorausgefüllte Formular. Sie prüfen und senden es selbst ab."
       }
     >
-      <Send className="size-3.5" /> Apply
+      <Send className="size-3.5" /> Bewerben
     </button>
   );
 }

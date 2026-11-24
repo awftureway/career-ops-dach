@@ -36,15 +36,15 @@ type SchedulerStatus = {
 };
 
 function formatTaskTime(value: string | null) {
-  if (!value) return "Not reported";
+  if (!value) return "Nicht gemeldet";
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString("de-DE");
 }
 
 const OS_SCHEDULERS: Record<string, { title: string; install: string } | undefined> = {
-  win32: { title: "Windows Task Scheduler Integration", install: "web/scripts/install-scan-schedule.ps1" },
-  darwin: { title: "macOS launchd Integration", install: "sh web/scripts/install-scan-schedule.sh" },
-  linux: { title: "Linux cron Integration", install: "sh web/scripts/install-scan-schedule.sh" },
+  win32: { title: "Windows-Aufgabenplanung", install: "web/scripts/install-scan-schedule.ps1" },
+  darwin: { title: "macOS-launchd-Integration", install: "sh web/scripts/install-scan-schedule.sh" },
+  linux: { title: "Linux-cron-Integration", install: "sh web/scripts/install-scan-schedule.sh" },
 };
 
 export function ScheduledJobsView() {
@@ -71,7 +71,7 @@ export function ScheduledJobsView() {
       ]);
       const resJobs = await jobsResponse.json().catch(() => ({}));
       const resScheduler = await schedulerResponse.json().catch(() => null);
-      if (!jobsResponse.ok) throw new Error(resJobs.error || "Could not load scheduled scans.");
+      if (!jobsResponse.ok) throw new Error(resJobs.error || "Geplante Scans konnten nicht geladen werden.");
       if (!schedulerResponse.ok && resScheduler?.error) setError(resScheduler.error);
       setStore({
         jobs: Array.isArray(resJobs.jobs) ? resJobs.jobs : [],
@@ -80,7 +80,7 @@ export function ScheduledJobsView() {
       if (schedulerResponse.ok && isSchedulerStatusPayload(resScheduler)) setScheduler(resScheduler as SchedulerStatus);
       setPhase("ready");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not load scheduled scans.");
+      setError(cause instanceof Error ? cause.message : "Geplante Scans konnten nicht geladen werden.");
       setPhase("error");
     } finally {
       setLoading(false);
@@ -97,22 +97,22 @@ export function ScheduledJobsView() {
       await updateScheduledJobRequest(id, { status: nextStatus });
       await loadData();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not update scheduled scan.");
+      setError(cause instanceof Error ? cause.message : "Geplanter Scan konnte nicht aktualisiert werden.");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this scheduled scan?")) return;
+    if (!confirm("Möchten Sie diesen geplanten Scan wirklich löschen?")) return;
     try {
       const response = await fetch(`/api/scheduled-jobs/${id}`, { method: "DELETE" });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        setError(body.error || "Could not delete scheduled scan.");
+        setError(body.error || "Geplanter Scan konnte nicht gelöscht werden.");
         return;
       }
       await loadData();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not delete scheduled scan.");
+      setError(cause instanceof Error ? cause.message : "Geplanter Scan konnte nicht gelöscht werden.");
     }
   };
 
@@ -121,10 +121,10 @@ export function ScheduledJobsView() {
     try {
       const response = await fetch("/api/scheduler", { method: "POST" });
       const body = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(body.error || "Could not start scheduler.");
+      if (!response.ok) throw new Error(body.error || "Planer konnte nicht gestartet werden.");
       await loadData();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not start scheduler.");
+      setError(cause instanceof Error ? cause.message : "Planer konnte nicht gestartet werden.");
     } finally {
       setOsRunning(false);
     }
@@ -164,7 +164,7 @@ export function ScheduledJobsView() {
         <div>
           <div className="flex items-center gap-2.5">
             <CalendarClock className="size-6 text-brand-text" />
-            <h1 className={`${instrumentSerif.className} text-3xl text-foreground`}>Scheduled scans</h1>
+            <h1 className={`${instrumentSerif.className} text-3xl text-foreground`}>Geplante Scans</h1>
           </div>
           <p className="mt-1.5 max-w-2xl text-sm text-muted">
             {SCHEDULED_SCANS_INTRO}
@@ -178,7 +178,7 @@ export function ScheduledJobsView() {
             className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-200"
           >
             <CalendarPlus className="size-4" />
-            New scheduled scan
+            Neuer geplanter Scan
           </button>
           <button
             type="button"
@@ -186,14 +186,14 @@ export function ScheduledJobsView() {
             className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface/60 px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover"
           >
             <History className="size-4 text-brand-text" />
-            Run logs ({store.runs.length})
+            Laufprotokolle ({store.runs.length})
           </button>
           <button
             type="button"
             onClick={loadData}
             disabled={loading}
             className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-surface/60 text-muted transition-colors hover:bg-surface-hover hover:text-foreground"
-            title="Refresh list"
+            title="Liste aktualisieren"
           >
             <RefreshCw className={`size-4 ${loading ? "animate-spin text-brand-text" : ""}`} />
           </button>
@@ -203,10 +203,10 @@ export function ScheduledJobsView() {
 
       {/* Stats Cards */}
       <div className="grid gap-3.5 sm:grid-cols-4">
-        <StatCard label="Active scans" value={activeJobs.length} subtitle={`${jobsList.length} total jobs`} icon={<Zap className="size-4 text-emerald-500" />} />
-        <StatCard label="Executed runs" value={totalRuns} subtitle={`${successRuns} successful`} icon={<Layers className="size-4 text-brand-text" />} />
-        <StatCard label="Roles discovered" value={totalRolesFound} subtitle="Pushed to pipeline" icon={<Sparkles className="size-4 text-amber-500" />} />
-        <StatCard label="Success rate" value={successRate} subtitle={`${failedRuns} failed runs`} icon={<CheckCircle2 className="size-4 text-emerald-500" />} />
+        <StatCard label="Aktive Scans" value={activeJobs.length} subtitle={`${jobsList.length} Jobs gesamt`} icon={<Zap className="size-4 text-emerald-500" />} />
+        <StatCard label="Ausgeführte Läufe" value={totalRuns} subtitle={`${successRuns} erfolgreich`} icon={<Layers className="size-4 text-brand-text" />} />
+        <StatCard label="Gefundene Stellen" value={totalRolesFound} subtitle="In die Pipeline übernommen" icon={<Sparkles className="size-4 text-amber-500" />} />
+        <StatCard label="Erfolgsquote" value={successRate} subtitle={`${failedRuns} fehlgeschlagene Läufe`} icon={<CheckCircle2 className="size-4 text-emerald-500" />} />
       </div>
 
       {/* OS Task Scheduler Banner */}
@@ -219,7 +219,7 @@ export function ScheduledJobsView() {
               </div>
               <div>
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                  {osScheduler?.title ?? "Manual scans"}
+                  {osScheduler?.title ?? "Manuelle Scans"}
                   <span
                     className={
                       scheduler.task.exists && scheduler.task.enabled
@@ -228,18 +228,18 @@ export function ScheduledJobsView() {
                     }
                   >
                     {!osScheduler
-                      ? "No automatic schedule"
+                      ? "Kein automatischer Zeitplan"
                       : scheduler.task.exists
-                        ? scheduler.task.enabled ? "Task enabled" : "Task disabled"
-                        : "Task not installed"}
+                        ? scheduler.task.enabled ? "Aufgabe aktiv" : "Aufgabe deaktiviert"
+                        : "Aufgabe nicht installiert"}
                   </span>
                 </div>
                 <div className="mt-0.5 text-xs text-muted">
                   {!osScheduler
-                    ? "Automatic scheduling is not available on this platform."
+                    ? "Automatische Planung ist auf dieser Plattform nicht verfügbar."
                     : scheduler.task.exists
-                      ? "Next OS check: " + formatTaskTime(scheduler.task.nextRun) + " · Last OS check: " + formatTaskTime(scheduler.task.lastRun)
-                      : `Install with ${osScheduler.install} to run due jobs automatically.`}
+                      ? "Nächste Systemprüfung: " + formatTaskTime(scheduler.task.nextRun) + " · Letzte Systemprüfung: " + formatTaskTime(scheduler.task.lastRun)
+                      : `Installieren Sie mit ${osScheduler.install}, damit fällige Jobs automatisch laufen.`}
                 </div>
               </div>
             </div>
@@ -250,7 +250,7 @@ export function ScheduledJobsView() {
               className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-surface-hover disabled:opacity-50"
             >
               {osRunning ? <Loader2 className="size-3.5 animate-spin text-brand-text" /> : <Zap className="size-3.5 text-brand-text" />}
-              {osRunning ? "Checking..." : "Check due jobs now"}
+              {osRunning ? "Prüft …" : "Fällige Jobs jetzt prüfen"}
             </button>}
           </div>
         </div>
@@ -266,7 +266,7 @@ export function ScheduledJobsView() {
               filterTab === "all" ? "bg-brand text-brand-foreground shadow" : "text-muted hover:text-foreground"
             }`}
           >
-            All scans ({jobsList.length})
+            Alle Scans ({jobsList.length})
           </button>
           <button
             type="button"
@@ -275,7 +275,7 @@ export function ScheduledJobsView() {
               filterTab === "active" ? "bg-brand text-brand-foreground shadow" : "text-muted hover:text-foreground"
             }`}
           >
-            Active ({activeJobs.length})
+            Aktiv ({activeJobs.length})
           </button>
           <button
             type="button"
@@ -284,7 +284,7 @@ export function ScheduledJobsView() {
               filterTab === "paused" ? "bg-brand text-brand-foreground shadow" : "text-muted hover:text-foreground"
             }`}
           >
-            Paused ({pausedJobs.length})
+            Pausiert ({pausedJobs.length})
           </button>
         </div>
 
@@ -294,7 +294,7 @@ export function ScheduledJobsView() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search scans or keywords…"
+            placeholder="Scans oder Stichwörter suchen …"
             className="w-full rounded-full border border-border bg-surface/60 pl-8 pr-3 py-1.5 text-xs text-foreground outline-none focus:border-brand/60"
           />
         </div>
@@ -302,18 +302,18 @@ export function ScheduledJobsView() {
 
       {/* Jobs Grid */}
       {scheduledScansBody(phase, store.jobs.length) === "loading" ? (
-        <p role="status" className="rounded-2xl border border-dashed border-border p-12 text-center text-sm text-muted">Loading scheduled scans…</p>
+        <p role="status" className="rounded-2xl border border-dashed border-border p-12 text-center text-sm text-muted">Geplante Scans werden geladen …</p>
       ) : scheduledScansBody(phase, store.jobs.length) === "error" ? null : filteredJobs.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-12 text-center">
           <CalendarClock className="mx-auto size-8 text-faint" />
-          <h2 className="mt-3 text-sm font-semibold text-foreground">No scheduled scans found</h2>
+          <h2 className="mt-3 text-sm font-semibold text-foreground">Keine geplanten Scans gefunden</h2>
           <p className="mt-1 text-xs text-muted">{EMPTY_SCHEDULES_HINT}</p>
           <button
             type="button"
             onClick={() => setCreateModalOpen(true)}
             className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-xs font-medium text-brand-foreground transition-colors hover:bg-brand-200"
           >
-            <CalendarPlus className="size-3.5" /> New scheduled scan
+            <CalendarPlus className="size-3.5" /> Neuer geplanter Scan
           </button>
         </div>
       ) : (

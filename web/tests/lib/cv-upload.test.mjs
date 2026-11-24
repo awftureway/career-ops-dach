@@ -42,8 +42,8 @@ test("PDF text extraction preserves CV names, dates and metrics", { skip: skipPd
 });
 
 test("empty and malformed PDFs fail instead of proposing an empty CV", { skip: skipPdf }, async () => {
-  await assert.rejects(pdfText(cvPdf([]).buffer), /no readable text/);
-  await assert.rejects(pdfText(new TextEncoder().encode("This is not a PDF").buffer), /could not be read/);
+  await assert.rejects(pdfText(cvPdf([]).buffer), /keinen lesbaren Text/);
+  await assert.rejects(pdfText(new TextEncoder().encode("This is not a PDF").buffer), /konnte nicht gelesen werden/);
 });
 
 test("upload validation accepts PDF and TeX and rejects empty, oversized and unsupported files", () => {
@@ -51,7 +51,7 @@ test("upload validation accepts PDF and TeX and rejects empty, oversized and uns
     assert.equal(cvUploadError({ name, size: 100 }), null);
     assert.ok(CV_UPLOAD_ACCEPT.includes(name.slice(name.lastIndexOf(".")).toLowerCase()));
   }
-  assert.match(cvUploadError({ name: "resume.pdf", size: 0 }), /empty/);
-  assert.match(cvUploadError({ name: "resume.tex", size: MAX_CV_UPLOAD_BYTES + 1 }), /too large/);
-  assert.match(cvUploadError({ name: "resume.exe", size: 100 }), /Choose/);
+  assert.match(cvUploadError({ name: "resume.pdf", size: 0 }), /leer/);
+  assert.match(cvUploadError({ name: "resume.tex", size: MAX_CV_UPLOAD_BYTES + 1 }), /zu groß/);
+  assert.match(cvUploadError({ name: "resume.exe", size: 100 }), /Wählen Sie/);
 });

@@ -33,9 +33,9 @@ export const SENIORITY_LABEL: Record<Seniority, string> = {
   lead: "Lead / Mgr",
   staff: "Staff+",
   senior: "Senior",
-  mid: "Mid",
+  mid: "Mittel",
   junior: "Junior",
-  intern: "Intern",
+  intern: "Praktikum",
 };
 
 export function seniorityFromTitle(title: string): Seniority | null {
@@ -67,7 +67,7 @@ export function daysSince(iso: string | undefined, now: number): number | null {
 export function postedAgo(postedAt: string, now: number): string {
   const days = daysSince(postedAt, now);
   if (days == null) return "";
-  return days === 0 ? "today" : days === 1 ? "1d ago" : `${days}d ago`;
+  return days === 0 ? "heute" : days === 1 ? "vor 1 Tag" : `vor ${days} Tagen`;
 }
 
 // Freshness windows mirror the Explore "posted within" segmented control so the two

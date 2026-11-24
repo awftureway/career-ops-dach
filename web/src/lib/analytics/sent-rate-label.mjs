@@ -8,7 +8,7 @@
  */
 export function sentRateLabel(rate) {
   if (rate == null || !Number.isFinite(Number(rate))) return "—";
-  return `${Math.round(Number(rate))}% of sent`;
+  return `${Math.round(Number(rate))}\u00a0% der Versendeten`;
 }
 
 /**
@@ -20,5 +20,5 @@ export function sentRateLabel(rate) {
  */
 export function sentRateTitle(rate) {
   if (rate == null || !Number.isFinite(Number(rate))) return undefined;
-  return `${Math.round(Number(rate))}% of the applications sent from this group advanced`;
+  return `${Math.round(Number(rate))}\u00a0% der aus dieser Gruppe versendeten Bewerbungen kamen weiter`;
 }

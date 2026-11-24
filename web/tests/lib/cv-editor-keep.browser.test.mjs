@@ -30,19 +30,19 @@ test("an edit to the CV stays on disk after leaving the page, and the status doe
   await page.goto(`${origin.origin}/cv`);
   const box = page.locator("textarea");
   await box.waitFor();
-  const status = () => page.getByRole("status").filter({ hasText: /^(?:Unsaved|Saving|Saved)$/ });
+  const status = () => page.getByRole("status").filter({ hasText: /^(?:Nicht gespeichert|Speichert …|Gespeichert)$/ });
 
   const first = `${original.trimEnd()}\n\nKept the Tuesday review.`;
   await box.fill(first);
-  await status().filter({ hasText: /^Unsaved$/ }).waitFor();
-  await status().filter({ hasText: /^Saved$/ }).waitFor({ timeout: 8_000 });
+  await status().filter({ hasText: /^Nicht gespeichert$/ }).waitFor();
+  await status().filter({ hasText: /^Gespeichert$/ }).waitFor({ timeout: 8_000 });
   assert.match(fs.readFileSync(cvPath, "utf8"), /Kept the Tuesday review\./);
   const backupsAfterFirst = fs.readdirSync(root).filter((name) => name.startsWith("cv.md.bak-"));
   assert.equal(backupsAfterFirst.length, 1);
 
   const second = `${first}\nStill editing.`;
   await box.fill(second);
-  assert.equal((await status().innerText()).trim(), "Unsaved");
+  assert.equal((await status().innerText()).trim(), "Nicht gespeichert");
   await page.getByRole("complementary").getByRole("link", { name: "Today", exact: true }).click();
   await page.waitForURL((next) => new URL(next).pathname === "/");
 
@@ -61,6 +61,6 @@ test("an edit to the CV stays on disk after leaving the page, and the status doe
   await box.waitFor();
   await page.locator("textarea", { hasText: "Still editing." }).waitFor();
   assert.match(await box.inputValue(), /Still editing\./);
-  await status().filter({ hasText: /^Saved$/ }).waitFor({ timeout: 8_000 });
+  await status().filter({ hasText: /^Gespeichert$/ }).waitFor({ timeout: 8_000 });
   assert.deepEqual(errors, []);
 });

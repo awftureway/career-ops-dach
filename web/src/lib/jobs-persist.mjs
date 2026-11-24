@@ -55,7 +55,7 @@ export function restoreStoredJobs(stored, now) {
     return {
       ...job,
       status: "error",
-      steps: [...steps, { kind: "status", label: "Interrupted (page reloaded)", ts: now }],
+      steps: [...steps, { kind: "status", label: "Unterbrochen (Seite neu geladen)", ts: now }],
     };
   });
 }

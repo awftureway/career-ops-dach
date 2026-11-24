@@ -38,11 +38,11 @@ test("a Save for apply that already wrote is corrected when the screen has moved
   assert.equal(shouldSendEdits("restored", "restored", inflightEdits(null, null, "restored"), true), false);
   assert.equal(shouldSendEdits("saved", "hidden", inflightEdits(null, "hidden", "hidden"), false), false);
   assert.equal(shouldSendEdits("saved", "restored", inflightEdits("older", "hidden", "restored"), true), true);
-  assert.equal(editSaveStatus("restored", "restored", null, "hidden"), "Saving");
-  assert.equal(editSaveStatus("restored", "restored", "hidden", null), "Saving");
-  assert.equal(editSaveStatus("restored", "restored", null, null), "Saved");
-  assert.equal(editSaveStatus("saved", "hidden", null, null), "Unsaved");
-  assert.equal(editSaveStatus("saved", "hidden", "hidden", null), "Saving");
+  assert.equal(editSaveStatus("restored", "restored", null, "hidden"), "Speichert …");
+  assert.equal(editSaveStatus("restored", "restored", "hidden", null), "Speichert …");
+  assert.equal(editSaveStatus("restored", "restored", null, null), "Gespeichert");
+  assert.equal(editSaveStatus("saved", "hidden", null, null), "Nicht gespeichert");
+  assert.equal(editSaveStatus("saved", "hidden", "hidden", null), "Speichert …");
 });
 
 test("a 422 before the edits are stored does not count as a write", () => {
@@ -90,8 +90,8 @@ test("a lost autosave keeps the restored snapshot unsaved", () => {
   assert.equal(shouldSendEdits("saved", "saved", "saved", true, true), true);
   assert.equal(shouldSendEdits("saved", "saved", "saved", false, true), false);
   assert.equal(shouldSendEdits("saved", "saved", "newer", false, true), false);
-  assert.equal(editSaveStatus("saved", "saved", null, null, true), "Unsaved");
-  assert.equal(editSaveStatus("saved", "saved", null, null, false), "Saved");
+  assert.equal(editSaveStatus("saved", "saved", null, null, true), "Nicht gespeichert");
+  assert.equal(editSaveStatus("saved", "saved", null, null, false), "Gespeichert");
 });
 
 test("a PUT without a usable tab or number is written", () => {

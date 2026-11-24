@@ -56,11 +56,11 @@ test(
     await preset.waitFor();
     assert.equal(await preset.isChecked(), true);
     const roles = page.getByRole("textbox", {
-      name: "Roles to find",
+      name: "Gesuchte Rollen",
       exact: true,
     });
     const location = page.getByRole("textbox", {
-      name: "City or location",
+      name: "Stadt oder Ort",
       exact: true,
     });
     await roles.focus();
@@ -75,7 +75,7 @@ test(
     assert.equal(await page.getByText("工程师", { exact: true }).count(), 1);
     assert.equal(await page.getByText("北京", { exact: true }).count(), 1);
     assert.equal(
-      await page.getByText("Posted within", { exact: true }).count(),
+      await page.getByText("Veröffentlicht innerhalb", { exact: true }).count(),
       0,
     );
     const checkboxes = page.getByRole("checkbox");
@@ -93,14 +93,14 @@ test(
     for (const c of await checkboxes.all())
       assert.equal(await c.isChecked(), true);
     await page
-      .getByRole("radio", { name: "China employer preset", exact: true })
+      .getByRole("radio", { name: "China-Arbeitgeber-Vorlage", exact: true })
       .focus();
     for (let i = 0; i < 3; i++) {
       await page.keyboard.press("Tab");
       await page.keyboard.press("Space");
     }
     const discover = page.getByRole("button", {
-      name: "Discover (free)",
+      name: "Entdecken (kostenlos)",
       exact: true,
     });
     assert.equal(await discover.isDisabled(), true);
@@ -110,12 +110,12 @@ test(
     );
     assert.match(
       await page.locator("#employer-selection").innerText(),
-      /Select at least one/,
+      /Wählen Sie mindestens einen Arbeitgeber/,
     );
     assert.match(await discover.ariaSnapshot(), /disabled/);
     assert.equal(requests.length, 0);
     await page
-      .getByRole("radio", { name: "China employer preset", exact: true })
+      .getByRole("radio", { name: "China-Arbeitgeber-Vorlage", exact: true })
       .focus();
     await page.keyboard.press("Tab");
     await page.keyboard.press("Space");
@@ -139,12 +139,12 @@ test(
     ]) {
       const message =
         state === "failed"
-          ? "Failed — Tencent: source timed out."
+          ? "Fehlgeschlagen: Tencent: source timed out."
           : state === "partial"
-            ? `Partial / incomplete — ${count} matches. Meituan: source failed.`
+            ? `Teilweise / unvollständig: ${count} Treffer. Meituan: source failed.`
             : count
-              ? "Completed — 1 matches from Tencent."
-              : "No matches for this scan — Tencent.";
+              ? "Abgeschlossen: 1 Treffer von Tencent."
+              : "Keine Treffer für diesen Scan: Tencent.";
       responseEvents = [
         {
           kind: "summary",
@@ -162,24 +162,24 @@ test(
         }),
       };
       const button = page.getByRole("button", {
-        name: /^(Discover|Re-cast) \(free\)$/,
+        name: /^(Entdecken|Neu auswerfen) \(kostenlos\)$/,
       });
       // Refine is closed after a result; keyboard-open it before starting again.
       if ((await button.count()) === 0) {
         const refine = page.getByRole("button", {
-          name: "Refine search",
+          name: "Suche verfeinern",
           exact: true,
         });
         await refine.focus();
         await page.keyboard.press("Enter");
       }
       const start = page.getByRole("button", {
-        name: /^(Discover|Re-cast) \(free\)$/,
+        name: /^(Entdecken|Neu auswerfen) \(kostenlos\)$/,
       });
       await start.focus();
       await page.keyboard.press("Enter");
       await page
-        .getByText("Scanning selected employers…", { exact: true })
+        .getByText("Scanne ausgewählte Arbeitgeber …", { exact: true })
         .waitFor();
       const focusBefore = await page.evaluateHandle(
         () => document.activeElement,
@@ -200,11 +200,11 @@ test(
         new RegExp(
           state === "complete"
             ? count
-              ? "Completed"
-              : "No matches"
+              ? "Abgeschlossen"
+              : "Keine Treffer"
             : state === "partial"
-              ? "Partial"
-              : "Failed",
+              ? "Teilweise"
+              : "Fehlgeschlagen",
         ),
       );
       assert.equal(await status.getAttribute("aria-live"), "polite");
@@ -216,10 +216,10 @@ test(
       );
       if (count) {
         await page.getByRole("heading", { name: offer.title }).waitFor();
-        assert.equal(await page.getByText("Location unknown").count(), 1);
-        assert.equal(await page.getByText("Posting date unknown").count(), 1);
+        assert.equal(await page.getByText("Ort unbekannt").count(), 1);
+        assert.equal(await page.getByText("Veröffentlichungsdatum unbekannt").count(), 1);
         const link = page.getByRole("link", {
-          name: "Open the posting",
+          name: "Stellenanzeige öffnen",
           exact: true,
         });
         assert.equal(await link.getAttribute("href"), offer.url);
@@ -257,7 +257,7 @@ test(
     // Leaving the preset preserves the user-entered terms and restores ATS controls.
     await preset.focus();
     await page.keyboard.press("Space");
-    await page.getByText("Posted within", { exact: true }).waitFor();
+    await page.getByText("Veröffentlicht innerhalb", { exact: true }).waitFor();
     assert.equal(await page.getByText("工程师", { exact: true }).count(), 1);
   },
 );
@@ -337,13 +337,13 @@ test(
         await page.keyboard.press("ArrowRight");
       }
       const discover = page.getByRole("button", {
-        name: "Discover (free)",
+        name: "Entdecken (kostenlos)",
         exact: true,
       });
       await discover.focus();
       await page.keyboard.press("Enter");
       const add = page.getByRole("button", {
-        name: "Add to pipeline",
+        name: "Zur Pipeline",
         exact: true,
       });
       await add.waitFor();
@@ -365,13 +365,13 @@ test(
       await page.keyboard.press("Enter");
       await addResponse;
       await page
-        .getByRole("button", { name: "In pipeline", exact: true })
+        .getByRole("button", { name: "In Pipeline", exact: true })
         .waitFor();
       assert.equal(added.length, 1);
       assert.equal(added[0].offers[0].url, offer.url);
       assert.deepEqual(evaluated, []);
       const evaluate = page.getByRole("button", {
-        name: "Evaluate",
+        name: "Bewerten",
         exact: true,
       });
       await evaluate.focus();

@@ -33,7 +33,7 @@ function Logo({ company }: { company: string }) {
 }
 
 // What a running worker is doing on this exact posting → the live CTA label.
-const WORKER_LABEL: Record<string, string> = { evaluate: "Evaluating…", pdf: "Preparing CV…", research: "Researching…", apply: "Filling…" };
+const WORKER_LABEL: Record<string, string> = { evaluate: "Bewertet …", pdf: "Erstellt Lebenslauf …", research: "Recherchiert …", apply: "Füllt aus …" };
 
 export function DiscoveryCard({
   offer,
@@ -60,7 +60,7 @@ export function DiscoveryCard({
   const working = job?.status === "running";
   const doneEval = job?.status === "done" && job.kind === "evaluate";
   const gate = evaluationGateForJob(job);
-  const statusLabel = WORKER_LABEL[job?.kind ?? ""] ?? "Working…";
+  const statusLabel = WORKER_LABEL[job?.kind ?? ""] ?? "Arbeitet …";
 
   // Worker state is not evidence that the separate Inbox write succeeded.
   const isAdded = added.has(offer.url) || inPipeline;
@@ -87,15 +87,15 @@ export function DiscoveryCard({
           <h3 className={`${instrumentSerif.className} truncate text-[17px] leading-tight text-foreground transition-colors group-hover:text-brand-text`}>{offer.title}</h3>
           <p className="mt-0.5 truncate text-[13px] text-muted">
             {offer.company}
-            {(offer.location || employer) && <span className="text-faint"> · {offer.location || "Location unknown"}</span>}
+            {(offer.location || employer) && <span className="text-faint"> · {offer.location || "Ort unbekannt"}</span>}
           </p>
         </a>
         <a
           href={offer.url}
           target="_blank"
           rel="noopener noreferrer"
-          title="Open the posting"
-          aria-label="Open the posting"
+          title="Stellenanzeige öffnen"
+          aria-label="Stellenanzeige öffnen"
           className="-m-1 inline-flex shrink-0 items-center justify-center rounded p-1 text-faint transition-colors hover:text-foreground max-sm:min-h-[44px] max-sm:min-w-[44px]"
         >
           <ExternalLink className="size-4" />
@@ -104,18 +104,18 @@ export function DiscoveryCard({
 
       <div className={cn("flex flex-wrap items-center gap-1.5 text-[11px]", row && "shrink-0 basis-72")}>
         <span className="rounded border border-border px-1.5 py-0.5 font-medium text-muted">{ATS_LABEL[offer.ats as AtsSource] ?? EMPLOYER_LABEL[offer.ats as keyof typeof EMPLOYER_LABEL] ?? offer.ats}</span>
-        {(fresh || employer) && <span className="text-faint">{fresh || "Posting date unknown"}</span>}
+        {(fresh || employer) && <span className="text-faint">{fresh || "Veröffentlichungsdatum unbekannt"}</span>}
         {unverified && (
           <span
             className="inline-flex items-center gap-1 rounded border border-amber-500/25 bg-amber-500/10 px-1.5 py-0.5 font-medium text-amber-800 dark:text-amber-300"
-            title="Found by AI on the public web — we can't confirm it's still live without opening it. Evaluating runs a real browser check and sets the verdict."
+            title="Von der KI im öffentlichen Web gefunden – ob die Stelle noch aktiv ist, lässt sich ohne Öffnen nicht bestätigen. Die Bewertung prüft das im Browser und setzt das Ergebnis."
           >
-            <ShieldQuestion className="size-3" /> unverified
+            <ShieldQuestion className="size-3" /> ungeprüft
           </span>
         )}
         {offer.matchedKeyword && (
-          <span className="text-faint" title="Keyword match — not yet scored. Evaluate to get an A–F fit score.">
-            · matched <span className="text-brand-text">{offer.matchedKeyword}</span>
+          <span className="text-faint" title="Stichwort-Treffer – noch nicht bewertet. Bewerten liefert einen A–F-Fit-Score.">
+            · Treffer: <span className="text-brand-text">{offer.matchedKeyword}</span>
           </span>
         )}
         {offer.fit && (
@@ -126,9 +126,9 @@ export function DiscoveryCard({
                 ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-800 dark:text-emerald-400"
                 : "text-faint",
             )}
-            title="Free keyword-level estimate: posting title vs your profile's target roles (config/profile.yml). Not an evaluation — Evaluate still gives the real A–F fit score."
+            title="Kostenlose Stichwort-Schätzung: Titel der Stellenanzeige gegen die Zielrollen Ihres Profils (config/profile.yml). Keine Bewertung – erst Bewerten liefert den echten A–F-Fit-Score."
           >
-            · {offer.fit.band} fit
+            · Fit: {offer.fit.band}
           </span>
         )}
       </div>
@@ -146,17 +146,17 @@ export function DiscoveryCard({
             href={evaluatedN ? `/pipeline/${evaluatedN}` : job ? `/jobs/${job.id}` : "/pipeline"}
             className="inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-brand-soft px-2.5 py-2 text-xs font-medium text-brand-text max-sm:min-h-[44px]"
           >
-            <Check className="size-3.5" /> Evaluated · view report
+            <Check className="size-3.5" /> Bewertet · Bericht ansehen
           </a>
         ) : gate && job ? (
           <a href={`/jobs/${job.id}`} className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/5 px-2.5 py-2 text-xs font-medium text-amber-800 dark:text-amber-400 max-sm:min-h-[44px]">
-            <CirclePause className="size-3.5" /> Needs review · view reason
+            <CirclePause className="size-3.5" /> Prüfung nötig · Grund ansehen
           </a>
         ) : working ? (
           <div className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-brand/30 bg-brand-soft/60 px-2.5 py-2 text-xs font-medium text-brand-text">
             <Loader2 className="size-3.5 animate-spin" />
             {statusLabel}
-            {isAdded && <span className="text-brand-text">· in pipeline</span>}
+            {isAdded && <span className="text-brand-text">· in Pipeline</span>}
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -170,15 +170,15 @@ export function DiscoveryCard({
               )}
             >
               {isAdding ? <Loader2 className="size-3.5 animate-spin" /> : isAdded ? <Check className="size-3.5" /> : <Plus className="size-3.5" />}
-              {isAdded ? "In pipeline" : "Add to pipeline"}
+              {isAdded ? "In Pipeline" : "Zur Pipeline"}
             </button>
             <button
               type="button"
               onClick={evaluate}
-              title={unverified ? "Runs a real evaluation — and verifies the posting is live. Uses tokens." : "Runs a real A–F evaluation. Uses tokens."}
+              title={unverified ? "Startet eine echte Bewertung und prüft, ob die Stelle aktiv ist. Verbraucht Tokens." : "Startet eine echte A–F-Bewertung. Verbraucht Tokens."}
               className="inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-brand/30 px-2.5 py-2 text-xs font-medium text-brand-text transition-colors hover:bg-brand-soft max-sm:min-h-[44px]"
             >
-              Evaluate <Coins className="size-3.5 opacity-80" />
+              Bewerten <Coins className="size-3.5 opacity-80" />
             </button>
           </div>
         )}

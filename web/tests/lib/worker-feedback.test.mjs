@@ -18,15 +18,15 @@ test("task identity includes role; detail names exclude ticking progress", () =>
   const task = { ...job("a", "running"), steps: ["WebFetch"], elapsed: 1 };
   assert.equal(workerIdentity(task), "Evaluate · FixtureCo · Engineer");
   assert.equal(workerIdentity({ title: "Draft CV" }), "Draft CV");
-  assert.equal(workerDetailsLabel(task), "Open worker: Evaluate · FixtureCo · Engineer — Running");
+  assert.equal(workerDetailsLabel(task), "Worker öffnen: Evaluate · FixtureCo · Engineer — Läuft");
   assert.equal(workerDetailsLabel({ ...task, elapsed: 60, steps: ["Write"] }), workerDetailsLabel(task));
-  assert.equal(workerState("done"), "Completed");
-  assert.equal(workerState("error"), "Failed");
+  assert.equal(workerState("done"), "Abgeschlossen");
+  assert.equal(workerState("error"), "Fehlgeschlagen");
 });
 
 test("batch outcomes distinguish failures, active work and unavailable history", () => {
-  assert.equal(workerBatchSummary([job("a"), job("b", "error"), job("c", "running")], 4), "1 running, 1 completed, 1 failed, 1 unavailable");
-  assert.equal(workerBatchSummary([job("a"), job("b", "error")]), "1 completed, 1 failed");
+  assert.equal(workerBatchSummary([job("a"), job("b", "error"), job("c", "running")], 4), "1 läuft, 1 abgeschlossen, 1 fehlgeschlagen, 1 nicht verfügbar");
+  assert.equal(workerBatchSummary([job("a"), job("b", "error")]), "1 abgeschlossen, 1 fehlgeschlagen");
 });
 
 test("no initial/history notice; only terminal events schedule feedback", () => {
@@ -36,7 +36,7 @@ test("no initial/history notice; only terminal events schedule feedback", () => 
   assert.equal(f.timers.size, 0);
   f.feedback.push(job("a"));
   f.flush();
-  assert.deepEqual(f.notices, ["", "Evaluate · FixtureCo · Engineer: completed."]);
+  assert.deepEqual(f.notices, ["", "Evaluate · FixtureCo · Engineer: abgeschlossen."]);
 });
 
 test("same terminal event is deduplicated across instances and later renders", () => {
@@ -46,7 +46,7 @@ test("same terminal event is deduplicated across instances and later renders", (
   assert.equal(f.notices.length, 2);
   f.feedback.push(job("b", "done", "Evaluate · FixtureCo", "Designer"));
   f.flush();
-  assert.equal(f.notices.at(-1), "Evaluate · FixtureCo · Designer: completed.");
+  assert.equal(f.notices.at(-1), "Evaluate · FixtureCo · Designer: abgeschlossen.");
 });
 
 test("concurrent outcomes share a fixed window, including mixed success and failure", () => {
@@ -57,21 +57,21 @@ test("concurrent outcomes share a fixed window, including mixed success and fail
   assert.deepEqual([...f.timers.keys()], [timer], "new events must not restart or extend the window");
   assert.equal(f.timers.get(timer).delay, 500);
   f.flush();
-  assert.deepEqual(f.notices, ["", "Evaluate · FixtureCo · Engineer: completed. Evaluate · FixtureCo · Designer: failed."]);
+  assert.deepEqual(f.notices, ["", "Evaluate · FixtureCo · Engineer: abgeschlossen. Evaluate · FixtureCo · Designer: fehlgeschlagen."]);
 });
 
 test("large bursts give bounded counts instead of reading every task", () => {
   const f = fixture();
   for (let i = 0; i < 20; i++) f.feedback.push(job(String(i), i % 2 ? "error" : "done"));
   f.flush();
-  assert.equal(f.notices.at(-1), "20 workers: 10 completed, 10 failed. Open Worker history for details.");
+  assert.equal(f.notices.at(-1), "20 Worker: 10 abgeschlossen, 10 fehlgeschlagen. Details im Worker-Verlauf.");
 });
 
 test("different tasks with identical labels still create separate mutations", () => {
   const f = fixture();
   f.feedback.push(job("a")); f.flush();
   f.feedback.push(job("b")); f.flush();
-  assert.deepEqual(f.notices, ["", "Evaluate · FixtureCo · Engineer: completed.", "", "Evaluate · FixtureCo · Engineer: completed."]);
+  assert.deepEqual(f.notices, ["", "Evaluate · FixtureCo · Engineer: abgeschlossen.", "", "Evaluate · FixtureCo · Engineer: abgeschlossen."]);
 });
 
 test("unmount cancels pending work and ignores late worker events", () => {
@@ -87,8 +87,8 @@ test("an explicit gate is announced as needing review, never completed or failed
   const f = fixture();
   f.feedback.push(job("gate", "gated"));
   f.flush();
-  assert.equal(workerState("gated"), "Needs review");
-  assert.equal(workerDetailsLabel(job("gate", "gated")), "Open worker: Evaluate · FixtureCo · Engineer — Needs review");
-  assert.equal(f.notices.at(-1), "Evaluate · FixtureCo · Engineer: needs review.");
-  assert.equal(workerBatchSummary([job("done"), job("gate", "gated"), job("bad", "error")]), "1 completed, 1 needs review, 1 failed");
+  assert.equal(workerState("gated"), "Prüfung nötig");
+  assert.equal(workerDetailsLabel(job("gate", "gated")), "Worker öffnen: Evaluate · FixtureCo · Engineer — Prüfung nötig");
+  assert.equal(f.notices.at(-1), "Evaluate · FixtureCo · Engineer: prüfung nötig.");
+  assert.equal(workerBatchSummary([job("done"), job("gate", "gated"), job("bad", "error")]), "1 abgeschlossen, 1 Prüfung nötig, 1 fehlgeschlagen");
 });

@@ -63,7 +63,7 @@ export function TodayDashboard({
   const [decisionUndo, setDecisionUndo] = useState<{ n: string; label: string; busy?: boolean; error?: string } | null>(null);
   const requestGeneration = useRef(0);
   const router = useRouter();
-  const dateLabel = useMemo(() => new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }), []);
+  const dateLabel = useMemo(() => new Date().toLocaleDateString("de-DE", { weekday: "long", month: "short", day: "numeric" }), []);
 
   const refetch = useCallback(() => {
     const generation = ++requestGeneration.current;
@@ -139,7 +139,7 @@ export function TodayDashboard({
       setDecisionUndo(null);
       router.refresh();
     } catch (cause) {
-      setDecisionUndo({ ...notice, error: cause instanceof Error ? cause.message : "Could not undo. Please try again." });
+      setDecisionUndo({ ...notice, error: cause instanceof Error ? cause.message : "Rückgängig machen fehlgeschlagen. Bitte versuchen Sie es erneut." });
     }
   };
 
@@ -202,15 +202,15 @@ export function TodayDashboard({
       <section className="dot-bg relative overflow-hidden rounded-2xl border border-border bg-surface/40 px-7 py-10 md:px-10 md:py-12">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted">
-            <span className="text-faint">//</span> today · <span className="tabular-nums">{dateLabel}</span>
+            <span className="text-faint">//</span> heute · <span className="tabular-nums">{dateLabel}</span>
           </p>
           <h1 className={`${instrumentSerif.className} mt-3 text-4xl leading-[1.05] text-landing md:text-5xl`}>
             {heroState === "loading" ? (
-              <>Your career queue is loading.</>
+              <>Ihre Aufgabenliste lädt …</>
             ) : heroState === "unavailable" ? (
-              <>Some updates are unavailable.</>
+              <>Einige Updates sind nicht verfügbar.</>
             ) : allClear ? (
-              <>You&apos;re all caught up.</>
+              <>Sie sind auf dem neuesten Stand.</>
             ) : showsQueue(heroState) ? (
               <>
                 {queueLead.map((item, index) => (
@@ -218,11 +218,11 @@ export function TodayDashboard({
                     {index > 0 && <span className="text-faint"> · </span>}
                     {item.kind === "follow-up" ? (
                       <>
-                        <span className="text-brand-text tabular-nums">{item.count}</span> follow-up{item.count === 1 ? "" : "s"} due
+                        <span className="text-brand-text tabular-nums">{item.count}</span> Nachfass-Termin{item.count === 1 ? "" : "e"} fällig
                       </>
                     ) : (
                       <>
-                        <span className="text-brand-text tabular-nums">{item.count}</span> new match{item.count === 1 ? "" : "es"} this week
+                        <span className="text-brand-text tabular-nums">{item.count}</span> {item.count === 1 ? "neuer Treffer" : "neue Treffer"} diese Woche
                       </>
                     )}
                   </span>
@@ -230,29 +230,29 @@ export function TodayDashboard({
                 {/* queue-partial with work known only from the server snapshot:
                     both loops are down but the pipeline still has decisions
                     waiting, so the queue is real while neither count is. */}
-                {queueLead.length === 0 && <>Your queue is waiting.</>}
+                {queueLead.length === 0 && <>Ihre Aufgaben warten.</>}
               </>
             ) : (
-              <>Your queue is waiting.</>
+              <>Ihre Aufgaben warten.</>
             )}
           </h1>
           <p className="mt-4 max-w-xl text-sm text-muted">
             {heroState === "unavailable"
-              ? "We couldn't load all of today's updates. Try again."
+              ? "Nicht alle heutigen Updates konnten geladen werden. Versuchen Sie es erneut."
               : heroState === "queue-partial"
-                ? `${missingSources} could not be read, so this may be missing work. What loaded is below.`
+                ? `${missingSources} konnte nicht gelesen werden, daher fehlen eventuell Aufgaben. Das Geladene steht unten.`
                 : allClear
-                  ? "I'll keep scanning the market in the background and surface anything that fits."
+                  ? "Ich scanne den Markt weiter im Hintergrund und zeige Passendes an."
                   : followupsEnabled
-                    ? "Your action queue for today — discovery and follow-ups, in one place."
-                    : "Your action queue for today, in one place."}
+                    ? "Ihre Aufgaben für heute — Entdecken und Nachfassen an einem Ort."
+                    : "Ihre Aufgaben für heute an einem Ort."}
           </p>
           <div className="mt-6 flex flex-wrap gap-2.5">
             <Link href="/explore" className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-brand-foreground transition hover:bg-brand-200 max-sm:min-h-[44px]">
-              Find new roles <ArrowRight className="size-4" />
+              Neue Stellen finden <ArrowRight className="size-4" />
             </Link>
             <Link href="/pipeline" className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition hover:border-brand/40 hover:text-brand-text max-sm:min-h-[44px]">
-              Open pipeline
+              Pipeline öffnen
             </Link>
           </div>
           <QuickEvaluate />
@@ -261,8 +261,8 @@ export function TodayDashboard({
 
       {dataError && !dataLoading && (
         <div role="alert" className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface/40 px-5 py-4 text-sm text-muted">
-          <p>{missingSources} could not be loaded.</p>
-          <button type="button" onClick={refetch} className="font-medium text-brand-text hover:underline">Retry updates</button>
+          <p>{missingSources} konnte nicht geladen werden.</p>
+          <button type="button" onClick={refetch} className="font-medium text-brand-text hover:underline">Updates erneut laden</button>
         </div>
       )}
 
@@ -272,7 +272,7 @@ export function TodayDashboard({
       ) : followupsError ? (
         null
       ) : dueFollowups.length > 0 ? (
-        <Section icon={Bell} title="Follow-ups due" hint="Keep your applications alive — a nudge beats silence">
+        <Section icon={Bell} title="Nachfassen fällig" hint="Halten Sie Bewerbungen am Leben — ein Anstoß schlägt Schweigen">
           <div className="grid gap-2.5">
             {dueFollowups.map((f) => (
               // Refetch (not a local decrement) so the parent's followups/upcoming
@@ -283,14 +283,14 @@ export function TodayDashboard({
           </div>
           {followupRest.hidden > 0 && (
             <Link href="/followups" className="mt-3 inline-flex items-center text-sm text-muted transition hover:text-brand-text max-sm:min-h-[44px]">
-              See all {followupRest.total} {followupRest.total === 1 ? "follow-up" : "follow-ups"}
+              Alle {followupRest.total} {followupRest.total === 1 ? "Nachfass-Termin" : "Nachfass-Termine"} anzeigen
             </Link>
           )}
         </Section>
       ) : null}
 
       {!followupsLoading && !followupsError && upcoming.length > 0 && (
-        <Section icon={Bell} title="Upcoming" hint="Not due yet">
+        <Section icon={Bell} title="Demnächst" hint="Noch nicht fällig">
           <ul className="grid gap-2">
             {upcoming.map((item) => (
               <li key={`${item.num ?? item.company}-${item.nextFollowupDate ?? ""}`}>
@@ -310,7 +310,7 @@ export function TodayDashboard({
 
       {/* B. Awaiting your decision */}
       {awaiting.length > 0 && (
-        <Section icon={CircleHelp} title="Awaiting your decision" hint="Best score first, closed postings last">
+        <Section icon={CircleHelp} title="Wartet auf Ihre Entscheidung" hint="Bester Score zuerst, geschlossene Stellenanzeigen zuletzt">
           {applyTarget && (
             <ApplyNext
               n={applyTarget.n}
@@ -332,7 +332,7 @@ export function TodayDashboard({
                     age={ages[a.n]}
                     onDecided={(status) => {
                       const company = companyPresentation(a).label;
-                      setDecisionUndo({ n: a.n, label: status === "Applied" ? `Marked ${company} applied` : `Skipped ${company}` });
+                      setDecisionUndo({ n: a.n, label: status === "Applied" ? `${company} als beworben markiert` : `${company} übersprungen` });
                     }}
                   />
                 ))}
@@ -344,7 +344,7 @@ export function TodayDashboard({
 
       {/* C. Fresh matches this week (supply loop) */}
       {!freshError && fresh.length > 0 && (
-        <Section icon={Sparkles} title="Fresh matches this week" hint="Found by your free scans · 0 tokens">
+        <Section icon={Sparkles} title="Neue Treffer diese Woche" hint="Gefunden durch Ihre kostenlosen Scans · 0 Tokens">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {fresh.slice(0, 6).map((o) => (
               <DiscoveryCard key={o.url} offer={o} inPipeline={inboxUrls.has(o.url)} />
@@ -352,7 +352,7 @@ export function TodayDashboard({
           </div>
           {fresh.length > 6 && (
             <Link href="/explore?view=fresh" className="mt-3 inline-flex items-center text-sm text-muted transition hover:text-brand-text max-sm:min-h-[44px]">
-              See all {freshCount} →
+              Alle {freshCount} anzeigen →
             </Link>
           )}
         </Section>
@@ -362,7 +362,7 @@ export function TodayDashboard({
         <div className="mt-8 rounded-2xl border border-border bg-surface/30 px-6 py-10 text-center">
           <Sparkles className="mx-auto size-6 text-brand-text" />
           <p className="mx-auto mt-3 max-w-md text-sm text-muted">
-            Nothing needs you right now. Run a <Link href="/explore" className="text-brand-text hover:underline">free scan</Link> to surface this week&apos;s roles, or check your <Link href="/pipeline" className="text-brand-text hover:underline">pipeline</Link>.
+            Aktuell braucht nichts Ihre Aufmerksamkeit. Starten Sie einen <Link href="/explore" className="text-brand-text hover:underline">kostenlosen Scan</Link>, um die Stellen dieser Woche zu finden, oder prüfen Sie Ihre <Link href="/pipeline" className="text-brand-text hover:underline">Pipeline</Link>.
           </p>
         </div>
       )}
@@ -377,10 +377,10 @@ export function TodayDashboard({
               {decisionUndo.error && <p role="alert" className="text-red-700 dark:text-red-400">{decisionUndo.error}</p>}
             </div>
             <button type="button" onClick={() => void undoDecision(decisionUndo)} disabled={decisionUndo.busy} aria-busy={Boolean(decisionUndo.busy)} className="inline-flex shrink-0 items-center gap-1 font-medium text-brand-text disabled:opacity-50 max-sm:min-h-[44px]">
-              <Undo2 className="size-3.5" /> {decisionUndo.busy ? "Undoing…" : decisionUndo.error ? "Retry undo" : "Undo"}
+              <Undo2 className="size-3.5" /> {decisionUndo.busy ? "Mache rückgängig …" : decisionUndo.error ? "Erneut versuchen" : "Rückgängig"}
             </button>
             {decisionUndo.error && (
-              <button type="button" onClick={() => setDecisionUndo(null)} aria-label="Dismiss" className="inline-flex shrink-0 items-center text-faint hover:text-muted max-sm:min-h-[44px] max-sm:min-w-[44px] max-sm:justify-center">
+              <button type="button" onClick={() => setDecisionUndo(null)} aria-label="Schließen" className="inline-flex shrink-0 items-center text-faint hover:text-muted max-sm:min-h-[44px] max-sm:min-w-[44px] max-sm:justify-center">
                 <X className="size-3.5" />
               </button>
             )}

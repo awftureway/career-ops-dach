@@ -16,11 +16,11 @@ test("CV Studio live preview bolds markdown and keeps the date and contact line 
   page.on("pageerror", (error) => errors.push(error.message));
 
   await page.goto(`${origin.origin}/pipeline/7/cv-studio`);
-  const frame = page.frameLocator('iframe[title="Tailored CV preview"]');
+  const frame = page.frameLocator('iframe[title="Vorschau des angepassten Lebenslaufs"]');
   await frame.getByText("Microsoft PowerApps").first().waitFor();
 
   const fit = await page.evaluate(() => {
-    const section = document.querySelector('section[aria-label="Live preview"]');
+    const section = document.querySelector('section[aria-label="Live-Vorschau"]');
     const box = section.querySelector(".overflow-auto");
     const doc = section.querySelector("iframe").contentDocument;
     const cw = doc.documentElement.clientWidth;
@@ -65,6 +65,6 @@ test("CV Studio live preview bolds markdown and keeps the date and contact line 
   assert.ok(fit.linkEnd <= fit.cw + 1, `contact link ends on the page (${fit.linkEnd} vs ${fit.cw})`);
   assert.ok(fit.sw <= fit.cw + 1, `preview page has no horizontal overflow (${fit.sw} vs ${fit.cw})`);
   assert.equal(fit.outerScroll, false);
-  assert.equal(fit.label, `Live preview ${fit.pages} page${fit.pages > 1 ? "s" : ""} (estimate)`);
+  assert.equal(fit.label, `Live-Vorschau ${fit.pages} Seite${fit.pages > 1 ? "n" : ""} (geschätzt)`);
   assert.deepEqual(errors, []);
 });

@@ -28,7 +28,7 @@ export function TemplateEditor({ kind, name, title, onClose, onSaved }: Props) {
     fetch(`/api/templates/file?kind=${kind}&name=${encodeURIComponent(name)}`)
       .then(async (r) => {
         const j = await r.json().catch(() => ({}));
-        if (!r.ok) throw new Error(typeof j.error === "string" ? j.error : "Could not open the template.");
+        if (!r.ok) throw new Error(typeof j.error === "string" ? j.error : "Die Vorlage konnte nicht geöffnet werden.");
         return j as { text: string; version: string };
       })
       .then((j) => {
@@ -54,14 +54,14 @@ export function TemplateEditor({ kind, name, title, onClose, onSaved }: Props) {
         body: JSON.stringify({ kind, name, text, version }),
       });
       const j = await res.json().catch(() => ({}));
-      if (!res.ok) setError(typeof j.error === "string" ? j.error : "Could not save.");
+      if (!res.ok) setError(typeof j.error === "string" ? j.error : "Speichern nicht möglich.");
       else {
         setVersion(j.version);
         setSaved(text);
         onSaved();
       }
     } catch {
-      setError("Could not save.");
+      setError("Speichern nicht möglich.");
     }
     setBusy(false);
   };
@@ -76,12 +76,12 @@ export function TemplateEditor({ kind, name, title, onClose, onSaved }: Props) {
   }, [loaded]);
 
   return (
-    <section aria-label={`Edit ${title}`} className="mt-4 rounded-xl border border-border bg-surface/40 p-3">
+    <section aria-label={`${title} bearbeiten`} className="mt-4 rounded-xl border border-border bg-surface/40 p-3">
       <label htmlFor={fieldId} className="text-sm font-medium">
         {title} (HTML)
       </label>
       {text === null && !error ? (
-        <Loader2 className="mt-2 size-4 animate-spin text-muted" aria-label="Opening template" />
+        <Loader2 className="mt-2 size-4 animate-spin text-muted" aria-label="Vorlage wird geöffnet" />
       ) : (
         <textarea
           ref={areaRef}
@@ -105,12 +105,12 @@ export function TemplateEditor({ kind, name, title, onClose, onSaved }: Props) {
           onClick={() => void save()}
           className="rounded-md border border-border px-3 py-1 text-xs hover:bg-surface disabled:opacity-60"
         >
-          {busy ? "Saving…" : "Save"}
+          {busy ? "Speichert …" : "Speichern"}
         </button>
         <button type="button" disabled={busy} onClick={onClose} className="text-xs underline disabled:opacity-60">
-          {dirty ? "Discard and close" : "Close"}
+          {dirty ? "Verwerfen und schließen" : "Schließen"}
         </button>
-        {dirty && <span className="text-xs text-muted">Unsaved changes</span>}
+        {dirty && <span className="text-xs text-muted">Ungespeicherte Änderungen</span>}
       </div>
     </section>
   );

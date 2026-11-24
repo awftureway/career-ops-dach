@@ -287,7 +287,7 @@ test("orchestration executes only selected providers and preserves all four term
       if (states.every((s) => s === "complete") && !matches)
         assert.match(
           summary.employerOutcome.message,
-          /No matches for this scan/,
+          /Keine Treffer für diesen Scan/,
         );
     }
   }
