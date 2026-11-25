@@ -663,8 +663,21 @@ export async function fillSession(
       if (!isResumeField(meta)) continue;
       let ok = false;
       try {
-        await s.frame.locator(`[data-co-field="${cssAttr(meta.id)}"]`).first().setInputFiles(cvFile);
-        ok = true;
+        const input = s.frame.locator(`[data-co-field="${cssAttr(meta.id)}"]`).first();
+        await input.setInputFiles(cvFile);
+        // setInputFiles can return without the page keeping the file. Count the
+        // upload only on evidence: the input holds the file, or the form shows
+        // its name. Personio accepts the file, lists its name and swaps the input
+        // for an empty one, so the input alone says "failed" for a good upload.
+        const shownName = (typeof cvFile === "string" ? cvFile : cvFile.name).split(/[\\/]/).pop() || "";
+        const landed = async () =>
+          (await input.evaluate((el) => ((el as HTMLInputElement).files?.length ?? 0) > 0).catch(() => false)) ||
+          (await s.frame.evaluate((name) => document.body.innerText.includes(name), shownName).catch(() => false)) === true;
+        ok = await landed();
+        if (!ok) {
+          await s.page.waitForTimeout(700).catch(() => {});
+          ok = await landed();
+        }
       } catch {
         // A replaced/missing resume control does not identify another upload.
         // The first file input may be a cover letter or portfolio: leave it for

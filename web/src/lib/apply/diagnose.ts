@@ -376,7 +376,7 @@ export async function verifyFill(frame: Frame, fields: ApplyField[], answers: Re
       .map((f) => [f.id, checkboxSelections(answers[f.id] || "", f.options).map(normOption)]),
   );
   type Combo = { label: string; intended: string; actual: string; required: boolean };
-  type R = { mismatches: string[]; requiredEmpty: string[]; unverified: string[]; valErrors: string[]; comboboxes: Combo[] };
+  type R = { mismatches: string[]; requiredEmpty: string[]; unverified: string[]; valErrors: string[]; comboboxes: Combo[]; untracked?: string[] };
   let readFailed = false;
   const res = await frame
     .evaluate(
@@ -483,7 +483,35 @@ export async function verifyFill(frame: Frame, fields: ApplyField[], answers: Re
           const txt = (e.textContent || "").replace(/\s+/g, " ").trim();
           if (txt && txt.length > 2 && txt.length < 160 && e.offsetParent !== null) valErrors.push(txt);
         }
-        return { mismatches, requiredEmpty, unverified, valErrors: Array.from(new Set(valErrors)).slice(0, 5), comboboxes };
+        // Controls on the live page that extraction never tagged. Nothing above
+        // can read them back. Only a required, visible control counts: an optional
+        // search box or cookie toggle is not a gap in the form.
+        const untracked: string[] = [];
+        const seenUntracked = new Set<string>();
+        const nameOf = (c: HTMLElement) => {
+          const id = c.getAttribute("id");
+          const viaFor = id ? document.querySelector(`label[for="${CSS.escape(id)}"]`)?.textContent : "";
+          const wrapped = c.closest("label")?.textContent;
+          const raw = c.getAttribute("aria-label") || viaFor || wrapped || c.getAttribute("placeholder") || c.getAttribute("name") || c.getAttribute("id") || "unbenanntes Feld";
+          return raw.replace(/\s+/g, " ").trim().slice(0, 60);
+        };
+        for (const c of Array.from(document.querySelectorAll("input, textarea, select")) as HTMLElement[]) {
+          if (c.hasAttribute("data-co-field") || c.closest('[class*="autofill" i]')) continue;
+          const t = ((c as HTMLInputElement).type || "").toLowerCase();
+          if (["hidden", "submit", "button", "image", "reset"].includes(t)) continue;
+          const required = c.hasAttribute("required") || c.getAttribute("aria-required") === "true";
+          const visible = c.offsetParent !== null;
+          // An upload is left out: after a good upload an ATS may swap the tagged
+          // input for a fresh empty one, which would read as an unseen field. A
+          // CV with no upload field to take it is caught by the handoff gate.
+          if (t === "file" || !(required && visible)) continue;
+          const label = nameOf(c);
+          if (!seenUntracked.has(label)) {
+            seenUntracked.add(label);
+            untracked.push(label);
+          }
+        }
+        return { mismatches, requiredEmpty, unverified, valErrors: Array.from(new Set(valErrors)).slice(0, 5), comboboxes, untracked };
       },
       { meta, answers, checkboxWanted },
     )
@@ -506,6 +534,7 @@ export async function verifyFill(frame: Frame, fields: ApplyField[], answers: Re
   if (res.requiredEmpty.length) out.push({ level: "warn", code: "required-empty", labels: res.requiredEmpty, message: `Pflichtfeld noch leer. Bitte ${res.requiredEmpty.length > 1 ? "diese" : "dieses"} ausfüllen: ${res.requiredEmpty.slice(0, 4).join(", ")}${res.requiredEmpty.length > 4 ? "…" : ""}.` });
   if (res.unverified.length) out.push({ level: "warn", code: "fill-unverified", message: `Diese Felder ließen sich nicht zurücklesen und zählen daher nicht als vorausgefüllt: ${res.unverified.slice(0, 4).join(", ")}${res.unverified.length > 4 ? "…" : ""}.` });
   else if (readFailed) out.push({ level: "warn", code: "fill-unverified", message: "Das Formular ließ sich nicht zurücklesen und zählt daher nicht als vorausgefüllt." });
+  if (res.untracked?.length) out.push({ level: "warn", code: "untracked-fields", message: `Im Formular gibt es Felder, die nicht erfasst wurden und daher weder ausgefüllt noch geprüft sind: ${res.untracked.slice(0, 4).join(", ")}${res.untracked.length > 4 ? "…" : ""}.` });
   for (const v of res.valErrors) out.push({ level: "warn", code: "validation", message: `Das Formular meldet: „${v}“.` });
   return out;
 }

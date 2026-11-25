@@ -131,6 +131,18 @@ export function handoffDecision({
     }
   }
 
+  // A tailored CV exists but the form shows no résumé upload to take it. The
+  // loop above only sees résumé fields extraction found, so a missed field left
+  // "CV attached" on screen while nothing was uploaded.
+  const hasResumeField = fields.some((field) => field.type === "file" && isResumeLabel(field.label));
+  if (cvAttached && fields.length > 0 && !hasResumeField) {
+    gaps.push({
+      level: "warn",
+      code: "resume-missing",
+      message: "Der angepasste Lebenslauf konnte keinem Upload-Feld im Formular zugeordnet werden und wurde nicht hochgeladen. Hängen Sie ihn im echten Formular selbst an.",
+    });
+  }
+
   return { handoff: gaps.length === 0, gaps };
 }
 

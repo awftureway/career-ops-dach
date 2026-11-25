@@ -433,3 +433,21 @@ test("a retry keeps one ai-filled note and both résumé gaps", () => {
     { code: "resume-missing", message: "No tailored CV was resolved for Cover letter." },
   ]);
 });
+
+// A tailored CV exists, but extraction found no résumé upload in the form (a
+// hidden dropzone input, say). Nothing was uploaded, so the form is not handed
+// over as "CV attached".
+test("a claimed CV with no résumé upload field holds the handoff", () => {
+  const decision = handoffDecision({
+    fields: [{ id: "a", type: "text", label: "Vorname", required: true }],
+    answers: { a: "Ada" },
+    cvAttached: true,
+  });
+  assert.equal(decision.handoff, false);
+  assert.equal(decision.gaps[0].code, "resume-missing");
+});
+
+test("no CV claimed and no résumé field is not a gap", () => {
+  const decision = handoffDecision({ fields: [{ id: "a", type: "text", label: "Vorname" }], answers: { a: "Ada" }, cvAttached: false });
+  assert.equal(decision.handoff, true);
+});
