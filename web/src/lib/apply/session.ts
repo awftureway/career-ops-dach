@@ -127,11 +127,16 @@ function looksLikeApplicationForm(form: ExtractedForm): boolean {
   const hasFile = fs.some((f) => f.type === "file");
   const hasEmail = fs.some((f) => f.type === "email" || /e-?mail/.test(lab(f)));
   const hasAppish = fs.some((f) => /first name|last name|full name|resume|résumé|\bcv\b|cover letter|phone|linkedin|github|why |portfolio|sponsorship|relocat/.test(lab(f)));
+  // A lone e-mail box is a newsletter or job-alert signup, not an application.
+  if (fs.length === 1 && hasEmail && !hasFile && !hasAppish) return false;
   if (hasFile || hasEmail || hasAppish) return true; // clearly an application
   const allSearch = fs.every(
-    (f) => /search|buscar|filtr|keyword|palabra|department|departa|office|oficina|location|ubicaci|remote|category|categor/.test(lab(f)) || /filter|search|keyword/.test((f.nativeId || "").toLowerCase()),
+    (f) => /search|buscar|filtr|keyword|palabra|department|departa|office|oficina|location|ubicaci|remote|category|categor|jobtitel|kompetenz|firmenname|stichwort|suche|\bort\b|plz|umkreis|sprache|deutsch|cookie|informationen auf einem ger|personalisierte (anzeigen|inhalte)|fremdinhalte|werbung/.test(lab(f)) || /filter|search|keyword/.test((f.nativeId || "").toLowerCase()),
   );
   if (allSearch) return false; // a job-board search/filter form
+  // Only optional pick-lists and tick boxes (a cookie dialog, a filter bar) hold
+  // nothing a candidate would type, attach or have to answer.
+  if (fs.every((f) => !f.required && (f.type === "select" || f.type === "checkbox" || f.type === "radio"))) return false;
   if (fs.length <= 3 && fs.every((f) => !f.required)) return false; // too sparse + all optional = not an app form
   return true;
 }

@@ -199,7 +199,12 @@ export async function tryApplyTrigger(page: Page, handoffHosts?: string[]): Prom
     const hrefs = await atsLinks
       .evaluateAll((links) => links.slice(0, 20).map((a) => a.getAttribute("href")))
       .catch(() => [] as (string | null)[]);
-    let href = hrefs.find((h): h is string => !!h && isApplicationHref(h)) ?? null;
+    // A link that ends in /apply or /application beats one that merely contains
+    // "/apply" ("/blog/applying-for-german-citizenship" sat before the real one).
+    let href =
+      hrefs.find((h): h is string => !!h && isApplicationHref(h) && /\/(apply|application)\/?(\?|#|$)/i.test(h)) ??
+      hrefs.find((h): h is string => !!h && isApplicationHref(h)) ??
+      null;
     // arbeitsagentur.de has no apply button: its "Informationen zur Bewerbung"
     // section links to the employer's own application, and the page only
     // renders that link once "Info zur Bewerbung" is pressed. The press is a
