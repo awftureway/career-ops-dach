@@ -4,7 +4,7 @@ import type { ApplyIssue } from "./issue";
 import { pickComboboxOption } from "./option-match.mjs";
 import { checkboxSelections } from "./checkbox-options.mjs";
 import { unsupportedAtsMessage, unsupportedInAppAts } from "./unsupported-ats.mjs";
-import { isApplicationHref } from "./apply-link.mjs";
+import { isApplicationHref, employerLinkFromPanel } from "./apply-link.mjs";
 import { factsOf } from "./drive-action.mjs";
 import { isSubmitControl } from "./submit-guard.mjs";
 
@@ -33,8 +33,9 @@ export function statusBlock(status: number | null | undefined, headers: Record<s
 }
 
 const CONSENT_ROOTS =
-  '#onetrust-banner-sdk, #CybotCookiebotDialog, #truste-consent-track, .qc-cmp2-container, #usercentrics-root, [id*="cookie" i][class*="banner" i], [class*="cookie-consent" i], [aria-label*="cookie" i]';
+  'bahf-cookie-disclaimer-dpl3, #onetrust-banner-sdk, #CybotCookiebotDialog, #truste-consent-track, .qc-cmp2-container, #usercentrics-root, [id*="cookie" i][class*="banner" i], [class*="cookie-consent" i], [aria-label*="cookie" i]';
 const CONSENT_BUTTONS = [
+  '[data-testid="bahf-cookie-disclaimer-btn-ablehnen"]', // arbeitsagentur.de, declined rather than accepted
   "#onetrust-accept-btn-handler",
   "#onetrust-button-accept-all",
   "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll",
@@ -198,7 +199,20 @@ export async function tryApplyTrigger(page: Page, handoffHosts?: string[]): Prom
     const hrefs = await atsLinks
       .evaluateAll((links) => links.slice(0, 20).map((a) => a.getAttribute("href")))
       .catch(() => [] as (string | null)[]);
-    const href = hrefs.find((h): h is string => !!h && isApplicationHref(h)) ?? null;
+    let href = hrefs.find((h): h is string => !!h && isApplicationHref(h)) ?? null;
+    // arbeitsagentur.de has no apply button: its "Informationen zur Bewerbung"
+    // section links to the employer's own application, and the page only
+    // renders that link once "Info zur Bewerbung" is pressed. The press is a
+    // script click, since the site's cookie banner intercepts a pointer click.
+    if (!href && /(^|\.)arbeitsagentur\.de$/i.test(new URL(page.url()).hostname)) {
+      await page.getByRole("button", { name: /info zur bewerbung/i }).first().evaluate((el) => (el as HTMLElement).click()).catch(() => {});
+      await page.waitForTimeout(1500).catch(() => {});
+      const links = await page
+        .locator("a[href^='http']")
+        .evaluateAll((as) => as.slice(0, 1000).map((a) => ({ text: (a.textContent || "").trim(), href: a.getAttribute("href") || "" })))
+        .catch(() => [] as { text: string; href: string }[]);
+      href = employerLinkFromPanel(links, new URL(page.url()).hostname);
+    }
     if (href) {
       const blocked = await blockedTriggerHref(page, href, handoffHosts);
       if (blocked) return { blocked };

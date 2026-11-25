@@ -6,7 +6,7 @@ import { resolveSessionCv, uploadNameForCv } from "@/lib/apply/cv";
 import { answersForRefreshedFields, handoffDecision } from "@/lib/apply/handoff-gate.mjs";
 import { prepareLabeledAnswers, readApplyProfile } from "@/lib/apply/blank-unknown.mjs";
 import { readbackIssues } from "@/lib/apply/prefilled-banner.mjs";
-import { careerOpsRoot } from "@/lib/career-ops";
+import { careerOpsRoot, findApplication } from "@/lib/career-ops";
 import { resolveCliOrFallback } from "@/lib/clis";
 import { readJsonObject } from "@/lib/json-body";
 
@@ -61,12 +61,12 @@ export async function POST(req: Request) {
             return false;
           }
         };
-        const budget = goal === "full" ? 16 : 7;
+        const budget = goal === "full" ? 16 : 10;
         // A refused host (Workday, iCIMS, UKG or apply.handoff_hosts) ends the
         // drive with the same refusal panel the session open shows; its window
         // is already closed by then.
         const refuse = (hit: { vendor: string; label: string; postingUrl: string }) => emit({ t: "unsupported", ...unsupportedSessionJson(hit, body.application, true) });
-        const result = await driveSession(page, cliId, goal, isFormReady, (step) => emit({ t: "step", ...step }), budget, safeAnswers, () => refusedDestination(s.id));
+        const result = await driveSession(page, cliId, goal, isFormReady, (step) => emit({ t: "step", ...step }), budget, safeAnswers, () => refusedDestination(s.id), body.application ? findApplication(body.application)?.role : undefined);
         if (result.unsupported) {
           refuse(result.unsupported);
           return;

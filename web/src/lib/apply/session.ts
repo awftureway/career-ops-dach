@@ -355,7 +355,10 @@ export async function openSession(url: string, cliId?: string, forceAgent?: bool
     if (moved) return moved;
     if (formHasPassword(form)) return abort(LOGIN_WALL_MESSAGE);
   }
-  if (!noApplyBtn && !looksLikeApplicationForm(form)) {
+  // arbeitsagentur.de carries a captcha field of its own, which reads as an
+  // application form; its posting still has to be followed to the employer.
+  const onJobBoard = /(^|\.)arbeitsagentur\.de$/i.test(new URL(page.url()).hostname);
+  if (!noApplyBtn && (onJobBoard || !looksLikeApplicationForm(form))) {
     const trigger = await tryApplyTrigger(page, handoffHosts);
     // The Apply control points at Workday, iCIMS, or UKG. Close this window
     // instead of following it or handing the page to the drive agent.
@@ -382,6 +385,13 @@ export async function openSession(url: string, cliId?: string, forceAgent?: bool
       if (formHasPassword(form)) return abort(LOGIN_WALL_MESSAGE);
       await snap();
     }
+  }
+  // arbeitsagentur.de hides the employer's application link behind an image
+  // captcha. It is not solved here: the posting stays unopened and the user is
+  // told how to carry on, instead of the captcha field being read as a form.
+  if (onJobBoard && /(^|\.)arbeitsagentur\.de$/i.test(new URL(page.url()).hostname)) {
+    const gated = await page.evaluate(() => /Sicherheitsabfrage/.test(document.body.innerText) && !document.querySelector('a[href*="/apply"]')).catch(() => false);
+    if (gated) return abort("Die Arbeitsagentur zeigt den Bewerbungslink des Arbeitgebers erst nach einer Sicherheitsabfrage (Captcha). Öffnen Sie die Stelle im Browser, lösen Sie die Abfrage unter „Informationen zur Bewerbung“ und fügen Sie den Link „Über Internetseite des Arbeitgebers“ hier ein.");
   }
   // Recovering the form above (scroll, a second pickFormFrame) gives the page
   // time to move on its own. Check where it is now, with the same list, before

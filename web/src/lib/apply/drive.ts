@@ -181,6 +181,7 @@ export async function driveSession(
   budget = 10,
   answers?: { label: string; value: string }[],
   refused?: () => Promise<{ vendor: string; label: string; postingUrl: string } | null>,
+  role?: string,
 ): Promise<DriveResult> {
   const steps: DriveStep[] = [];
   // A page on a refused host is never driven: checked before the first step,
@@ -202,7 +203,7 @@ export async function driveSession(
       return undefined;
     }
   };
-  const goalText = driveGoalText(goal, answers);
+  const goalText = driveGoalText(goal, answers, role);
   let resumeId: string | null = null;
 
   const stopVerb = goal === "reach" ? '{"action":"reached_form"}            STOP — the fillable application form is now visible' : '{"action":"done"}                    STOP — every answer is filled (you NEVER submit; the human does)';
