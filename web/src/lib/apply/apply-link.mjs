@@ -38,3 +38,33 @@ export function isApplicationHref(href) {
     return false;
   }
 }
+
+/**
+ * The link to the posting's own application among the links of a job board's
+ * posting page. arbeitsagentur.de lists it under "Informationen zur Bewerbung"
+ * as "Bewerben Sie sich: Über Internetseite des Arbeitgebers", and it points at
+ * the employer's own application (its ATS), which differs for every company.
+ * Nothing else is followed: a "Karriereseite" or "Homepage" link next to it can
+ * belong to a parent company and is not this posting. Contact e-mail addresses
+ * and the board's own pages never qualify.
+ *
+ * @param {{ text?: string, href?: string }[]} links
+ * @param {string} boardHost host of the board page, e.g. "www.arbeitsagentur.de"
+ * @returns {string | null}
+ */
+export function employerLinkFromPanel(links, boardHost) {
+  const board = String(boardHost || "").toLowerCase().replace(/^www\./, "");
+  for (const link of Array.isArray(links) ? links : []) {
+    if (!/(über|ueber)\s+(die\s+)?(internet|web)seite des arbeitgebers/i.test(link?.text || "")) continue;
+    if (!isApplicationHref(link.href)) continue;
+    let host;
+    try {
+      host = new URL(link.href).hostname.toLowerCase().replace(/^www\./, "");
+    } catch {
+      continue;
+    }
+    if (host === board || host.endsWith(`.${board}`)) continue;
+    return link.href;
+  }
+  return null;
+}

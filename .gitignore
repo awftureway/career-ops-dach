@@ -316,3 +316,7 @@ web/out/
 # Regenerate with `npm run harvest:buildlist`.
 buildlist-*.yml
 buildlist-*.yml.progress.json
+
+# local UI/design tooling state, not part of the system layer
+.impeccable/
+config/ui-appearance.json

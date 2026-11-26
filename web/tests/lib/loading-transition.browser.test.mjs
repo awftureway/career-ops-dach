@@ -32,7 +32,7 @@ test("loading transitions keep context and only latest requests settle Today", {
   page.on("pageerror", (error) => errors.push(error.message));
   const tab = (label) => page.getByRole("button", { name: new RegExp(`^${label} \\d+$`) });
   const heading = page.getByRole("heading", { level: 1 });
-  const updatesAlert = page.getByRole("alert").filter({ hasText: "could not be loaded." });
+  const updatesAlert = page.getByRole("alert").filter({ hasText: "konnte nicht geladen werden." });
   async function until(check) {
     const started = Date.now();
     while (!await check()) {
@@ -51,7 +51,7 @@ test("loading transitions keep context and only latest requests settle Today", {
   // Check the server, not just the local marker: a misconfigured test URL
   // must never direct fixture mutations at a personal tracker.
   await page.goto(`${origin.origin}/pipeline?tab=ALL`);
-  await page.getByRole("button", { name: /^Edit status/ }).first().waitFor();
+  await page.getByRole("button", { name: /^Status für .* bearbeiten/ }).first().waitFor();
   assert.equal(await page.locator("tbody tr").count(), 3);
   for (const [n, company] of [["11", "Fixture Alpha"], ["12", "Fixture Beta"], ["13", "Fixture Gamma"]]) {
     const row = page.locator("tbody tr").filter({ has: page.getByRole("link", { name: `#${n}`, exact: true }) });
@@ -65,7 +65,7 @@ test("loading transitions keep context and only latest requests settle Today", {
 
   await t.test("Pipeline filter keeps heading, search, tabs and result skeletons", async (subtest) => {
     await page.goto(`${origin.origin}/pipeline?tab=ALL`);
-    await page.getByRole("button", { name: /^Edit status/ }).first().waitFor();
+    await page.getByRole("button", { name: /^Status für .* bearbeiten/ }).first().waitFor();
     const pending = gate();
     let held = false;
     subtest.after(async () => { pending.release(); await page.unrouteAll({ behavior: "wait" }); });
@@ -76,7 +76,7 @@ test("loading transitions keep context and only latest requests settle Today", {
     await tab("APPLIED").click();
     await until(() => held);
     assert.equal(await heading.innerText(), "Pipeline");
-    assert.equal(await page.getByPlaceholder("Search company or role…").isVisible(), true);
+    assert.equal(await page.getByPlaceholder("Firma oder Rolle suchen …").isVisible(), true);
     assert.equal(await tab("ALL").isVisible(), true);
     assert.equal(await page.locator('tbody[aria-busy="true"]').count(), 1);
     assert.ok(await page.locator('tbody[aria-busy="true"] tr').count() > 0);
@@ -84,7 +84,7 @@ test("loading transitions keep context and only latest requests settle Today", {
     pending.release();
     await page.waitForURL(/tab=APPLIED/);
     await page.locator('tbody[aria-busy="false"]').waitFor();
-    assert.equal(await page.getByRole("button", { name: /^Edit status/ }).count(), 3);
+    assert.equal(await page.getByRole("button", { name: /^Status für .* bearbeiten/ }).count(), 3);
   });
 
   await t.test("Follow-ups query transition retains page context", async (subtest) => {
@@ -97,10 +97,10 @@ test("loading transitions keep context and only latest requests settle Today", {
       if (route.request().headers().rsc === "1") { held = true; await pending.promise; }
       await route.continue();
     });
-    await page.getByRole("button", { name: /^Company/ }).click();
+    await page.getByRole("button", { name: /^Firma/ }).click();
     await until(() => held);
-    assert.equal(await heading.innerText(), "Follow-ups");
-    assert.equal(await page.getByPlaceholder("Search company or role…").isVisible(), true);
+    assert.equal(await heading.innerText(), "Nachfassen");
+    assert.equal(await page.getByPlaceholder("Firma oder Rolle suchen …").isVisible(), true);
     assert.equal(await tab("ALL").isVisible(), true);
     assert.equal(await page.locator('tbody[aria-busy="true"]').count(), 1);
     assert.ok(await page.locator('tbody[aria-busy="true"] tr').count() > 0);
@@ -125,7 +125,7 @@ test("loading transitions keep context and only latest requests settle Today", {
     });
     await page.goto(origin.origin);
     await page.getByRole("button", { name: "Updates erneut laden" }).waitFor();
-    assert.equal(await heading.innerText(), "Some updates are unavailable.");
+    assert.equal(await heading.innerText(), "Einige Updates sind nicht verfügbar.");
     assert.equal(await updatesAlert.isVisible(), true);
     assert.equal(await page.getByText("Sie sind auf dem neuesten Stand.", { exact: true }).count(), 0);
     retry = true;
@@ -133,7 +133,7 @@ test("loading transitions keep context and only latest requests settle Today", {
     await page.getByRole("button", { name: "Updates erneut laden" }).click();
     await until(() => seen.size === 2);
     assert.equal(await heading.innerText(), "Ihre Aufgabenliste lädt …");
-    await page.getByRole("region", { name: "Loading follow-ups due" }).waitFor();
+    await page.getByRole("region", { name: "Fällige Nachfass-Aktionen werden geladen" }).waitFor();
     pending.release();
     await page.getByRole("heading", { name: "Sie sind auf dem neuesten Stand." }).waitFor();
     assert.equal(await updatesAlert.count(), 0);
@@ -148,8 +148,8 @@ test("loading transitions keep context and only latest requests settle Today", {
     }));
     await page.goto(origin.origin);
     await page.getByRole("button", { name: "Updates erneut laden" }).waitFor();
-    assert.equal(await heading.innerText(), "Some updates are unavailable.");
-    assert.match(await updatesAlert.innerText(), /Follow-ups could not be loaded/);
+    assert.equal(await heading.innerText(), "Einige Updates sind nicht verfügbar.");
+    assert.match(await updatesAlert.innerText(), /Nachfassen konnte nicht geladen werden/);
     assert.equal(await page.getByText("Sie sind auf dem neuesten Stand.", { exact: true }).count(), 0);
   });
 

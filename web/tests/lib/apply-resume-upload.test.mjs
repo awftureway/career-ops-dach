@@ -49,7 +49,7 @@ for (const exactFails of [false, true]) {
         first: () => ({ setInputFiles: async (file) => {
           if (exactFails && selector === '[data-co-field="resume"]') throw new Error("tagged input replaced");
           uploads.push({ selector, file });
-        } }),
+        }, evaluate: async () => true }),
       }),
       evaluate: async () => ({ mismatches: [], requiredEmpty: [], valErrors: [] }),
     };
@@ -76,7 +76,7 @@ test("CV upload carries the display name and leaves the file on disk as it was",
     url: () => "about:blank",
     locator: (selector) => ({
       count: async () => 0,
-      first: () => ({ setInputFiles: async (file) => { uploads.push({ selector, file }); } }),
+      first: () => ({ setInputFiles: async (file) => { uploads.push({ selector, file }); }, evaluate: async () => true }),
     }),
     evaluate: async () => ({ mismatches: [], requiredEmpty: [], valErrors: [] }),
   };
@@ -138,4 +138,49 @@ test("a re-rendered resume field never receives its CV through the cover input",
   assert.equal(await page.locator("#cover").evaluate((el) => el.files.length), 0, "the CV must not land in the cover-letter field");
   assert.equal(await page.locator("#resume").evaluate((el) => el.files.length), 0);
   assert.equal(failed.steps[0].ok, false);
+});
+
+// An upload counts only when the input holds the file afterwards: a dropzone
+// that resets its input made setInputFiles return cleanly with nothing attached.
+test("CV upload is not counted when neither the input nor the form shows the file", async () => {
+  const frame = {
+    url: () => "about:blank",
+    locator: () => ({
+      count: async () => 0,
+      first: () => ({ setInputFiles: async () => {}, evaluate: async () => false }),
+    }),
+    evaluate: async () => ({ mismatches: [], requiredEmpty: [], valErrors: [] }),
+  };
+  const page = { screenshot: async () => Buffer.from("fixture"), frames: () => [frame], waitForTimeout: async () => {} };
+  const result = await withSession(frame, page, (id) => fillSession(id, {}, [resume], "/fixture/cv.pdf"));
+  assert.equal(result.steps[0].ok, false);
+});
+
+// Controls the extractor never tagged are reported, so a missed upload field no
+// longer leaves a form that looks complete.
+test("CV upload counts when the form shows the file name although the input was swapped", async () => {
+  const frame = {
+    url: () => "about:blank",
+    locator: () => ({
+      count: async () => 0,
+      first: () => ({ setInputFiles: async () => {}, evaluate: async () => false }),
+    }),
+    evaluate: async (fn, arg) => (typeof arg === "string" ? true : { mismatches: [], requiredEmpty: [], valErrors: [] }),
+  };
+  const page = { screenshot: async () => Buffer.from("fixture"), frames: () => [frame], waitForTimeout: async () => {} };
+  const result = await withSession(frame, page, (id) => fillSession(id, {}, [resume], "/fixture/cv.pdf"));
+  assert.equal(result.steps[0].ok, true);
+});
+
+test("untracked controls on the live form are reported", async () => {
+  const frame = {
+    url: () => "about:blank",
+    locator: () => ({ count: async () => 0, first: () => ({}) }),
+    evaluate: async () => ({ mismatches: [], requiredEmpty: [], unverified: [], valErrors: [], comboboxes: [], untracked: ["Upload Lebenslauf"] }),
+  };
+  const page = { screenshot: async () => Buffer.from("fixture"), frames: () => [frame] };
+  const result = await withSession(frame, page, (id) => fillSession(id, {}, [{ id: "n", type: "text", label: "Name", required: false }], undefined));
+  const issue = result.issues.find((i) => i.code === "untracked-fields");
+  assert.ok(issue);
+  assert.match(issue.message, /Upload Lebenslauf/);
 });

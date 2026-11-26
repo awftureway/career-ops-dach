@@ -39,7 +39,7 @@ test("version pill and Ask stay out of the main column at 1440x900", {
   const main = await page.locator("main").boundingBox();
   const askBox = await ask.boundingBox();
   const pillBox = await report.locator("xpath=..").boundingBox();
-  const theme = await page.getByRole("complementary").filter({ has: page.getByRole("navigation") }).getByRole("button", { name: "Dark mode" }).boundingBox();
+  const theme = await page.getByRole("complementary").filter({ has: page.getByRole("navigation") }).getByRole("button", { name: "Dunkelmodus" }).boundingBox();
   assert.ok(main && askBox && pillBox && theme);
 
   assert.equal(overlapSize(pillBox, main), null, "version pill intersects main");
@@ -79,7 +79,7 @@ test("Ask stays off the sidebar's links and controls at short and tall desktop h
     const ask = page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true });
     const sidebar = page.getByRole("complementary").filter({ has: page.getByRole("navigation") });
     await ask.waitFor();
-    await sidebar.getByRole("button", { name: "Dark mode" }).waitFor();
+    await sidebar.getByRole("button", { name: "Dunkelmodus" }).waitFor();
 
     const askBox = await ask.boundingBox();
     assert.ok(askBox);

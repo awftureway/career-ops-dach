@@ -88,7 +88,9 @@ export async function extractForm(ctx: Page | Frame): Promise<ExtractedForm> {
         // Its labels count wherever they sit (a wrapping label or a
         // label[for] outside a hidden wrapper). A box alone is not proof:
         // a visibility:hidden panel keeps its boxes.
-        if (type !== "radio" && type !== "checkbox") return false;
+        // A file input is the same: Personio and many ATSs hide the real <input
+        // type=file> behind a dropzone, and setInputFiles reaches it anyway.
+        if (type !== "radio" && type !== "checkbox" && type !== "file") return false;
         const rendered = (proxy: Element | null) =>
           !!proxy && proxy.getClientRects().length > 0 && getComputedStyle(proxy).visibility !== "hidden";
         const labels = Array.from((node as HTMLInputElement).labels ?? []);

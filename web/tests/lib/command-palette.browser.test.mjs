@@ -24,7 +24,7 @@ test("Ctrl+K jumps to a page or an application from anywhere", { skip: liveServe
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   const combobox = page.getByRole("combobox", { name: "Zu einer Seite oder Bewerbung springen" });
-  const trigger = page.getByRole("button", { name: "Search", exact: true });
+  const trigger = page.getByRole("button", { name: "Suche", exact: true });
   const isFocused = (locator) => locator.evaluate((el) => el === document.activeElement);
 
   await page.goto(`${origin.origin}/analytics`);
@@ -46,7 +46,7 @@ test("Ctrl+K jumps to a page or an application from anywhere", { skip: liveServe
   await page.keyboard.press("Control+k");
   await combobox.waitFor();
   assert.equal(await combobox.inputValue(), "", "the query resets on open");
-  await page.keyboard.type("config");
+  await page.keyboard.type("einstellungen");
   await page.keyboard.press("Enter");
   await page.waitForURL(`${origin.origin}/config`);
 

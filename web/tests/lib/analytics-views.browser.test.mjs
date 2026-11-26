@@ -29,7 +29,7 @@ test("Analytics rebase retains Progress, Search stats and core Insights", {
   const page = await browser.newPage();
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const nav = page.getByRole("navigation", { name: "Analytics views" });
+  const nav = page.getByRole("navigation", { name: "Auswertungsansichten" });
   for (const query of ["", "?view=progress", "?view=bogus", "?tab=search-stats", "?view=progress&tab=search-stats"]) {
     await t.test(`Progress and core conversion survive ${query || "the default URL"}`, async () => {
       const response = await page.goto(`${origin.origin}/analytics${query}`);
@@ -53,11 +53,11 @@ test("Analytics rebase retains Progress, Search stats and core Insights", {
       count: el.nextElementSibling?.textContent,
     })));
     assert.ok(rows.length >= 2, JSON.stringify(rows));
-    assert.match(rows[0].label, /^Tracked: \d+$/);
+    assert.match(rows[0].label, /^(?:Tracked|Erfasst): \d+$/);
     const tracked = Number(rows[0].count);
     assert.ok(tracked > 0, JSON.stringify(rows));
     for (const row of rows) {
-      assert.doesNotMatch(row.label, /percent/);
+      assert.doesNotMatch(row.label, /Prozent/);
       assert.match(row.count, /^\d+$/, `funnel row prints only its count: ${JSON.stringify(row)}`);
       assert.ok(Math.abs(parseFloat(row.width) - (Number(row.count) / tracked) * 100) < 0.01, JSON.stringify(row));
     }

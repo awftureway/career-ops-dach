@@ -80,7 +80,7 @@ test("status confirmations recover from busy writes without replaying ambiguous 
   }
   const input = page.getByRole("textbox", { name: "Nachricht an den Assistenten", exact: true });
   const open = page.getByRole("button", { name: "Fragen Sie den Assistenten", exact: true });
-  const summary = n => `Mark #${n} → Rejected?`;
+  const summary = n => `#${n} als Rejected markieren?`;
   const card = n => page.getByRole("group", { name: summary(n), exact: true });
   const button = (verb, n) => page.getByRole("button", { name: `${verb}: ${summary(n)}`, exact: true });
   const result = n => card(n).locator('[tabindex="-1"]');
@@ -116,7 +116,7 @@ test("status confirmations recover from busy writes without replaying ambiguous 
   await page.keyboard.press("Enter");
   assert.equal(calls.length, 1); assert.equal((await ledger()).length, 0);
   releases.get(1)();
-  await card("11").getByText(/Status was not saved/).waitFor();
+  await card("11").getByText(/Status nicht gespeichert/).waitFor();
   await until(() => focused(result("11")));
   assert.equal(await feedback("11").innerText(), "", "focused error must not also be live announced");
   const tree = await cdp.send("Accessibility.getFullAXTree");
@@ -135,7 +135,7 @@ test("status confirmations recover from busy writes without replaying ambiguous 
   await snapshot("02-retry-saved");
 
   await propose("12"); await tabTo(button("Bestätigen", "12")); await page.keyboard.press("Enter");
-  await card("12").getByText(/could not be confirmed/).waitFor();
+  await card("12").getByText(/konnte nicht bestätigt werden/).waitFor();
   await until(() => focused(result("12")));
   assert.equal(await button("Erneut versuchen", "12").count(), 0);
   assert.equal((await ledger()).length, 2, "the disconnected request actually committed");
@@ -146,20 +146,20 @@ test("status confirmations recover from busy writes without replaying ambiguous 
 
   await propose("13");
   await button("Bestätigen", "13").evaluate(el => el.click()); // user remains in composer
-  await card("13").getByText(/could not be confirmed/).waitFor();
+  await card("13").getByText(/konnte nicht bestätigt werden/).waitFor();
   assert.equal(await focused(input), true);
-  await until(async () => (await feedback("13").innerText()).includes("could not be confirmed"));
+  await until(async () => (await feedback("13").innerText()).includes("konnte nicht bestätigt werden"));
   assert.equal(await button("Erneut versuchen", "13").count(), 0);
   await page.keyboard.press("Escape"); await open.waitFor(); await page.keyboard.press("Enter"); await input.waitFor();
-  assert.deepEqual(await page.getByRole("status", { name: /^Status change feedback:/ }).allTextContents(), ["", "", ""], "reopening does not replay settled announcements");
+  assert.deepEqual(await page.getByRole("status", { name: /^Rückmeldung zur Statusänderung:/ }).allTextContents(), ["", "", ""], "reopening does not replay settled announcements");
 
   await propose("14"); await tabTo(button("Bestätigen", "14")); await page.keyboard.press("Enter");
   await button("Erneut versuchen", "14").waitFor();
   await until(() => saved?.messages.some(m => m.parts.some(p => p.type === "note" && p.text.includes("#14") && p.text.includes("failed"))));
   const beforeReload = calls.length;
   await page.reload(); await open.waitFor(); await tabTo(open); await page.keyboard.press("Enter"); await input.waitFor();
-  await page.getByText(/Mark #14 → Rejected\? \(failed/).waitFor();
-  await page.getByText(/Mark #12 → Rejected\? \(unconfirmed/).waitFor();
+  await page.getByText(/#14 als Rejected markieren\? \(failed/).waitFor();
+  await page.getByText(/#12 als Rejected markieren\? \(unconfirmed/).waitFor();
   assert.equal(calls.length, beforeReload);
   assert.equal(await page.getByRole("button", { name: /^(Erneut versuchen|Bestätigen):/ }).count(), 0);
   assert.equal((await ledger()).length, 2);

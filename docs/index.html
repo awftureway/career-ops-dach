@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>career-ops-dach – Dokumentation</title>
+  <meta name="description" content="Dokumentation für career-ops-dach: die KI-gestützte Jobsuche für den DACH-Raum, die lokal in Ihrem KI-Kommandozeilenwerkzeug läuft.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="index.html">career-ops<span>-dach</span></a>
+      <nav class="top-nav" aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="index.html" aria-current="page">Start</a></li>
+          <li><a href="erste-schritte/claude.html">Erste Schritte</a></li>
+          <li><a href="https://github.com/awftureway/career-ops-dach">GitHub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main id="inhalt" class="content">
+      <p class="eyebrow">Dokumentation</p>
+      <h1>Jobsuche mit KI – lokal, nachvollziehbar, unter Ihrer Kontrolle</h1>
+      <p class="lead">career-ops-dach bewertet Stellenanzeigen anhand Ihres Lebenslaufs, erstellt passende Bewerbungsunterlagen und führt Buch über Ihre Bewerbungen. Es läuft in einem KI-Kommandozeilenwerkzeug wie Claude Code auf Ihrem eigenen Rechner.</p>
+
+      <h2 id="was-es-tut">Was career-ops-dach für Sie erledigt</h2>
+      <ul class="cards">
+        <li class="card">
+          <h3>Stellen finden</h3>
+          <p>Der Scanner durchsucht die Jobportale und Firmen-Karriereseiten aus Ihrer <code>portals.yml</code> und sammelt neue Treffer in einem Posteingang.</p>
+        </li>
+        <li class="card">
+          <h3>Stellen bewerten</h3>
+          <p>Fügen Sie eine Stellen-URL oder den Anzeigentext ein. Sie erhalten einen Bericht mit Passung, Lücken, Gehaltsrecherche und einer Bewertung von 1 bis 5.</p>
+        </li>
+        <li class="card">
+          <h3>Unterlagen erstellen</h3>
+          <p>Aus Ihrer <code>cv.md</code> entsteht ein auf die Stelle zugeschnittener Lebenslauf als PDF. Schlüsselwörter werden umformuliert, nie erfunden.</p>
+        </li>
+        <li class="card">
+          <h3>Bewerbungen verfolgen</h3>
+          <p>Jede Bewertung landet im Tracker <code>data/applications.md</code>, mit einheitlichen Status von „Evaluated“ bis „Hired“.</p>
+        </li>
+      </ul>
+
+      <h2 id="grundsaetze">Zwei Grundsätze</h2>
+      <div class="callout key">
+        <strong>Ihre Daten bleiben bei Ihnen.</strong>
+        <p>Lebenslauf, Profil, Tracker, Berichte und erzeugte PDFs liegen als Dateien in Ihrem lokalen Projektordner. Sie sind per <code>.gitignore</code> von Git ausgeschlossen und werden daher nicht versehentlich in ein Repository hochgeladen. Für die Bewertung sendet Ihr KI-Werkzeug die nötigen Inhalte an den jeweiligen KI-Anbieter.</p>
+      </div>
+      <div class="callout key">
+        <strong>Nichts wird ohne Ihre Prüfung abgeschickt.</strong>
+        <p>career-ops-dach füllt Formulare aus, entwirft Antworten und erzeugt PDFs, hält aber immer vor „Absenden“ an. Die Entscheidung, ob und wo Sie sich bewerben, treffen ausschließlich Sie.</p>
+      </div>
+
+      <h2 id="erste-schritte">Erste Schritte</h2>
+      <p>Die Anleitung führt Sie von der Installation bis zur ersten bewerteten Stelle. Wählen Sie das KI-Werkzeug, mit dem Sie arbeiten:</p>
+      <ul class="cards">
+        <li class="card">
+          <h3>Claude Code</h3>
+          <p>Schritt für Schritt: Voraussetzungen, Installation, Einrichtung, erster Scan, erste Bewertung und Tracker.</p>
+          <p><a class="more" href="erste-schritte/claude.html">Zur Anleitung für Claude Code</a></p>
+        </li>
+        <li class="card muted">
+          <h3>Weitere CLIs folgen</h3>
+          <p>Anleitungen für weitere Werkzeuge wie Codex sind in Vorbereitung. Die grundlegenden Schritte sind für alle unterstützten CLIs gleich.</p>
+        </li>
+      </ul>
+
+      <h2 id="ueber">Über dieses Projekt</h2>
+      <p>career-ops-dach ist eine Anpassung des Open-Source-Projekts career-ops für den deutschsprachigen Arbeitsmarkt. Es ergänzt DACH-Jobbörsen, Voreinstellungen für den deutschen Markt und eine deutsche Benutzeroberfläche. Die ausführliche technische Dokumentation (auf Englisch) finden Sie im Ordner <a href="https://github.com/awftureway/career-ops-dach/tree/main/docs"><code>docs/</code> des Repositorys</a>.</p>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>career-ops-dach basiert auf <a href="https://github.com/career-ops-hq/career-ops">career-ops</a> von Santiago Fernández de Valderrama und Mitwirkenden, veröffentlicht unter der MIT-Lizenz.</p>
+      <p>Diese Seiten verwenden keine Cookies, keine externen Schriften und keine Tracker.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -47,7 +47,7 @@ test("Follow-ups holds the table's place while the cadence loads", {
     });
     const response = await page.goto(`${origin.origin}/followups`);
     assert.equal(response.status(), 200);
-    await visible(page.getByRole("heading", { name: "Follow-ups", exact: true })).waitFor();
+    await visible(page.getByRole("heading", { name: "Nachfassen", exact: true })).waitFor();
     await busyBody.waitFor({ timeout: 15_000 });
     const started = Date.now();
     while (!requested) {
@@ -55,7 +55,7 @@ test("Follow-ups holds the table's place while the cadence loads", {
       await page.waitForTimeout(50);
     }
     assert.equal(await busyBody.count(), 1, "the busy table is still up once the cadence request is in flight");
-    for (const name of ["Company", "Role", "Urgency", "Next follow-up"]) {
+    for (const name of ["Firma", "Rolle", "Dringlichkeit", "Nächstes Nachfassen"]) {
       assert.equal(await table.getByRole("columnheader", { name: new RegExp(`^${name}`) }).isVisible(), true, `${name} header visible while loading`);
     }
     assert.ok(await busyBody.locator("tr").count() > 0);

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Erste Schritte mit Claude Code – career-ops-dach</title>
+  <meta name="description" content="Schritt-für-Schritt-Anleitung: career-ops-dach mit Claude Code installieren, einrichten und die erste Stelle bewerten.">
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="../index.html">career-ops<span>-dach</span></a>
+      <nav class="top-nav" aria-label="Hauptnavigation">
+        <ul>
+          <li><a href="../index.html">Start</a></li>
+          <li><a href="claude.html" aria-current="page">Erste Schritte</a></li>
+          <li><a href="https://github.com/awftureway/career-ops-dach">GitHub</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout with-sidebar">
+    <aside class="sidebar">
+      <nav aria-label="Erste Schritte">
+        <h2>Erste Schritte</h2>
+        <ul>
+          <li><a href="claude.html" aria-current="page">Claude Code</a></li>
+          <!-- Weitere CLIs hier als Geschwisterseiten ergänzen, z. B. codex.html -->
+          <li><span class="placeholder">Weitere CLIs folgen</span></li>
+        </ul>
+        <h2>Auf dieser Seite</h2>
+        <ol>
+          <li><a href="#voraussetzungen">Voraussetzungen</a></li>
+          <li><a href="#klonen">Repository klonen</a></li>
+          <li><a href="#installieren">Abhängigkeiten installieren</a></li>
+          <li><a href="#claude-code">Claude Code starten</a></li>
+          <li><a href="#doctor">Systemcheck</a></li>
+          <li><a href="#onboarding">Einrichtung</a></li>
+          <li><a href="#scan">Erster Scan</a></li>
+          <li><a href="#bewertung">Erste Bewertung</a></li>
+          <li><a href="#tracker">Tracker</a></li>
+        </ol>
+      </nav>
+    </aside>
+
+    <main id="inhalt" class="content">
+      <p class="eyebrow">Erste Schritte · Claude Code</p>
+      <h1>career-ops-dach mit Claude Code einrichten</h1>
+      <p class="lead">Diese Anleitung führt Sie in neun Schritten von einem leeren Rechner zur ersten bewerteten Stellenanzeige. Rechnen Sie mit etwa 30 Minuten, den größten Teil davon für Ihr Profil.</p>
+
+      <div class="callout key">
+        <strong>Bevor Sie beginnen: Ihre Daten bleiben lokal.</strong>
+        <p>Alles, was Sie über sich eingeben (<code>cv.md</code>, <code>config/profile.yml</code>, <code>portals.yml</code>, <code>modes/_profile.md</code>, der Ordner <code>data/</code> mit dem Tracker, <code>reports/</code> und <code>output/</code>), bleibt als Datei auf Ihrem Rechner. Diese Dateien sind per <code>.gitignore</code> von Git ausgeschlossen. Zur Bewertung schickt Claude Code die benötigten Inhalte an Anthropic; mehr dazu in <a href="https://github.com/awftureway/career-ops-dach/blob/main/docs/PRIVACY.md">PRIVACY.md</a>.</p>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <h2 id="voraussetzungen">Voraussetzungen prüfen</h2>
+          <p>Sie benötigen:</p>
+          <ul>
+            <li><strong>Node.js 22.13 oder neuer</strong> (ab Version 23 mindestens 23.4). Download unter <a href="https://nodejs.org">nodejs.org</a>. <code>npx</code> ist darin enthalten.</li>
+            <li><strong>Git</strong>, um das Repository herunterzuladen.</li>
+            <li><strong>Claude Code</strong> mit einem Claude-Abonnement oder einem API-Zugang (siehe Schritt 4).</li>
+          </ul>
+          <p>Prüfen Sie im Terminal, welche Versionen installiert sind:</p>
+          <div class="code" data-lang="shell"><pre><code>node --version
+git --version</code></pre></div>
+          <p>Unter Windows beachten Sie bitte die Hinweise in <a href="https://github.com/awftureway/career-ops-dach/blob/main/docs/WINDOWS.md">WINDOWS.md</a>.</p>
+        </li>
+
+        <li class="step">
+          <h2 id="klonen">Repository klonen</h2>
+          <p>Laden Sie career-ops-dach in einen Ordner Ihrer Wahl und wechseln Sie hinein:</p>
+          <div class="code" data-lang="shell"><pre><code>git clone https://github.com/awftureway/career-ops-dach.git
+cd career-ops-dach</code></pre></div>
+          <div class="callout">
+            <strong>Hinweis zum Installer</strong>
+            <p>Der Befehl <code>npx @santifer/career-ops init</code> aus dem Originalprojekt installiert das ursprüngliche career-ops ohne die DACH-Erweiterungen. Für diese Version verwenden Sie bitte <code>git clone</code> wie oben.</p>
+          </div>
+        </li>
+
+        <li class="step">
+          <h2 id="installieren">Abhängigkeiten installieren</h2>
+          <div class="code" data-lang="shell"><pre><code>npm install</code></pre></div>
+          <p>Dabei wird auch der Browser Chromium für Playwright heruntergeladen. Er wird für PDFs und für die Prüfung, ob eine Stelle noch ausgeschrieben ist, gebraucht. Falls dieser Teil fehlschlägt, holen Sie ihn so nach:</p>
+          <div class="code" data-lang="shell"><pre><code>npx playwright install chromium</code></pre></div>
+        </li>
+
+        <li class="step">
+          <h2 id="claude-code">Claude Code installieren und starten</h2>
+          <p>Installieren Sie Claude Code nach der offiziellen Anleitung auf <a href="https://claude.ai/code">claude.ai/code</a>. Starten Sie es anschließend <em>im Projektordner</em>:</p>
+          <div class="code" data-lang="shell"><pre><code>claude</code></pre></div>
+          <p>Beim ersten Start melden Sie sich mit <code>/login</code> an. Claude Code liest dann automatisch die Projektregeln aus <code>CLAUDE.md</code> und <code>AGENTS.md</code>, und der Befehl <code>/career-ops</code> steht zur Verfügung. Ohne Zusatz zeigt er das Befehlsmenü.</p>
+          <div class="callout warn">
+            <strong>Abonnement oder API-Schlüssel?</strong>
+            <p>Ist in Ihrer Umgebung die Variable <code>ANTHROPIC_API_KEY</code> gesetzt, verwendet Claude Code diesen Schlüssel und rechnet pro Token ab, auch wenn Sie ein Abonnement haben. Prüfen Sie das mit <code>echo $ANTHROPIC_API_KEY</code>. Gibt der Befehl etwas aus und möchten Sie Ihr Abonnement nutzen, entfernen Sie die Variable aus Ihrem Shell-Profil, starten das Terminal neu und melden sich mit <code>/login</code> an.</p>
+          </div>
+        </li>
+
+        <li class="step">
+          <h2 id="doctor">Systemcheck ausführen</h2>
+          <p>Der Systemcheck zeigt, ob alles bereit ist und welche persönlichen Dateien noch fehlen. Sie können ihn in einem zweiten Terminal im Projektordner selbst ausführen; Claude Code ruft ihn vor der ersten Bewertung ohnehin auf.</p>
+          <div class="code" data-lang="shell"><pre><code>node doctor.mjs --json</code></pre></div>
+          <p>Die wichtigsten Felder der Ausgabe:</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Feld</th><th scope="col">Bedeutung</th></tr></thead>
+              <tbody>
+                <tr><td><code>onboardingNeeded</code></td><td><code>true</code>, solange Pflichtdateien fehlen. Dann folgt die Einrichtung in Schritt 6.</td></tr>
+                <tr><td><code>missing</code></td><td>Welche von <code>cv.md</code>, <code>config/profile.yml</code>, <code>modes/_profile.md</code> und <code>portals.yml</code> noch fehlen.</td></tr>
+                <tr><td><code>unpersonalized</code></td><td>Dateien, die noch Vorlageninhalt enthalten. Ein unverändertes <code>modes/_profile.md</code> bewertet Stellen nach dem Profil des Vorlagenautors, nicht nach Ihrem.</td></tr>
+                <tr><td><code>warnings</code></td><td>Hinweise, die die Nutzung nicht blockieren.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Eine gut lesbare Fassung für Menschen erhalten Sie mit <code>npm run doctor</code>. Der Befehl ist rein lesend und legt keine Dateien an.</p>
+        </li>
+
+        <li class="step">
+          <h2 id="onboarding">Einrichtung im Gespräch</h2>
+          <p>Sie müssen keine Konfigurationsdatei von Hand bearbeiten. Schreiben Sie in Claude Code zum Beispiel:</p>
+          <div class="code" data-lang="text"><pre><code>Richte bitte mein career-ops-Profil ein.</code></pre></div>
+          <p>Claude Code führt Sie dann durch diese Schritte und fragt Sie vor jedem Schritt nach Ihren Angaben:</p>
+          <ol>
+            <li><strong>Vorlagen anlegen</strong> mit <code>node doctor.mjs --json --init-templates</code>. Fehlende Dateien wie <code>modes/_profile.md</code> werden aus Vorlagen kopiert, bestehende bleiben unverändert.</li>
+            <li><strong>Lebenslauf (<code>cv.md</code>)</strong>: Sie fügen Ihren Lebenslauf als Text ein oder beschreiben Ihre Erfahrung. Daraus entsteht eine Markdown-Datei mit Abschnitten wie <code>## Experience</code> und <code>## Skills</code>. Die Struktur zeigt <a href="https://github.com/awftureway/career-ops-dach/blob/main/examples/cv-example.md"><code>examples/cv-example.md</code></a>.</li>
+            <li><strong>Profil (<code>config/profile.yml</code>)</strong>: Name, E-Mail, Wohnort und Zeitzone, Zielpositionen, Gehaltsvorstellung mit Währung und die gewünschte Kostenstufe (economy, standard oder premium).</li>
+            <li><strong>Portale (<code>portals.yml</code>)</strong>: Suchbegriffe für Stellentitel, ausgeschlossene Titel und erlaubte Länder oder Städte. Claude Code schreibt Profil und Portale gemeinsam mit <code>node onboard-write.mjs</code>.</li>
+            <li><strong>Tracker</strong>: Fehlt <code>data/applications.md</code>, wird eine leere Tabelle angelegt.</li>
+            <li><strong>Werkzeug merken</strong> mit <code>node remember-cli.mjs claude</code>, damit Skripte und Weboberfläche wissen, dass Sie Claude Code verwenden.</li>
+          </ol>
+          <p>Zum Schluss erzählen Sie mehr über Ihre Stärken, Ausschlusskriterien und Erfolge. Diese Angaben landen in <code>config/profile.yml</code>, <code>modes/_profile.md</code> oder <code>article-digest.md</code> und verbessern jede spätere Bewertung.</p>
+
+          <h3 id="sprache">Ausgabe auf Deutsch</h3>
+          <p>Damit Berichte, Notizen und Anschreiben auf Deutsch erscheinen und der deutsche Arbeitsmarkt berücksichtigt wird (etwa das 13. Monatsgehalt), ergänzen Sie in <code>config/profile.yml</code>:</p>
+          <div class="code" data-lang="yaml"><pre><code>language:
+  output: de
+  modes_dir: modes/de</code></pre></div>
+
+          <p>Prüfen Sie danach erneut mit <code>node doctor.mjs --json</code>. Wenn <code>onboardingNeeded</code> auf <code>false</code> steht und <code>unpersonalized</code> leer ist, ist die Einrichtung abgeschlossen.</p>
+        </li>
+
+        <li class="step">
+          <h2 id="scan">Erster Scan</h2>
+          <p>Lassen Sie die Portale aus Ihrer <code>portals.yml</code> nach neuen Stellen durchsuchen:</p>
+          <div class="code" data-lang="text"><pre><code>/career-ops scan</code></pre></div>
+          <p>Neue Treffer landen im Posteingang <code>data/pipeline.md</code>. Den Scanner selbst können Sie auch ohne KI im Terminal starten; das kostet keine Tokens:</p>
+          <div class="code" data-lang="shell"><pre><code>npm run scan</code></pre></div>
+          <p>Gefällt ein Scan-Ergebnis nicht, prüfen Sie die Konfiguration mit <code>npm run validate:portals</code>. Alle gesammelten URLs bewerten Sie anschließend in einem Durchgang mit <code>/career-ops pipeline</code>.</p>
+        </li>
+
+        <li class="step">
+          <h2 id="bewertung">Erste Bewertung</h2>
+          <p>Fügen Sie eine Stellen-URL oder den vollständigen Text einer Stellenanzeige direkt in Claude Code ein, zum Beispiel:</p>
+          <div class="code" data-lang="text"><pre><code>https://firma.example/karriere/stellen/12345</code></pre></div>
+          <p>career-ops-dach prüft dann automatisch:</p>
+          <ul>
+            <li>ob die Stelle noch ausgeschrieben ist (nur bei URLs),</li>
+            <li>wie gut sie zu Ihrem Lebenslauf passt, mit Bewertung von 1 bis 5,</li>
+            <li>und schreibt einen Bericht nach <code>reports/</code>, einen zugeschnittenen Lebenslauf (standardmäßig als PDF) nach <code>output/</code> sowie einen Eintrag in den Tracker.</li>
+          </ul>
+          <p>Nur bewerten, ohne PDF: <code>/career-ops oferta</code>. Bei einer Bewertung unter 4,0 von 5 rät career-ops-dach ausdrücklich von einer Bewerbung ab.</p>
+          <div class="callout key">
+            <strong>Nichts wird ohne Ihre Prüfung abgeschickt.</strong>
+            <p>Auch beim Ausfüllen von Bewerbungsformularen (<code>/career-ops apply</code>) hält career-ops-dach immer vor „Absenden“ an. Lesen Sie jeden erzeugten Lebenslauf vor dem Versand: Fakten werden aus Ihren Dateien übernommen und nie erfunden, die Verantwortung für das Dokument liegt dennoch bei Ihnen.</p>
+          </div>
+        </li>
+
+        <li class="step">
+          <h2 id="tracker">Bewerbungen im Tracker verfolgen</h2>
+          <p>Alle Bewertungen stehen in <code>data/applications.md</code>. Eine Übersicht erhalten Sie mit:</p>
+          <div class="code" data-lang="text"><pre><code>/career-ops tracker</code></pre></div>
+          <p>Haben Sie sich beworben, sagen Sie es Claude Code einfach („Ich habe mich auf Bericht 001 beworben“) oder setzen den Status selbst:</p>
+          <div class="code" data-lang="shell"><pre><code>node set-status.mjs --report 001 Applied</code></pre></div>
+          <p>Gültige Status sind <code>Evaluated</code>, <code>Speculative</code>, <code>Applied</code>, <code>Responded</code>, <code>Assessment</code>, <code>Interview</code>, <code>Offer</code>, <code>Hired</code>, <code>Rejected</code>, <code>Discarded</code> und <code>SKIP</code>. Bearbeiten Sie die Tabelle möglichst nicht von Hand. Die Konsistenz prüfen Sie mit:</p>
+          <div class="code" data-lang="shell"><pre><code>node verify-pipeline.mjs</code></pre></div>
+        </li>
+      </ol>
+
+      <h2 id="weiter">Wie geht es weiter?</h2>
+      <ul>
+        <li>Alle Modi und wie Sie sie aufrufen: <a href="https://github.com/awftureway/career-ops-dach#usage">README, Abschnitt „Usage“</a></li>
+        <li>Alle Skripte mit Optionen: <a href="https://github.com/awftureway/career-ops-dach/blob/main/docs/SCRIPTS.md">SCRIPTS.md</a></li>
+        <li>Andere unterstützte CLIs: <a href="https://github.com/awftureway/career-ops-dach/blob/main/docs/SUPPORTED_CLIS.md">SUPPORTED_CLIS.md</a></li>
+        <li>Regelmäßige Scans einrichten: <a href="https://github.com/awftureway/career-ops-dach/blob/main/docs/AUTOMATION.md">AUTOMATION.md</a></li>
+      </ul>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>career-ops-dach basiert auf <a href="https://github.com/career-ops-hq/career-ops">career-ops</a> von Santiago Fernández de Valderrama und Mitwirkenden, veröffentlicht unter der MIT-Lizenz.</p>
+      <p>Diese Seiten verwenden keine Cookies, keine externen Schriften und keine Tracker.</p>
+    </div>
+  </footer>
+  <script src="../assets/copy.js"></script>
+</body>
+</html>

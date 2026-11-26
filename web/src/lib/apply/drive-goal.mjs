@@ -13,11 +13,16 @@
 /**
  * @param {"reach" | "full"} goal
  * @param {{ label: string, value: string }[] | undefined} answers
+ * @param {string} [role] the posting being applied to
  * @returns {string}
  */
-export function driveGoalText(goal, answers) {
+export function driveGoalText(goal, answers, role) {
   if (goal === "reach") {
-    return `Your goal: navigate to the actual fillable JOB APPLICATION form (click 'Apply', pass any interstitial/pre-screen, reach the page with the Name/Email/Resume fields). Do NOT fill anything yet. Reply {"action":"reached_form"} once the form with those fields is visible.`;
+    const wanted = String(role || "").replace(/\s+/g, " ").trim().slice(0, 160);
+    const target = wanted
+      ? ` The posting is "${wanted}". On a careers page or job board, open THAT posting (scroll and wait for the list to load), and prefer its own apply button over a general or unsolicited ("Initiativ") application.`
+      : "";
+    return `Your goal: navigate to the actual fillable JOB APPLICATION form (click 'Apply', pass any interstitial/pre-screen, reach the page with the Name/Email/Resume fields).${target} Do NOT fill anything yet. Reply {"action":"reached_form"} once the form with those fields is visible.`;
   }
   const answersBlock = (answers ?? [])
     .filter((a) => a.value?.trim())

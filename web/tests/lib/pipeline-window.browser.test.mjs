@@ -42,7 +42,7 @@ test("the pipeline table mounts a window of a long tracker", { skip: liveServerS
   const firstPaint = await mounted();
   assert.ok(firstPaint < 40, `first paint mounted ${firstPaint} rows`);
   assert.ok(firstPaint > 5, `first paint mounted ${firstPaint} rows`);
-  await visible(page.getByText("120 tracked")).waitFor();
+  await visible(page.getByText("120 erfasst")).waitFor();
   const heights = await page.locator("[data-application-key]:visible").evaluateAll((rows) => rows.map((row) => row.getBoundingClientRect().height));
   assert.ok(heights.every((h) => Math.abs(h - heights[1]) < 1), `mounted rows differ in height: ${heights.join(", ")}`);
   const bodyHeight = await page.locator("tbody", { has: page.locator("[data-application-key]:visible") }).evaluate((body) => body.getBoundingClientRect().height);
@@ -55,7 +55,7 @@ test("the pipeline table mounts a window of a long tracker", { skip: liveServerS
   assert.ok(scrolled < 40, `scrolled paint mounted ${scrolled} rows`);
   assert.equal(await visible(page.getByRole("link", { name: "#1", exact: true })).count(), 0);
   assert.equal(await visible(page.locator("tr", { has: page.getByRole("link", { name: "#120", exact: true }) })).getAttribute("aria-rowindex"), "121");
-  await visible(page.getByPlaceholder("Search company or role…")).fill("Zulu");
+  await visible(page.getByPlaceholder("Firma oder Rolle suchen …")).fill("Zulu");
   await visible(page.getByRole("link", { name: "Fixture Zulu", exact: true })).waitFor();
   // Fixture Zulu can already be on screen at the bottom of the list before the
   // search applies, so wait for the filtered count rather than for its row.
@@ -96,10 +96,10 @@ test("an off-screen save failure moves the window, and the error row does not se
   // Anchoring on a row would hold the table still, so the window would not move.
   await page.addStyleTag({ content: "* { overflow-anchor: none !important; }" });
   const row = (n) => page.locator("tr[data-application-key]:visible").filter({ has: page.getByRole("link", { name: `#${n}`, exact: true }) });
-  await row(1).getByRole("button", { name: /^Edit status/ }).click();
+  await row(1).getByRole("button", { name: /^Status für .* bearbeiten/ }).click();
   await row(1).getByRole("combobox").selectOption("Applied");
   await row(1).getByRole("button", { name: "Ja, als beworben markieren" }).click();
-  await row(1).getByText("saving…").waitFor();
+  await row(1).getByText("Speichert …").waitFor();
 
   // Leave the bottom edge. A banner there can grow the page without moving
   // the rows that are already pinned in view. Sit a few pixels past a row
@@ -125,7 +125,7 @@ test("an off-screen save failure moves the window, and the error row does not se
   const before = await mountedIndexes(page);
 
   release();
-  const banner = page.getByRole("alert").filter({ hasText: "Application #1 was not saved" });
+  const banner = page.getByRole("alert").filter({ hasText: "Bewerbung #1 wurde nicht gespeichert" });
   await banner.waitFor();
   await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   assert.equal(await banner.evaluate((el) => el.closest("tr[data-application-key]") == null), true);
@@ -143,13 +143,13 @@ test("an off-screen save failure moves the window, and the error row does not se
   await page.waitForURL((u) => !u.searchParams.has("tab"));
   await page.evaluate(() => new Promise((resolve) => setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(resolve)), 300)));
   assert.equal(await page.locator("tr[data-application-key]:visible").count(), 0);
-  assert.equal(await page.getByText("Application #1 was not saved").count(), 0);
+  assert.equal(await page.getByText("Bewerbung #1 wurde nicht gespeichert").count(), 0);
   await page.getByRole("button", { name: /^ALL \d+$/ }).click();
   await page.waitForURL((u) => u.searchParams.get("tab") === "ALL");
 
   await page.evaluate(() => window.scrollTo(0, 0));
   await row(1).getByRole("alert").waitFor();
-  assert.equal(await page.getByText("Application #1 was not saved").count(), 0);
+  assert.equal(await page.getByText("Bewerbung #1 wurde nicht gespeichert").count(), 0);
   assert.match(await row(1).getByRole("alert").innerText(), /Fixture tracker busy/);
   const back = await mountedIndexes(page);
   const errorHeight = await row(1).evaluate((el) => el.getBoundingClientRect().height);
@@ -179,7 +179,7 @@ test("j/k and Shift-click reach rows outside the window", { skip: liveServerSkip
 
   await page.goto(`${origin.origin}/pipeline?tab=ALL&sort=tracker&dir=1`);
   await page.getByRole("link", { name: "#1", exact: true }).waitFor();
-  await page.getByText("120 tracked").filter({ visible: true }).waitFor();
+  await page.getByText("120 erfasst").filter({ visible: true }).waitFor();
   const link = (n) => page.getByRole("link", { name: `#${n}`, exact: true });
   const row = (n) => page.locator("tr[data-application-key]:visible").filter({ has: link(n) });
   const cursorRow = page.locator('tr[data-tracker-cursor="true"]');
@@ -219,12 +219,12 @@ test("j/k and Shift-click reach rows outside the window", { skip: liveServerSkip
   // Shift-click selects every row in between, mounted or not.
   await page.evaluate(() => window.scrollTo(0, 0));
   await row(3).getByRole("checkbox").click();
-  await page.getByText("1 selected", { exact: true }).waitFor();
+  await page.getByText("1 ausgewählt", { exact: true }).waitFor();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await link(118).waitFor();
   assert.equal(await link(3).count(), 0, "the anchor row is not mounted");
   await row(118).getByRole("checkbox").click({ modifiers: ["Shift"] });
-  await page.getByText("116 selected", { exact: true }).waitFor();
+  await page.getByText("116 ausgewählt", { exact: true }).waitFor();
   await page.evaluate(() => {
     const body = [...document.querySelectorAll("tbody [data-application-key]")].find((el) => el.checkVisibility()).closest("tbody");
     window.scrollTo(0, body.getBoundingClientRect().top + window.scrollY + body.getBoundingClientRect().height / 2);

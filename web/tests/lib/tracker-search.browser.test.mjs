@@ -24,7 +24,7 @@ test("Tracker search explains what it filtered and how to undo it", { skip: live
   page.setDefaultTimeout(15_000);
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  const search = page.getByRole("searchbox", { name: "Search applications" });
+  const search = page.getByRole("searchbox", { name: "Bewerbungen durchsuchen" });
   const company = (name) => page.getByRole("link", { name, exact: true });
   const allRowsShown = () => Promise.all(["Fixture Alpha", "Fixture Beta", "Fixture Gamma"].map((name) => company(name).waitFor()));
   const tabPressed = (name) => page.getByRole("button", { name: new RegExp(`^${name} \\d+$`), pressed: true });
@@ -48,18 +48,18 @@ test("Tracker search explains what it filtered and how to undo it", { skip: live
 
   await t.test("a filtered list says how many rows it shows, and the clear button resets it", async () => {
     await search.fill("Alpha");
-    await page.getByRole("status").filter({ hasText: "1 of 3 shown" }).waitFor();
+    await page.getByRole("status").filter({ hasText: "1 von 3 angezeigt" }).waitFor();
     await company("Fixture Gamma").waitFor({ state: "detached" });
-    await page.getByRole("button", { name: "Suche zurücksetzen" }).click();
+    await page.getByRole("button", { name: "Suche leeren" }).click();
     assert.equal(await search.inputValue(), "");
     await allRowsShown();
-    assert.equal(await page.getByText(/\d+ of \d+ shown/).count(), 0);
+    assert.equal(await page.getByText(/\d+ von \d+ angezeigt/).count(), 0);
   });
 
   await t.test("an empty status tab with no search does not mention search", async () => {
     await page.goto(`${origin.origin}/pipeline?tab=OFFER`);
     await page.getByRole("heading", { name: "Noch keine Bewerbungen in „Offer“" }).waitFor();
-    assert.equal(await page.getByRole("main").getByText(/search/i).count(), 0);
+    assert.equal(await page.getByRole("main").getByText(/such/i).count(), 0);
   });
 
   await t.test("a score filter that empties the list names it and clears it", async () => {

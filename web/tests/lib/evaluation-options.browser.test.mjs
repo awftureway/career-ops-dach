@@ -36,28 +36,28 @@ test("evaluation choices survive navigation and reach pasted-URL and shortlist w
   }
   await page.goto(url);
   await page.getByText("Bewertungsoptionen · vollständige Bewertung", { exact: true }).click();
-  const options = page.getByRole("group", { name: "Evaluation sections" });
+  const options = page.getByRole("group", { name: "Bewertungsabschnitte" });
   assert.equal(await options.getByRole("checkbox").count(), FULL_EVALUATION.length);
   assert.equal(await options.getByRole("checkbox", { checked: true }).count(), FULL_EVALUATION.length);
   await scoreQuick("https://example.com/fixture-full");
   assert.deepEqual(requests.at(-1).evaluationSections, [...FULL_EVALUATION]);
-  await options.getByRole("button", { name: "Essentials", exact: true }).click();
+  await options.getByRole("button", { name: "Kompakt", exact: true }).click();
   await options.getByRole("checkbox", { name: /Zusammenfassung der Stelle/ }).uncheck();
   await scoreQuick("https://example.com/fixture-fit-only");
   assert.deepEqual(requests.at(-1).evaluationSections, []);
-  await options.getByRole("checkbox", { name: /Interview preparation/ }).check();
+  await options.getByRole("checkbox", { name: /Interviewvorbereitung/ }).check();
   await page.reload();
   await page.getByText("Bewertungsoptionen · 1 optionale Abschnitte", { exact: true }).click();
-  assert.equal(await options.getByRole("checkbox", { name: /Interview preparation/ }).isChecked(), true);
+  assert.equal(await options.getByRole("checkbox", { name: /Interviewvorbereitung/ }).isChecked(), true);
   assert.equal(await options.getByRole("checkbox", { checked: true }).count(), 1);
 
   await page.goto(`${url}/pipeline`);
-  await page.locator("li:visible").filter({ hasText: "Fixture Alpha" }).getByRole("button", { name: /Save/ }).click();
-  await page.getByRole("button", { name: /^Score 1 ·/ }).click();
-  assert.equal(await options.getByRole("checkbox", { name: /Interview preparation/ }).isChecked(), true);
-  await options.getByRole("button", { name: "Essentials", exact: true }).click();
+  await page.locator("li:visible").filter({ hasText: "Fixture Alpha" }).getByRole("button", { name: /Merken/ }).click();
+  await page.getByRole("button", { name: /^1 bewerten/ }).click();
+  assert.equal(await options.getByRole("checkbox", { name: /Interviewvorbereitung/ }).isChecked(), true);
+  await options.getByRole("button", { name: "Kompakt", exact: true }).click();
   const request = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/run");
-  await page.getByRole("button", { name: "Score 1 now", exact: true }).click();
+  await page.getByRole("button", { name: "Jetzt 1 bewerten", exact: true }).click();
   await request;
   assert.equal(requests.at(-1).input, "https://example.com/fixture-alpha");
   assert.deepEqual(requests.at(-1).evaluationSections, ["summary"]);
@@ -71,5 +71,5 @@ test("invalid evaluation selections are rejected before CLI discovery", {
   const response = await fetch(`${url}/api/run`, { method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ kind: "evaluate", input: "https://example.com/fixture", cliId: "nonexistent", evaluationSections: ["invented"] }) });
   assert.equal(response.status, 400);
-  assert.match((await response.json()).error, /valid evaluation sections/);
+  assert.match((await response.json()).error, /gültige Bewertungsabschnitte/);
 });

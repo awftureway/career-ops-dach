@@ -8,7 +8,7 @@ export type StatusConfirmationPart = {
   cid: string;
   summary: string;
   statusChange: { n: string; status: string };
-  state: "pending" | "saving" | "failed" | "unconfirmed" | "done" | "abgebrochen";
+  state: "pending" | "saving" | "failed" | "unconfirmed" | "done" | "cancelled";
   message?: string;
   retryable?: boolean;
 };
@@ -24,7 +24,7 @@ export function StatusConfirmationCard({ part, onConfirm }: {
   const [announcement, setAnnouncement] = useState("");
   const saving = part.state === "saving";
   const message = saving ? "Status wird gespeichert …" : part.state === "done" ? "Status gespeichert."
-    : part.state === "abgebrochen" ? "abgebrochen" : part.message ?? "";
+    : part.state === "cancelled" ? "abgebrochen" : part.message ?? "";
   const canDecide = part.state === "pending" || saving || (part.state === "failed" && part.retryable);
 
   useLayoutEffect(() => {
@@ -43,7 +43,7 @@ export function StatusConfirmationCard({ part, onConfirm }: {
       setAnnouncement("");
       result.current?.focus();
     } else {
-      setAnnouncement(part.state === "abgebrochen" ? "" : `${part.summary} ${message}`);
+      setAnnouncement(part.state === "cancelled" ? "" : `${part.summary} ${message}`);
     }
   }, [part.state, part.summary, message]);
 

@@ -35,12 +35,12 @@ test("a saved view with a score floor comes back after a reload", { skip: liveSe
 
   await page.goto(`${origin.origin}/pipeline?tab=ALL`);
   await until(async () => (await rows.count()) === 3);
-  await page.getByRole("combobox", { name: "Minimum score" }).selectOption("4");
+  await page.getByRole("combobox", { name: "Mindest-Score" }).selectOption("4");
   await until(async () => (await rows.count()) === 1 && new URL(page.url()).searchParams.get("min") === "4");
 
-  await page.getByRole("button", { name: "Save view", exact: true }).click();
-  await page.getByRole("textbox", { name: "View name" }).fill("Top picks");
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.getByRole("button", { name: "Ansicht speichern", exact: true }).click();
+  await page.getByRole("textbox", { name: "Name der Ansicht" }).fill("Top picks");
+  await page.getByRole("button", { name: "Speichern", exact: true }).click();
   await page.getByRole("button", { name: "Top picks", exact: true }).waitFor();
 
   await page.goto(`${origin.origin}/pipeline?tab=ALL`);
@@ -50,9 +50,9 @@ test("a saved view with a score floor comes back after a reload", { skip: liveSe
   assert.equal(new URL(page.url()).searchParams.get("min"), "4");
   assert.match(await rows.first().innerText(), /Fixture Alpha/);
 
-  await page.getByRole("button", { name: "Remove view Top picks" }).click();
+  await page.getByRole("button", { name: "Ansicht entfernen: Top picks" }).click();
   await page.reload();
-  await page.getByRole("button", { name: "Save view", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Ansicht speichern", exact: true }).waitFor();
   assert.equal(await page.getByRole("button", { name: "Top picks", exact: true }).count(), 0);
   assert.deepEqual(errors, []);
 });

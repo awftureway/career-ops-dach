@@ -43,7 +43,7 @@ test("an edit to the CV stays on disk after leaving the page, and the status doe
   const second = `${first}\nStill editing.`;
   await box.fill(second);
   assert.equal((await status().innerText()).trim(), "Nicht gespeichert");
-  await page.getByRole("complementary").getByRole("link", { name: "Today", exact: true }).click();
+  await page.getByRole("complementary").getByRole("link", { name: "Heute", exact: true }).click();
   await page.waitForURL((next) => new URL(next).pathname === "/");
 
   const deadline = Date.now() + 8_000;

@@ -69,7 +69,7 @@ test("shift-click two rows, then a number key sets their status", { skip: liveSe
   await until(() => statusOf(cursorN) === "Offer");
   // The file can change before the browser finishes the POST. Until the
   // announcement is up, busyRef can ignore the next status key.
-  await until(async () => (await page.locator('p[role="status"].sr-only').innerText()).includes("set to Offer"));
+  await until(async () => (await page.locator('p[role="status"].sr-only').innerText()).includes("auf Offer gesetzt"));
   assert.notEqual(beforeCursor, "Offer");
   for (const n of [10, 11, 12, 13]) {
     if (n === cursorN) continue;
@@ -83,7 +83,7 @@ test("shift-click two rows, then a number key sets their status", { skip: liveSe
   await page.keyboard.press("4");
   const alert = page.locator('p[role="alert"]');
   await until(async () => (await alert.count()) === 1);
-  assert.match(await alert.innerText(), new RegExp(`1 not saved: #${cursorN} \\(Fixture tracker busy\\)`));
+  assert.match(await alert.innerText(), new RegExp(`1 nicht gespeichert: #${cursorN} \\(Fixture tracker busy\\)`));
   assert.equal(statusOf(cursorN), "Offer");
   assert.ok(scrollBefore >= 0);
   assert.deepEqual(errors, []);

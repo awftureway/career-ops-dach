@@ -69,7 +69,7 @@ test("hiding a bullet and leaving the studio keeps the hide, and the status does
   assert.match(dirty, /^(?:Nicht gespeichert|Speichert …)$/);
   await autosaveSeen;
   const left = page.waitForURL((next) => new URL(next).pathname === "/");
-  await page.getByRole("complementary").getByRole("link", { name: "Today", exact: true }).click();
+  await page.getByRole("complementary").getByRole("link", { name: "Heute", exact: true }).click();
   await Promise.all([left, exitSeen]);
 
   const editsPath = path.join(root, ".career-ops-web", "cv-studio", "011.json");

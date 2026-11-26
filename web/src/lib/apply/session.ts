@@ -127,11 +127,16 @@ function looksLikeApplicationForm(form: ExtractedForm): boolean {
   const hasFile = fs.some((f) => f.type === "file");
   const hasEmail = fs.some((f) => f.type === "email" || /e-?mail/.test(lab(f)));
   const hasAppish = fs.some((f) => /first name|last name|full name|resume|résumé|\bcv\b|cover letter|phone|linkedin|github|why |portfolio|sponsorship|relocat/.test(lab(f)));
+  // A lone e-mail box is a newsletter or job-alert signup, not an application.
+  if (fs.length === 1 && hasEmail && !hasFile && !hasAppish) return false;
   if (hasFile || hasEmail || hasAppish) return true; // clearly an application
   const allSearch = fs.every(
-    (f) => /search|buscar|filtr|keyword|palabra|department|departa|office|oficina|location|ubicaci|remote|category|categor/.test(lab(f)) || /filter|search|keyword/.test((f.nativeId || "").toLowerCase()),
+    (f) => /search|buscar|filtr|keyword|palabra|department|departa|office|oficina|location|ubicaci|remote|category|categor|jobtitel|kompetenz|firmenname|stichwort|suche|\bort\b|plz|umkreis|sprache|deutsch|cookie|informationen auf einem ger|personalisierte (anzeigen|inhalte)|fremdinhalte|werbung/.test(lab(f)) || /filter|search|keyword/.test((f.nativeId || "").toLowerCase()),
   );
   if (allSearch) return false; // a job-board search/filter form
+  // Only optional pick-lists and tick boxes (a cookie dialog, a filter bar) hold
+  // nothing a candidate would type, attach or have to answer.
+  if (fs.every((f) => !f.required && (f.type === "select" || f.type === "checkbox" || f.type === "radio"))) return false;
   if (fs.length <= 3 && fs.every((f) => !f.required)) return false; // too sparse + all optional = not an app form
   return true;
 }
@@ -355,7 +360,10 @@ export async function openSession(url: string, cliId?: string, forceAgent?: bool
     if (moved) return moved;
     if (formHasPassword(form)) return abort(LOGIN_WALL_MESSAGE);
   }
-  if (!noApplyBtn && !looksLikeApplicationForm(form)) {
+  // arbeitsagentur.de carries a captcha field of its own, which reads as an
+  // application form; its posting still has to be followed to the employer.
+  const onJobBoard = /(^|\.)arbeitsagentur\.de$/i.test(new URL(page.url()).hostname);
+  if (!noApplyBtn && (onJobBoard || !looksLikeApplicationForm(form))) {
     const trigger = await tryApplyTrigger(page, handoffHosts);
     // The Apply control points at Workday, iCIMS, or UKG. Close this window
     // instead of following it or handing the page to the drive agent.
@@ -382,6 +390,13 @@ export async function openSession(url: string, cliId?: string, forceAgent?: bool
       if (formHasPassword(form)) return abort(LOGIN_WALL_MESSAGE);
       await snap();
     }
+  }
+  // arbeitsagentur.de hides the employer's application link behind an image
+  // captcha. It is not solved here: the posting stays unopened and the user is
+  // told how to carry on, instead of the captcha field being read as a form.
+  if (onJobBoard && /(^|\.)arbeitsagentur\.de$/i.test(new URL(page.url()).hostname)) {
+    const gated = await page.evaluate(() => /Sicherheitsabfrage/.test(document.body.innerText) && !document.querySelector('a[href*="/apply"]')).catch(() => false);
+    if (gated) return abort("Die Arbeitsagentur zeigt den Bewerbungslink des Arbeitgebers erst nach einer Sicherheitsabfrage (Captcha). Öffnen Sie die Stelle im Browser, lösen Sie die Abfrage unter „Informationen zur Bewerbung“ und fügen Sie den Link „Über Internetseite des Arbeitgebers“ hier ein.");
   }
   // Recovering the form above (scroll, a second pickFormFrame) gives the page
   // time to move on its own. Check where it is now, with the same list, before
@@ -648,8 +663,21 @@ export async function fillSession(
       if (!isResumeField(meta)) continue;
       let ok = false;
       try {
-        await s.frame.locator(`[data-co-field="${cssAttr(meta.id)}"]`).first().setInputFiles(cvFile);
-        ok = true;
+        const input = s.frame.locator(`[data-co-field="${cssAttr(meta.id)}"]`).first();
+        await input.setInputFiles(cvFile);
+        // setInputFiles can return without the page keeping the file. Count the
+        // upload only on evidence: the input holds the file, or the form shows
+        // its name. Personio accepts the file, lists its name and swaps the input
+        // for an empty one, so the input alone says "failed" for a good upload.
+        const shownName = (typeof cvFile === "string" ? cvFile : cvFile.name).split(/[\\/]/).pop() || "";
+        const landed = async () =>
+          (await input.evaluate((el) => ((el as HTMLInputElement).files?.length ?? 0) > 0).catch(() => false)) ||
+          (await s.frame.evaluate((name) => document.body.innerText.includes(name), shownName).catch(() => false)) === true;
+        ok = await landed();
+        if (!ok) {
+          await s.page.waitForTimeout(700).catch(() => {});
+          ok = await landed();
+        }
       } catch {
         // A replaced/missing resume control does not identify another upload.
         // The first file input may be a cover letter or portfolio: leave it for

@@ -71,7 +71,7 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
   async function send(text) {
     await tabTo(input);
     await page.keyboard.type(text);
-    await until(() => page.getByRole("button", { name: "Send", exact: true }).isEnabled());
+    await until(() => page.getByRole("button", { name: "Senden", exact: true }).isEnabled());
     await page.keyboard.press("Enter");
     if (text !== "failure") {
       await until(async () => (await status.innerText()).startsWith("Ihre Anfrage wird verarbeitet."));
@@ -143,7 +143,7 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
 
   await send("cards");
   replies.get("cards").write('Review the proposals.\n<<act:setStatus {"n":"11","status":"Interview"}>>\n<<act:setStatus {"n":"12","status":"Rejected"}>>');
-  await page.getByRole("button", { name: "Bestätigen: Mark #11 → Interview?", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Bestätigen: #11 als Interview markieren?", exact: true }).waitFor();
   assert.equal(await focused(input), true);
   assert.equal(await page.getByRole("button", { name: "Offene Aktionen prüfen", exact: true }).count(), 1);
   assert.equal((await notices()).filter((n) => n === "Ihre Anfrage wird verarbeitet.").length, 2, "new tokens/cards do not repeat processing");
@@ -151,12 +151,12 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
   await until(async () => (await status.innerText()) === "Antwort bereit. 2 Aktionen brauchen Bestätigung.");
   await tabTo(page.getByRole("button", { name: "Offene Aktionen prüfen", exact: true }));
   await page.keyboard.press("Enter");
-  assert.equal(await focused(page.getByRole("group", { name: "Mark #11 → Interview?", exact: true })), true);
+  assert.equal(await focused(page.getByRole("group", { name: "#11 als Interview markieren?", exact: true })), true);
   assert.deepEqual(writes, [], "navigation must not confirm anything");
   const countBeforeDecision = (await notices()).length;
-  await tabTo(page.getByRole("button", { name: "Abbrechen: Mark #11 → Interview?", exact: true }));
+  await tabTo(page.getByRole("button", { name: "Abbrechen: #11 als Interview markieren?", exact: true }));
   await page.keyboard.press("Enter");
-  await until(async () => (await page.locator('[id]').filter({ hasText: /^Reply ready\. 1 Aktion braucht Bestätigung\.$/ }).count()) > 0);
+  await until(async () => (await page.locator('[id]').filter({ hasText: /^Antwort bereit\. 1 Aktion braucht Bestätigung\.$/ }).count()) > 0);
   assert.equal((await notices()).length, countBeforeDecision, "card result focus does not also generate a request announcement");
   assert.deepEqual(writes, []);
 
@@ -168,13 +168,13 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
   await until(async () => (await status.innerText()) === "Antwort bereit. 1 Aktion braucht Bestätigung.");
   await tabTo(page.getByRole("button", { name: "Offene Aktionen prüfen", exact: true }));
   await page.keyboard.press("Enter");
-  const earlierCard = page.getByRole("group", { name: "Mark #12 → Rejected?", exact: true });
+  const earlierCard = page.getByRole("group", { name: "#12 als Rejected markieren?", exact: true });
   assert.equal(await focused(earlierCard), true);
   const pendingTree = await cdp.send("Accessibility.getFullAXTree");
-  assert.ok(pendingTree.nodes.some((n) => !n.ignored && n.role?.value === "group" && n.name?.value === "Mark #12 → Rejected?" && n.properties?.some((p) => p.name === "focused" && p.value.value === true)));
+  assert.ok(pendingTree.nodes.some((n) => !n.ignored && n.role?.value === "group" && n.name?.value === "#12 als Rejected markieren?" && n.properties?.some((p) => p.name === "focused" && p.value.value === true)));
   assert.deepEqual(writes, [], "revisiting an earlier proposal must not approve it");
   const beforeEarlierCancel = (await notices()).length;
-  await tabTo(page.getByRole("button", { name: "Abbrechen: Mark #12 → Rejected?", exact: true }));
+  await tabTo(page.getByRole("button", { name: "Abbrechen: #12 als Rejected markieren?", exact: true }));
   await page.keyboard.press("Enter");
   await until(async () => (await page.getByRole("button", { name: "Offene Aktionen prüfen", exact: true }).count()) === 0);
   assert.equal((await notices()).length, beforeEarlierCancel);
@@ -203,7 +203,7 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
     await tabTo(page.getByRole("button", { name: "Fehler ansehen", exact: true }));
     await page.keyboard.press("Enter");
     assert.equal(await focused(latest), true);
-    assert.match(await latest.innerText(), /no output/);
+    assert.match(await latest.innerText(), /keine Ausgabe/);
   }
   await send("visible-partial");
   replies.get("visible-partial").end("Useful visible reply. <<act:setStatus ");
@@ -215,8 +215,8 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
   assert.deepEqual(writes, [], "valid action-only output still requires human confirmation");
   await tabTo(page.getByRole("button", { name: "Offene Aktionen prüfen", exact: true }));
   await page.keyboard.press("Enter");
-  assert.equal(await focused(page.getByRole("group", { name: "Mark #13 → Interview?", exact: true })), true);
-  await tabTo(page.getByRole("button", { name: "Abbrechen: Mark #13 → Interview?", exact: true }));
+  assert.equal(await focused(page.getByRole("group", { name: "#13 als Interview markieren?", exact: true })), true);
+  await tabTo(page.getByRole("button", { name: "Abbrechen: #13 als Interview markieren?", exact: true }));
   await page.keyboard.press("Enter");
   await until(async () => (await page.getByRole("button", { name: "Offene Aktionen prüfen", exact: true }).count()) === 0);
   assert.deepEqual(writes, []);
@@ -242,7 +242,7 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
   await until(async () => (await status.innerText()) === "Antwort bereit.");
   const beforeWorkerFinish = (await notices()).length;
   worker.end(JSON.stringify({ type: "done", tokens: 10 }) + "\n");
-  await page.getByText("10 tokens", { exact: true }).filter({ visible: true }).first().waitFor();
+  await page.getByText("10 Tokens", { exact: true }).filter({ visible: true }).first().waitFor();
   assert.equal((await notices()).length, beforeWorkerFinish, "worker completion belongs to #5083");
   await until(() => saved?.messages.some((m) => m.parts.some((p) => p.type === "text" && p.text.trim() === "Worker launched.")));
   await page.reload(); await open.waitFor(); await tabTo(open); await page.keyboard.press("Enter");
@@ -252,10 +252,10 @@ test("request feedback is transition-only, quiet when closed and user-navigated"
   // A failed history save prevents dispatch; its existing alert owns the error.
   await tabTo(input);
   await page.keyboard.type("save failure");
-  await until(() => page.getByRole("button", { name: "Send", exact: true }).isEnabled());
+  await until(() => page.getByRole("button", { name: "Senden", exact: true }).isEnabled());
   await page.keyboard.press("Enter");
   await page.getByRole("alert").filter({ hasText: "Fixture save failed" }).waitFor();
-  await page.getByText("⚠️ Request not sent: Fixture save failed", { exact: true }).waitFor();
+  await page.getByText("⚠️ Anfrage nicht gesendet: Fixture save failed", { exact: true }).waitFor();
   assert.equal(replies.has("save failure"), false);
   await until(async () => (await status.innerText()) === "");
   assert.deepEqual(unexpected, []);

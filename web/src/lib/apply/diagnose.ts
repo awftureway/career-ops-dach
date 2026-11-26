@@ -4,7 +4,7 @@ import type { ApplyIssue } from "./issue";
 import { pickComboboxOption } from "./option-match.mjs";
 import { checkboxSelections } from "./checkbox-options.mjs";
 import { unsupportedAtsMessage, unsupportedInAppAts } from "./unsupported-ats.mjs";
-import { isApplicationHref } from "./apply-link.mjs";
+import { isApplicationHref, employerLinkFromPanel } from "./apply-link.mjs";
 import { factsOf } from "./drive-action.mjs";
 import { isSubmitControl } from "./submit-guard.mjs";
 
@@ -33,8 +33,9 @@ export function statusBlock(status: number | null | undefined, headers: Record<s
 }
 
 const CONSENT_ROOTS =
-  '#onetrust-banner-sdk, #CybotCookiebotDialog, #truste-consent-track, .qc-cmp2-container, #usercentrics-root, [id*="cookie" i][class*="banner" i], [class*="cookie-consent" i], [aria-label*="cookie" i]';
+  'bahf-cookie-disclaimer-dpl3, #onetrust-banner-sdk, #CybotCookiebotDialog, #truste-consent-track, .qc-cmp2-container, #usercentrics-root, [id*="cookie" i][class*="banner" i], [class*="cookie-consent" i], [aria-label*="cookie" i]';
 const CONSENT_BUTTONS = [
+  '[data-testid="bahf-cookie-disclaimer-btn-ablehnen"]', // arbeitsagentur.de, declined rather than accepted
   "#onetrust-accept-btn-handler",
   "#onetrust-button-accept-all",
   "#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll",
@@ -198,7 +199,25 @@ export async function tryApplyTrigger(page: Page, handoffHosts?: string[]): Prom
     const hrefs = await atsLinks
       .evaluateAll((links) => links.slice(0, 20).map((a) => a.getAttribute("href")))
       .catch(() => [] as (string | null)[]);
-    const href = hrefs.find((h): h is string => !!h && isApplicationHref(h)) ?? null;
+    // A link that ends in /apply or /application beats one that merely contains
+    // "/apply" ("/blog/applying-for-german-citizenship" sat before the real one).
+    let href =
+      hrefs.find((h): h is string => !!h && isApplicationHref(h) && /\/(apply|application)\/?(\?|#|$)/i.test(h)) ??
+      hrefs.find((h): h is string => !!h && isApplicationHref(h)) ??
+      null;
+    // arbeitsagentur.de has no apply button: its "Informationen zur Bewerbung"
+    // section links to the employer's own application, and the page only
+    // renders that link once "Info zur Bewerbung" is pressed. The press is a
+    // script click, since the site's cookie banner intercepts a pointer click.
+    if (!href && /(^|\.)arbeitsagentur\.de$/i.test(new URL(page.url()).hostname)) {
+      await page.getByRole("button", { name: /info zur bewerbung/i }).first().evaluate((el) => (el as HTMLElement).click()).catch(() => {});
+      await page.waitForTimeout(1500).catch(() => {});
+      const links = await page
+        .locator("a[href^='http']")
+        .evaluateAll((as) => as.slice(0, 1000).map((a) => ({ text: (a.textContent || "").trim(), href: a.getAttribute("href") || "" })))
+        .catch(() => [] as { text: string; href: string }[]);
+      href = employerLinkFromPanel(links, new URL(page.url()).hostname);
+    }
     if (href) {
       const blocked = await blockedTriggerHref(page, href, handoffHosts);
       if (blocked) return { blocked };
@@ -357,7 +376,7 @@ export async function verifyFill(frame: Frame, fields: ApplyField[], answers: Re
       .map((f) => [f.id, checkboxSelections(answers[f.id] || "", f.options).map(normOption)]),
   );
   type Combo = { label: string; intended: string; actual: string; required: boolean };
-  type R = { mismatches: string[]; requiredEmpty: string[]; unverified: string[]; valErrors: string[]; comboboxes: Combo[] };
+  type R = { mismatches: string[]; requiredEmpty: string[]; unverified: string[]; valErrors: string[]; comboboxes: Combo[]; untracked?: string[] };
   let readFailed = false;
   const res = await frame
     .evaluate(
@@ -464,7 +483,35 @@ export async function verifyFill(frame: Frame, fields: ApplyField[], answers: Re
           const txt = (e.textContent || "").replace(/\s+/g, " ").trim();
           if (txt && txt.length > 2 && txt.length < 160 && e.offsetParent !== null) valErrors.push(txt);
         }
-        return { mismatches, requiredEmpty, unverified, valErrors: Array.from(new Set(valErrors)).slice(0, 5), comboboxes };
+        // Controls on the live page that extraction never tagged. Nothing above
+        // can read them back. Only a required, visible control counts: an optional
+        // search box or cookie toggle is not a gap in the form.
+        const untracked: string[] = [];
+        const seenUntracked = new Set<string>();
+        const nameOf = (c: HTMLElement) => {
+          const id = c.getAttribute("id");
+          const viaFor = id ? document.querySelector(`label[for="${CSS.escape(id)}"]`)?.textContent : "";
+          const wrapped = c.closest("label")?.textContent;
+          const raw = c.getAttribute("aria-label") || viaFor || wrapped || c.getAttribute("placeholder") || c.getAttribute("name") || c.getAttribute("id") || "unbenanntes Feld";
+          return raw.replace(/\s+/g, " ").trim().slice(0, 60);
+        };
+        for (const c of Array.from(document.querySelectorAll("input, textarea, select")) as HTMLElement[]) {
+          if (c.hasAttribute("data-co-field") || c.closest('[class*="autofill" i]')) continue;
+          const t = ((c as HTMLInputElement).type || "").toLowerCase();
+          if (["hidden", "submit", "button", "image", "reset"].includes(t)) continue;
+          const required = c.hasAttribute("required") || c.getAttribute("aria-required") === "true";
+          const visible = c.offsetParent !== null;
+          // An upload is left out: after a good upload an ATS may swap the tagged
+          // input for a fresh empty one, which would read as an unseen field. A
+          // CV with no upload field to take it is caught by the handoff gate.
+          if (t === "file" || !(required && visible)) continue;
+          const label = nameOf(c);
+          if (!seenUntracked.has(label)) {
+            seenUntracked.add(label);
+            untracked.push(label);
+          }
+        }
+        return { mismatches, requiredEmpty, unverified, valErrors: Array.from(new Set(valErrors)).slice(0, 5), comboboxes, untracked };
       },
       { meta, answers, checkboxWanted },
     )
@@ -487,6 +534,7 @@ export async function verifyFill(frame: Frame, fields: ApplyField[], answers: Re
   if (res.requiredEmpty.length) out.push({ level: "warn", code: "required-empty", labels: res.requiredEmpty, message: `Pflichtfeld noch leer. Bitte ${res.requiredEmpty.length > 1 ? "diese" : "dieses"} ausfüllen: ${res.requiredEmpty.slice(0, 4).join(", ")}${res.requiredEmpty.length > 4 ? "…" : ""}.` });
   if (res.unverified.length) out.push({ level: "warn", code: "fill-unverified", message: `Diese Felder ließen sich nicht zurücklesen und zählen daher nicht als vorausgefüllt: ${res.unverified.slice(0, 4).join(", ")}${res.unverified.length > 4 ? "…" : ""}.` });
   else if (readFailed) out.push({ level: "warn", code: "fill-unverified", message: "Das Formular ließ sich nicht zurücklesen und zählt daher nicht als vorausgefüllt." });
+  if (res.untracked?.length) out.push({ level: "warn", code: "untracked-fields", message: `Im Formular gibt es Felder, die nicht erfasst wurden und daher weder ausgefüllt noch geprüft sind: ${res.untracked.slice(0, 4).join(", ")}${res.untracked.length > 4 ? "…" : ""}.` });
   for (const v of res.valErrors) out.push({ level: "warn", code: "validation", message: `Das Formular meldet: „${v}“.` });
   return out;
 }

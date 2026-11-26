@@ -26,7 +26,7 @@ test("import PDF and TeX, review, back up and persist cv.md without leaving the 
   page.on("pageerror", error => errors.push(error.message));
   await page.addInitScript(() => localStorage.setItem("career-ops:config", JSON.stringify({ cliId: "codex" })));
   await page.goto(`${origin.origin}/cv`);
-  await page.getByLabel("CV Markdown", { exact: true }).fill(initial + "\nUnsaved draft");
+  await page.getByLabel("Lebenslauf-Markdown", { exact: true }).fill(initial + "\nUnsaved draft");
 
   let failure = false;
   let incomplete = false;
@@ -38,16 +38,16 @@ test("import PDF and TeX, review, back up and persist cv.md without leaving the 
     if (failure) return route.fulfill({ status: 400, json: { error: "Fixture file could not be read." } });
     await route.fulfill({ contentType: "text/plain", body: `Reading your CV…\n<<cv:start>>\n${proposed}\n${incomplete ? "" : "<<cv:end>>"}` });
   });
-  await page.getByRole("button", { name: "Upload PDF / TeX", exact: true }).click();
-  assert.equal(await page.getByLabel("CV Markdown", { exact: true }).isDisabled(), true);
+  await page.getByRole("button", { name: "PDF / TeX hochladen", exact: true }).click();
+  assert.equal(await page.getByLabel("Lebenslauf-Markdown", { exact: true }).isDisabled(), true);
   await page.getByLabel("Lebenslauf-Datei hochladen").setInputFiles({ name: "resume.pdf", mimeType: "application/pdf", buffer: Buffer.from("fictional PDF; response mocked") });
   await page.getByLabel("Importierter Lebenslauf (Markdown)").waitFor();
   assert.equal(fs.readFileSync(cv, "utf8"), initial, "review must not write cv.md");
-  await page.getByRole("button", { name: "Close upload", exact: true }).click();
-  assert.equal(await page.getByLabel("CV Markdown", { exact: true }).inputValue(), initial + "\nUnsaved draft");
+  await page.getByRole("button", { name: "Upload schließen", exact: true }).click();
+  assert.equal(await page.getByLabel("Lebenslauf-Markdown", { exact: true }).inputValue(), initial + "\nUnsaved draft");
 
   // TeX also goes through conversion, then the real canonical save endpoint.
-  await page.getByRole("button", { name: "Upload PDF / TeX", exact: true }).click();
+  await page.getByRole("button", { name: "PDF / TeX hochladen", exact: true }).click();
   const tex = { name: "resume.tex", mimeType: "application/x-tex", buffer: Buffer.from("\\section{Experience} Fictional CV") };
   await page.getByLabel("Lebenslauf-Datei hochladen").setInputFiles(tex);
   await page.getByLabel("Importierter Lebenslauf (Markdown)").waitFor();
@@ -58,34 +58,34 @@ test("import PDF and TeX, review, back up and persist cv.md without leaving the 
   assert.equal(fs.readFileSync(cv, "utf8"), initial);
   await page.unroute("**/api/cv");
   await page.getByRole("button", { name: "cv.md aktualisieren", exact: true }).click();
-  await page.getByRole("button", { name: "Upload PDF / TeX", exact: true }).waitFor();
+  await page.getByRole("button", { name: "PDF / TeX hochladen", exact: true }).waitFor();
   assert.equal(fs.readFileSync(cv, "utf8"), proposed);
   assert.ok(fs.readdirSync(root).filter(name => name.startsWith("cv.md.bak-")).some(name => fs.readFileSync(path.join(root, name), "utf8") === initial));
   assert.equal(new URL(page.url()).pathname, "/cv");
   await page.reload();
-  assert.equal(await page.getByLabel("CV Markdown", { exact: true }).inputValue(), proposed);
+  assert.equal(await page.getByLabel("Lebenslauf-Markdown", { exact: true }).inputValue(), proposed);
 
   // A PDF can be saved too. Failure and truncated conversion preserve it.
   proposed += "\n\n## Skills\n- TypeScript";
-  await page.getByRole("button", { name: "Upload PDF / TeX", exact: true }).click();
+  await page.getByRole("button", { name: "PDF / TeX hochladen", exact: true }).click();
   const pdf = { name: "resume.pdf", mimeType: "application/pdf", buffer: Buffer.from("fictional PDF; response mocked") };
   await page.getByLabel("Lebenslauf-Datei hochladen").setInputFiles(pdf);
   await page.getByLabel("Importierter Lebenslauf (Markdown)").waitFor();
   await page.getByRole("button", { name: "cv.md aktualisieren", exact: true }).click();
-  await page.getByRole("button", { name: "Upload PDF / TeX", exact: true }).waitFor();
+  await page.getByRole("button", { name: "PDF / TeX hochladen", exact: true }).waitFor();
   assert.equal(fs.readFileSync(cv, "utf8"), proposed);
   for (const kind of ["failure", "incomplete"]) {
     failure = kind === "failure";
     incomplete = kind === "incomplete";
-    await page.getByRole("button", { name: "Upload PDF / TeX", exact: true }).click();
+    await page.getByRole("button", { name: "PDF / TeX hochladen", exact: true }).click();
     await page.getByLabel("Lebenslauf-Datei hochladen").setInputFiles(pdf);
-    await page.getByRole("alert").filter({ hasText: failure ? "Fixture file could not be read" : "Couldn't finish reading" }).waitFor();
+    await page.getByRole("alert").filter({ hasText: failure ? "Fixture file could not be read" : "konnte nicht fertig gelesen werden" }).waitFor();
     assert.equal(fs.readFileSync(cv, "utf8"), proposed);
     assert.equal(await page.getByRole("button", { name: "cv.md aktualisieren", exact: true }).count(), 0);
-    await page.getByRole("button", { name: "Close upload", exact: true }).click();
+    await page.getByRole("button", { name: "Upload schließen", exact: true }).click();
   }
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole("button", { name: "Upload PDF / TeX", exact: true }).click();
+  await page.getByRole("button", { name: "PDF / TeX hochladen", exact: true }).click();
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
   await page.screenshot({ path: path.join(root, "cv-upload-mobile.png"), fullPage: true });
   assert.deepEqual(errors, []);

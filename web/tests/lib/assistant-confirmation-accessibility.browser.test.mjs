@@ -60,7 +60,7 @@ test("assistant confirmation context and keyboard continuation during streaming"
   async function focused(target) {
     return target.evaluate((element) => document.activeElement === element);
   }
-  const summary = (n, status) => `Mark #${n} → ${status}?`;
+  const summary = (n, status) => `#${n} als ${status} markieren?`;
   const card = (n, status) => page.getByRole("group", { name: summary(n, status), exact: true });
   const decision = (verb, n, status) => page.getByRole("button", { name: `${verb}: ${summary(n, status)}`, exact: true });
   const proposal = (n, status) => `\n<<act:setStatus ${JSON.stringify({ n, status })}>>`;
@@ -77,7 +77,7 @@ test("assistant confirmation context and keyboard continuation during streaming"
   await page.keyboard.press("Enter");
   await until(() => response);
   response.write("Please review these changes." + proposal("11", "Interview") + proposal("12", "Rejected"));
-  await until(() => page.getByRole("button", { name: /^Confirm/ }).count().then((count) => count === 2));
+  await until(() => page.getByRole("button", { name: /^Bestätigen/ }).count().then((count) => count === 2));
   assert.equal(await decision("Abbrechen", "11", "Interview").count(), 1);
   await decision("Bestätigen", "12", "Rejected").waitFor();
   assert.equal(await focused(input), true, "proposal arrival must not steal focus");

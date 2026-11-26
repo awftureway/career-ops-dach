@@ -107,7 +107,7 @@ export function ProgressPanel({ metrics }: { metrics: ProgressMetrics }) {
           <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3 xl:grid-cols-1 xl:gap-0">
             <RateRow label="Antwort" value={metrics.responseRate} />
             <RateRow label="Interview" value={metrics.interviewRate} />
-            <RateRow label="Angebot" value={metrics.offerRate} />
+            <RateRow label="Angebots" value={metrics.offerRate} />
           </div>
           <div className="mt-5 border-t border-border pt-4 text-xs text-muted">
             <span className="tabular-nums text-foreground">{metrics.activeApps}</span> aktive Bewerbungen · <span className="tabular-nums text-foreground">{metrics.totalOffers}</span> Angebote gesamt

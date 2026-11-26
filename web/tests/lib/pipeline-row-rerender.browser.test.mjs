@@ -48,7 +48,7 @@ function installCommitProbe() {
         }
       };
       walk(fiberRoot.current.child);
-      const search = document.querySelector('input[placeholder="Search company or role…"]');
+      const search = document.querySelector('input[placeholder="Firma oder Rolle suchen …"]');
       window.__commits.push({ rendered, search: search?.value ?? null });
     },
   };
@@ -90,7 +90,7 @@ test("tracker rows re-render only when their own content changes (disposable dat
   await t.test("a search keystroke's own commit re-renders no rows, and links still carry the query", async () => {
     await settle();
     await takeCommits();
-    await page.getByPlaceholder("Search company or role…").pressSequentially("f");
+    await page.getByPlaceholder("Firma oder Rolle suchen …").pressSequentially("f");
     const href = () => row(11).getByRole("link", { name: "#11", exact: true }).getAttribute("href");
     const start = Date.now();
     while (!new URL(await href(), origin).searchParams.has("q")) {
