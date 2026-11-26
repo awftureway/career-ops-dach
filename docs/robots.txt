@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://awftureway.github.io/career-ops-dach/sitemap.xml

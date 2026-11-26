@@ -136,22 +136,24 @@ a:hover { text-decoration-thickness: 2px; }
 .sidebar a {
   display: block;
   padding: 0.3rem 0.6rem;
-  border-left: 3px solid transparent;
+  border-radius: 6px;
   color: var(--text);
   text-decoration: none;
 }
 .sidebar a:hover { background: var(--surface-2); }
 .sidebar a[aria-current="page"] {
-  border-left-color: var(--accent);
   background: var(--accent-soft);
+  color: var(--accent-strong);
   font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 .sidebar .placeholder {
   display: block;
   padding: 0.3rem 0.6rem;
   color: var(--muted);
   font-style: italic;
-  border-left: 3px solid var(--border);
+  border: 1px dashed var(--border);
+  border-radius: 6px;
 }
 .sidebar ol { margin: 0; padding-left: 1.4rem; color: var(--muted); }
 .sidebar ol a { padding: 0.15rem 0; border: 0; }
@@ -214,16 +216,16 @@ code {
 
 /* Hinweise */
 .callout {
-  border-left: 4px solid var(--note-border);
+  border: 1px solid var(--note-border);
   background: var(--note-bg);
   padding: 0.9rem 1.1rem;
-  border-radius: 0 var(--radius) var(--radius) 0;
+  border-radius: var(--radius);
   margin: 0 0 1.25rem;
 }
 .callout > :last-child { margin-bottom: 0; }
 .callout strong:first-child { display: block; margin-bottom: 0.25rem; }
-.callout.warn { border-left-color: var(--warn-border); background: var(--warn-bg); }
-.callout.key { border-left-color: var(--accent); background: var(--accent-soft); }
+.callout.warn { border-color: var(--warn-border); background: var(--warn-bg); }
+.callout.key { border-color: var(--accent); background: var(--accent-soft); }
 
 /* Schritte */
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0; }
@@ -285,8 +287,8 @@ th { background: var(--surface-2); font-weight: 600; }
 
 @media print {
   .site-header, .sidebar, .copy-btn, .skip-link { display: none; }
-  .code { background: none; border: 1px solid #999; }
-  .code pre { color: #000; }
+  .code { background: #fff; border: 1px solid #999; }
+  .code pre { color: #000; background: #fff; }
 }
 
 /* Feldnamen in Tabellen nicht mitten im Wort umbrechen */
