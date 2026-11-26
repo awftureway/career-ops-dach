@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { employerLinkFromPanel } from "../src/lib/apply/apply-link.mjs";
+import { employerLinkFromPanel } from "../../src/lib/apply/apply-link.mjs";
 
 const board = "www.arbeitsagentur.de";
 const panel = [
